@@ -64,7 +64,7 @@ public class PluginReferencesDownloader {
       /** Hacky workaround to allow salesforce plugin through. there seems to be no way to 
 	  * enable a plugin without modifying the core plugin!
       */
-      if (!allowedPlugins.contains(key) && !key.equals("salesforce") ) {
+      if (!allowedPlugins.contains(key) && !key.equals("salesforce") && !key.equals("codescan") ) {
         LOG.debug("Plugin {} is not in the SonarLint whitelist. Skip it.", key);
         continue;
       }
