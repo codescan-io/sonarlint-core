@@ -65,7 +65,7 @@ public class StandaloneActiveRulesProvider extends ProviderAdapter {
   private static void registerProfilesForLanguage(ActiveRulesBuilder builder, String language, List<RulesProfile> defs) {
     for (Map.Entry<String, Collection<RulesProfile>> entry : profilesByName(defs).entrySet()) {
       String name = entry.getKey();
-      if ("Sonar way".equals(name)) {
+      if ("Sonar way".equals(name) || "CodeScan Way".equalsIgnoreCase(name)) {
         registerProfile(builder, language, entry);
       }
     }
