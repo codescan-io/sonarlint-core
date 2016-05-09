@@ -65,7 +65,7 @@ public class OfflineActiveRulesProvider extends ProviderAdapter {
   private static void registerProfilesForLanguage(ActiveRulesBuilder builder, String language, List<RulesProfile> defs) {
     for (Map.Entry<String, Collection<RulesProfile>> entry : profilesByName(defs).entrySet()) {
       String name = entry.getKey();
-      if ("Sonar way".equals(name)) {
+      if ("Sonar way".equals(name) || "CodeScan way".equals(name)) {
         for (RulesProfile rp : entry.getValue()) {
           for (ActiveRule ar : rp.getActiveRules()) {
             NewActiveRule newAr = builder.create(RuleKey.of(ar.getRepositoryKey(), ar.getRuleKey()))
