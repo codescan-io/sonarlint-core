@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.apache.commons.io.FileUtils;
+import org.assertj.core.util.Files;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -58,22 +59,30 @@ public class StandaloneIssueMediumTest {
   public static TemporaryFolder temp = new TemporaryFolder();
   private static StandaloneSonarLintEngineImpl sonarlint;
   private static File baseDir;
+  private static Path workDir;
 
   @BeforeClass
   public static void prepare() throws IOException {
+    Path sonarlintUserHome = temp.newFolder().toPath();
     StandaloneGlobalConfiguration config = StandaloneGlobalConfiguration.builder()
       .addPlugin(PluginLocator.getJavaScriptPluginUrl())
       .addPlugin(PluginLocator.getJavaPluginUrl())
       .addPlugin(PluginLocator.getPhpPluginUrl())
-      .setSonarLintUserHome(temp.newFolder().toPath())
+      .addPlugin(PluginLocator.getPythonPluginUrl())
+      .setSonarLintUserHome(sonarlintUserHome)
       .setLogOutput(new LogOutput() {
         @Override
         public void log(String formattedMessage, Level level) {
-          // Don't pollute logs
+          System.out.println(formattedMessage);
         }
       })
       .build();
     sonarlint = new StandaloneSonarLintEngineImpl(config);
+
+    workDir = sonarlintUserHome.resolve("work");
+    List<String> tmpFiles = Files.fileNamesIn(workDir.toString(), true);
+    assertThat(tmpFiles).hasSize(1);
+    assertThat(tmpFiles.get(0)).contains("sonar-plugin-api-deps");
 
     baseDir = temp.newFolder();
   }
@@ -81,6 +90,8 @@ public class StandaloneIssueMediumTest {
   @AfterClass
   public static void stop() {
     sonarlint.stop();
+    List<String> tmpFiles = Files.fileNamesIn(workDir.toString(), true);
+    assertThat(tmpFiles).isEmpty();
   }
 
   @Test
@@ -131,7 +142,25 @@ public class StandaloneIssueMediumTest {
       });
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path").containsOnly(
       tuple("php:S1172", 2, inputFile.getPath()));
+  }
 
+  @Test
+  public void simplePython() throws Exception {
+
+    ClientInputFile inputFile = prepareInputFile("foo.py", "def my_function(name):\n"
+      + "    print \"Hello world!\" # NOSONAR is not supported by Python\n"
+      + "\n", false);
+
+    final List<Issue> issues = new ArrayList<>();
+    sonarlint.analyze(new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile), ImmutableMap.<String, String>of()),
+      new IssueListener() {
+        @Override
+        public void handle(Issue issue) {
+          issues.add(issue);
+        }
+      });
+    assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path").containsOnly(
+      tuple("python:PrintStatementUsage", 2, inputFile.getPath()));
   }
 
   @Test
