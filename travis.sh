@@ -20,6 +20,7 @@ CI)
   if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     strongEcho 'Build and analyze commit in master'
     # this commit is master must be built and analyzed (with upload of report)
+    git fetch --unshallow || true
     export MAVEN_OPTS="-Xmx1G -Xms128m"
     mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar \
       -Pcoverage-per-test \
@@ -49,6 +50,10 @@ CI)
     # in Maven local repository
     mvn verify -Dmaven.test.redirectTestOutputToFile=false -B -e -V
   fi
+  ;;
+
+IT)
+  mvn clean verify -Prun-its -Dsonar.runtimeVersion=$SQ_VERSION -DjavaVersion=$JAVA_VERSION -DphpVersion=$PHP_VERSION -DjavascriptVersion=$JAVASCRIPT_VERSION
   ;;
 
 

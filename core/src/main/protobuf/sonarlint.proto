@@ -1,0 +1,105 @@
+// SonarLint, open source software quality management tool.
+// Copyright (C) 2015-2016 SonarSource
+// mailto:contact AT sonarsource DOT com
+//
+// SonarLint is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 3 of the License, or (at your option) any later version.
+//
+// SonarLint is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+
+syntax = "proto3";
+
+package sonarlint;
+
+// The java package can be changed without breaking compatibility.
+// it impacts only the generated Java code.
+option java_package = "org.sonarsource.sonarlint.core.proto";
+option optimize_for = SPEED;
+
+message UpdateStatus {
+  string sonarlint_core_version = 1;
+  string client_user_agent = 2;
+  int64 update_timestamp = 3;
+}
+
+message ServerInfos {
+  string id = 1;
+  string version = 2;
+  string status = 3;
+}
+
+message PluginReferences {
+  repeated PluginReference reference = 1;
+  
+  message PluginReference {
+    string key = 1;
+    string hash = 2;
+    string filename = 3;
+  }
+}
+
+message GlobalProperties {
+  map<string, string> properties = 1;
+}
+
+message Rules {
+  map<string,Rule> rules_by_key = 1;
+    
+  message Rule {
+    string repo = 1;
+    string key = 2;
+    string name = 3;
+    string severity = 4;
+    string lang = 5;
+    string internal_key = 6;
+    string html_desc = 7;
+    bool is_template = 8;
+    string template_key = 9;
+  }
+}
+
+message QProfiles {
+  map<string,QProfile> qprofilesByKey = 1;
+  map<string, string> defaultQProfilesByLanguage = 2;
+
+  message QProfile {
+    string key = 1;
+    int64 activeRuleCount = 2;
+  }
+}
+
+message ActiveRules {
+  map<string,ActiveRule> active_rules_by_key = 1;
+  
+  message ActiveRule {
+    string repo = 1;
+    string key = 2;
+    string severity = 3;
+    map<string,string> params = 4;
+  }
+}
+
+message ModuleList {
+  map<string,Module> modules_by_key = 1;
+  
+  message Module {
+    string key = 1;
+    string name = 2;
+    string qu = 3;
+  }
+}
+
+message ModuleConfiguration {
+  map<string, string> qprofile_per_language = 1;
+  map<string, string> properties = 2;
+}
