@@ -9,3 +9,4 @@ plsql=2.7
 swift=1.5.1
 rpg=2.0
 cpp=4.0
+salesforce=3.7

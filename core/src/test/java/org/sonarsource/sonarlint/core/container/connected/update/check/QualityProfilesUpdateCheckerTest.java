@@ -60,27 +60,27 @@ public class QualityProfilesUpdateCheckerTest {
   @Test
   public void addedQProfile() {
     when(qualityProfilesDownloader.fetchQualityProfiles())
-      .thenReturn(QProfiles.newBuilder().putQprofilesByKey("java-123", QProfile.newBuilder().setKey("java-123").setName("Sonar Way")
+      .thenReturn(QProfiles.newBuilder().putQprofilesByKey("java-123", QProfile.newBuilder().setKey("java-123").setName("CodeScan way")
         .setLanguageName("Java").build()).build());
 
     DefaultStorageUpdateCheckResult result = new DefaultStorageUpdateCheckResult();
     checker.checkForUpdates(result);
 
     assertThat(result.needUpdate()).isTrue();
-    assertThat(result.changelog()).containsOnly("Quality profile 'Sonar Way' for language 'Java' added");
+    assertThat(result.changelog()).containsOnly("Quality profile 'CodeScan way' for language 'Java' added");
   }
 
   @Test
   public void removedQProfile() {
     when(storageManager.readQProfilesFromStorage())
-      .thenReturn(QProfiles.newBuilder().putQprofilesByKey("java-123", QProfile.newBuilder().setKey("java-123").setName("Sonar Way")
+      .thenReturn(QProfiles.newBuilder().putQprofilesByKey("java-123", QProfile.newBuilder().setKey("java-123").setName("CodeScan way")
         .setLanguageName("Java").build()).build());
 
     DefaultStorageUpdateCheckResult result = new DefaultStorageUpdateCheckResult();
     checker.checkForUpdates(result);
 
     assertThat(result.needUpdate()).isTrue();
-    assertThat(result.changelog()).containsOnly("Quality profile 'Sonar Way' for language 'Java' removed");
+    assertThat(result.changelog()).containsOnly("Quality profile 'CodeScan way' for language 'Java' removed");
   }
 
   @Test
@@ -89,7 +89,7 @@ public class QualityProfilesUpdateCheckerTest {
       .thenReturn(QProfiles.newBuilder().putQprofilesByKey("java-123",
         QProfile.newBuilder()
           .setKey("java-123")
-          .setName("Sonar Way")
+          .setName("CodeScan way")
           .setLanguageName("Java")
           .setRulesUpdatedAt("foo")
           .build())
@@ -98,7 +98,7 @@ public class QualityProfilesUpdateCheckerTest {
       .thenReturn(QProfiles.newBuilder().putQprofilesByKey("java-123",
         QProfile.newBuilder()
           .setKey("java-123")
-          .setName("Sonar Way")
+          .setName("CodeScan way")
           .setLanguageName("Java")
           .setRulesUpdatedAt("foo2")
           .build())
@@ -108,7 +108,7 @@ public class QualityProfilesUpdateCheckerTest {
     checker.checkForUpdates(result);
 
     assertThat(result.needUpdate()).isTrue();
-    assertThat(result.changelog()).containsOnly("Quality profile 'Sonar Way' for language 'Java' updated");
+    assertThat(result.changelog()).containsOnly("Quality profile 'CodeScan way' for language 'Java' updated");
   }
 
   @Test
@@ -117,7 +117,7 @@ public class QualityProfilesUpdateCheckerTest {
       .thenReturn(QProfiles.newBuilder().putQprofilesByKey("java-123",
         QProfile.newBuilder()
           .setKey("java-123")
-          .setName("Sonar Way")
+          .setName("CodeScan way")
           .setLanguageName("Java")
           .setRulesUpdatedAt("foo")
           .setUserUpdatedAt("user")
@@ -127,7 +127,7 @@ public class QualityProfilesUpdateCheckerTest {
       .thenReturn(QProfiles.newBuilder().putQprofilesByKey("java-123",
         QProfile.newBuilder()
           .setKey("java-123")
-          .setName("Sonar Way")
+          .setName("CodeScan way")
           .setLanguageName("Java")
           .setRulesUpdatedAt("foo")
           .build())
@@ -137,6 +137,6 @@ public class QualityProfilesUpdateCheckerTest {
     checker.checkForUpdates(result);
 
     assertThat(result.needUpdate()).isTrue();
-    assertThat(result.changelog()).containsOnly("Quality profile 'Sonar Way' for language 'Java' updated");
+    assertThat(result.changelog()).containsOnly("Quality profile 'CodeScan way' for language 'Java' updated");
   }
 }
