@@ -24,7 +24,7 @@ git clone "$update_center_repo" "$props_repo"
 
 {
 cat << EOF
-# Minimum supported analyzer versions: the first versions supported by SonarQube $version,
+# Minimum supported analyzer versions: the first versions supported by CodeScan $version,
 # as defined in $update_center_repo
 EOF
 for lang in java php javascript python cobol abap plsql swift rpg cpp; do

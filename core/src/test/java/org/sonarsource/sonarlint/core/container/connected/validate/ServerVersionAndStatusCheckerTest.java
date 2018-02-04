@@ -65,7 +65,7 @@ public class ServerVersionAndStatusCheckerTest {
 
     ValidationResult validateStatusAndVersion = checker.validateStatusAndVersion();
     assertThat(validateStatusAndVersion.success()).isFalse();
-    assertThat(validateStatusAndVersion.message()).isEqualTo("SonarQube server has version 4.5. Version should be greater or equal to 5.6");
+    assertThat(validateStatusAndVersion.message()).isEqualTo("CodeScan server has version 4.5. Version should be greater or equal to 5.6");
   }
 
   @Test
@@ -78,7 +78,7 @@ public class ServerVersionAndStatusCheckerTest {
       checker.checkVersionAndStatus();
       fail("Expected exception");
     } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(UnsupportedServerException.class).hasMessage("SonarQube server has version 4.5. Version should be greater or equal to 5.6");
+      assertThat(e).isExactlyInstanceOf(UnsupportedServerException.class).hasMessage("CodeScan server has version 4.5. Version should be greater or equal to 5.6");
     }
   }
 
@@ -93,7 +93,7 @@ public class ServerVersionAndStatusCheckerTest {
       checker.checkVersionAndStatus();
       fail("Expected exception");
     } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(UnsupportedServerException.class).hasMessage("SonarQube server has version 4.5. Version should be greater or equal to 5.6");
+      assertThat(e).isExactlyInstanceOf(UnsupportedServerException.class).hasMessage("CodeScan server has version 4.5. Version should be greater or equal to 5.6");
     }
   }
 

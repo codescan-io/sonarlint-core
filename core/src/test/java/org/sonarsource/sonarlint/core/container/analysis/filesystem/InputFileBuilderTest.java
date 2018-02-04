@@ -37,7 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static org.sonarsource.sonarlint.core.client.api.util.FileUtils.toSonarQubePath;
+import static org.sonarsource.sonarlint.core.client.api.util.FileUtils.toCodeScanPath;
 
 public class InputFileBuilderTest {
   @Rule
@@ -61,9 +61,9 @@ public class InputFileBuilderTest {
 
     assertThat(inputFile.type()).isEqualTo(InputFile.Type.TEST);
     assertThat(inputFile.file()).isEqualTo(path.toFile());
-    assertThat(inputFile.absolutePath()).isEqualTo(toSonarQubePath(path.toString()));
+    assertThat(inputFile.absolutePath()).isEqualTo(toCodeScanPath(path.toString()));
     assertThat(inputFile.language()).isEqualTo("java");
-    assertThat(inputFile.key()).isEqualTo(toSonarQubePath(path.toAbsolutePath().toString()));
+    assertThat(inputFile.key()).isEqualTo(toCodeScanPath(path.toAbsolutePath().toString()));
     assertThat(inputFile.lines()).isEqualTo(1);
 
     assertThat(builder.langDetection()).isEqualTo(langDetection);

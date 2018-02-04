@@ -34,7 +34,7 @@ import org.sonarsource.sonarlint.core.plugin.cache.PluginCache;
 public class PluginCacheLoader {
 
   private static final ImmutableSet<String> PLUGIN_WHITELIST = ImmutableSet.of("xoo", "java", "javascript", "php", "python", "cobol", "abap", "plsql", "swift", "rpg", "cpp",
-    "pli");
+    "pli", "salesforce", "codescan");
   private static final String IMPLEMENTED_SQ_API = "6.7";
 
   private static final Logger LOG = Loggers.get(PluginCacheLoader.class);
@@ -61,7 +61,7 @@ public class PluginCacheLoader {
       PluginInfo info = PluginInfo.create(jarFilePath);
       Boolean sonarLintSupported = info.isSonarLintSupported();
       if (!info.isCompatibleWith(IMPLEMENTED_SQ_API)) {
-        LOG.debug("Plugin {} need SonarQube plugin API {} while SonarLint supports only up to {}. Skip it.", info.getKey(), info.getMinimalSqVersion(), IMPLEMENTED_SQ_API);
+        LOG.debug("Plugin {} need CodeScan plugin API {} while SonarLint supports only up to {}. Skip it.", info.getKey(), info.getMinimalSqVersion(), IMPLEMENTED_SQ_API);
         break;
       }
       if ((sonarLintSupported != null && sonarLintSupported.booleanValue()) || isWhitelisted(info.getKey())) {

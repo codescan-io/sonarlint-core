@@ -1,5 +1,5 @@
 /*
- * JavaScript Custom Rules Plugin
+ * SonarLint Language Server
  * Copyright (C) 2009-2017 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
@@ -17,18 +17,48 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.samples.javascript;
+package org.sonarlint.languageserver;
 
-import org.sonar.api.Plugin;
+import java.util.Map;
 
-/**
- * Extension point to define a CodeScan Plugin.
- */
-public class JavaScriptCustomRulesPlugin implements Plugin {
+public class SonarQubeServer {
+  private String id;
+  private String url;
+  private String token;
+  private String login;
+  private String password;
+  private String organization;
 
-  @Override
-  public void define(Context context) {
-    context.addExtension(JavascriptCustomRulesDefinition.class);
+  public SonarQubeServer(Map<String, String> map) {
+	this.id = map.get("id");
+	this.url = map.get("url");
+	this.token = map.get("token");
+	this.login = map.get("login");
+	this.password = map.get("password");
+	this.organization = map.get("organization");
   }
 
+  public String id() {
+    return id;
+  }
+
+  public String url() {
+    return url;
+  }
+
+  public String token() {
+    return token;
+  }
+
+  public String login() {
+    return login;
+  }
+
+  public String password() {
+    return password;
+  }
+
+  public String organization() {
+    return organization;
+  }
 }

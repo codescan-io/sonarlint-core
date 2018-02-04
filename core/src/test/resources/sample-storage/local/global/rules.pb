@@ -1720,16 +1720,16 @@ javascriptS1451/Copyright and license headers should be defined"BLOCKER*js:
 <h2>Compliant Solution</h2>
 <pre>
 /*
- * SonarQube, open source software quality management tool.
+ * CodeScan, open source software quality management tool.
  * Copyright (C) 2008-2013 SonarSource
  * mailto:contact AT sonarsource DOT com
  *
- * SonarQube is free software; you can redistribute it and/or
+ * CodeScan is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
  *
- * SonarQube is distributed in the hope that it will be useful,
+ * CodeScan is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
@@ -5809,7 +5809,7 @@ int Add(int a, int b)
 ‰
 squid:CycleBetweenPackagesê
 squidCycleBetweenPackages)Cycles between packages should be removed"MAJOR*java2CycleBetweenPackages:ü<p>When several packages are involved in a cycle (package A &gt; package B &gt; package C &gt; package A, where "&gt;" means "depends upon"), that means those packages are highly coupled, and there is no way to reuse/extract one of those packages without importing all the other packages. Such cycle could quickly increase the effort required to maintain an application and embrace business change.</p>
-<p>SonarQube not only detect cycles between packages, but also calculates the minimum effort to break those cycles. This rule logs a violation on each source file having an outgoing dependency to be cut in order to break a cycle.</p>
+<p>CodeScan not only detect cycles between packages, but also calculates the minimum effort to break those cycles. This rule logs a violation on each source file having an outgoing dependency to be cut in order to break a cycle.</p>
 ¨
 squid:S1905˜
 squidS1905"Redundant casts should not be used"MINOR*java2S1905:Ï<p>Unnecessary casting expressions make the code harder to read and understand.</p>
@@ -12558,16 +12558,16 @@ List&lt;? extends Animal&gt; getAnimals(){...}
 
 <pre>
 /*
- * SonarQube, open source software quality management tool.
+ * CodeScan, open source software quality management tool.
  * Copyright (C) 2008-2013 SonarSource
  * mailto:contact AT sonarsource DOT com
  *
- * SonarQube is free software; you can redistribute it and/or
+ * CodeScan is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
  *
- * SonarQube is distributed in the hope that it will be useful,
+ * CodeScan is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
@@ -20743,14 +20743,14 @@ mc.Create();
 Ä
 fxcop:CustomRuleTemplate§
 fxcopCustomRuleTemplateTemplate for custom FxCop rules"MAJOR*cs:Û<p>
-Follow these steps to make your custom FxCop rules available in SonarQube:
+Follow these steps to make your custom FxCop rules available in CodeScan:
 </p>
 
 <ol>
   <li>Place your custom FxCop rules assemblies in the "Rules" subdirectory of your FxCop installation directory.</li>
   <li>For each custom rule:</li>
   <ol>
-    <li>Create a new rule in SonarQube by "copying" this rule template and specify the <code>CheckId</code> of your custom rule, a title, a description, and a default severity.</li>
+    <li>Create a new rule in CodeScan by "copying" this rule template and specify the <code>CheckId</code> of your custom rule, a title, a description, and a default severity.</li>
     <li>Enable the newly created rule in your quality profile</li>
   </ol>
   <li>Relaunch an analysis on your projects, et voilÃ , your custom rules are executed!</li>

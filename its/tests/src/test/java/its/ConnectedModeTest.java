@@ -263,7 +263,7 @@ public class ConnectedModeTest extends AbstractConnectedTest {
     if (supportHtmlDesc()) {
       assertThat(engine.getRuleDetails("squid:S106").getHtmlDescription()).contains("When logging a message there are");
     } else {
-      assertThat(engine.getRuleDetails("squid:S106").getHtmlDescription()).contains("Rule descriptions are only available in SonarLint with SonarQube 5.1+");
+      assertThat(engine.getRuleDetails("squid:S106").getHtmlDescription()).contains("Rule descriptions are only available in SonarLint with CodeScan 5.1+");
     }
 
     assertThat(engine.getModuleStorageStatus(PROJECT_KEY_JAVA)).isNull();

@@ -18,7 +18,7 @@ $09b46ae2-e3f0-4c68-9aa0-7470c4528319org.sonarsource.flex:flex-squid2Flex :: 
 $5105e5c4-a3be-42b3-b51b-29d60e898507&org.sonarsource.flex:sslr-flex-toolkit2Flex :: SSLR ToolkitBBRCbdefault-organizationÜ
 $e76e9365-42e6-476f-b613-c354828ec54e1org.sonarsource.generic-coverage:generic-coverage2Generic CoverageBTRKbdefault-organizationÄ
 AVOfMZs51iu22sbktz9_5org.sonarsource.generic-coverage:generic-coverage-its2Generic-coverage :: ITBBRCbdefault-organizationå
-AVJeQjhvVuukC9ov60VX4org.sonarsource.auth.github:sonar-auth-github-plugin2#GitHub Authentication for SonarQubeBTRKbdefault-organizationí
+AVJeQjhvVuukC9ov60VX4org.sonarsource.auth.github:sonar-auth-github-plugin2#GitHub Authentication for CodeScanBTRKbdefault-organizationí
 AVMtQUyX1pJtXEqjRKjvRsonarlint-visualstudio:sonarlint-visualstudio:03278C1A-EE78-4FA7-A5B0-1AB0A81EA76F2IntegrationBBRCbdefault-organizationì
 AVNa7kB5aETv_IpZn3cNNsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:CC8197AA-D03C-42DB-A71C-5AEEEE0D9FDD2IntegrationTestsBBRCbdefault-organizationú
 AVMtQUyV1pJtXEqjRKhcRsonarlint-visualstudio:sonarlint-visualstudio:CB59EF29-8193-4F32-866E-64FBB61992832Integration.UnitTestsBBRCbdefault-organizationó
@@ -32,7 +32,7 @@ JavaScriptBTRKbdefault-organizationÖ
 $06349648-5104-4b3c-89ac-137f25627e59,org.sonarsource.javascript:javascript-checks2JavaScript :: ChecksBBRCbdefault-organizationâ
 $05fcc466-b6f1-4866-8473-647906592f74.org.sonarsource.javascript:javascript-frontend2JavaScript :: FrontendBBRCbdefault-organizationë
 $57a241c5-015e-4848-8118-d9e0b98fb41e2org.sonarsource.javascript:sonar-javascript-plugin2JavaScript :: Sonar PluginBBRCbdefault-organizationy
-$f1ab623e-d00d-401b-bf9e-c45e91976bf0org.jenkins-ci.plugins:sonar2Jenkins SonarQube PluginBTRKbdefault-organizationy
+$f1ab623e-d00d-401b-bf9e-c45e91976bf0org.jenkins-ci.plugins:sonar2Jenkins CodeScan PluginBTRKbdefault-organizationy
 $c77ab6b7-5e95-419e-94d6-8c681f19c7ac com.maif.sonar:maif-cobol-plugin2MAIF :: Cobol pluginBTRKbdefault-organizationo
 $d8d9289b-9a00-4dd2-a41e-4ea14e6ac937 com.sonarsource.infra:milestoner2
 MilestonerBTRKbdefault-organizationt
@@ -101,98 +101,98 @@ $7f8296a5-8e90-4d9d-a7ad-d7e9bfdc71d4&org.sonarsource.sonar-lits-plugin:lits2
 Sonar LITSBTRKbdefault-organizationy
 AVUHU2-As8V400cunPf_3org.sonarsource.sonar-lits-plugin:sonar-lits-plugin2Sonar LITS PluginBBRCbdefault-organizationj
 AVmxrxWDxIT31q2MXPfI&org.sonarsource:sonar-persistit:master2Sonar PersistitBTRKbdefault-organizationq
-$69e57151-be0d-4157-adff-c06741d88879#org.sonarsource.sonarqube:sonarqube2	SonarQubeBTRKbdefault-organizationà
-$d6fd7c80-fe67-4828-957a-dcf1a12e81b1+org.sonarsource.sonarqube:sonar-application2SonarQube :: ApplicationBBRCbdefault-organizationõ
-AVD2vXi5_ke-n2PyKAQRPsonar-scanner-msbuild:sonar-scanner-msbuild:60AACBB4-1661-4EEB-A029-91289C1D3F7E2SonarQube.BootstrapperBBRCbdefault-organization°
-AVD2vXid_ke-n2PyKAQFPsonar-scanner-msbuild:sonar-scanner-msbuild:3410EA30-5F7A-4E0F-B5F6-8E83077A20DB2SonarQube.Bootstrapper.TestsBBRCbdefault-organizationÑ
-$dcb60b0c-e806-40da-aec1-6e0aa8b75cae)org.sonarsource.sonarqube:sonar-check-api2SonarQube :: Check APIBBRCbdefault-organizationâ
-$f555741e-4be3-48b5-9de5-16d5c0b39604)org.sonarsource.sonarqube:sonar-colorizer2SonarQube :: Code ColorizerBBRCbdefault-organizationï
-AVD2vXjG_ke-n2PyKARHPsonar-scanner-msbuild:sonar-scanner-msbuild:E312FDBB-BC13-4559-8F21-76CA5B88EBC52SonarQube.CommonBBRCbdefault-organizationü
-AVD2vXjC_ke-n2PyKAQhPsonar-scanner-msbuild:sonar-scanner-msbuild:A74AA08B-58D3-4B52-BC40-3A4F9A9977052SonarQube.Common.UnitTestsBBRCbdefault-organizationr
-AVOaRnPr1iu22sbktZYV"org.sonarsource.sonarqube:sonar-ce2SonarQube :: Compute EngineBBRCbdefault-organizationz
-$ae76c9a3-ec7b-4add-b083-76210185a608$org.sonarsource.sonarqube:sonar-core2SonarQube :: CoreBBRCbdefault-organizationÇ
-$69fb3099-46f1-4c6d-b9e0-c52fb9323044*org.sonarsource.dotnet:sonar-csharp-plugin2SonarQube C# PluginBTRKbdefault-organization|
-$951bbd84-3f22-4cdb-95c2-74cf3e2c1037"org.sonarsource.sonarqube:sonar-db2SonarQube :: DatabaseBBRCbdefault-organizationÄ
-$86115d13-7e1b-4ed9-9b66-b826ac9fe19d$com.sonarsource.dbcopy:sonar-db-copy2SonarQube Database CopyBTRKbdefault-organizationÄ
-AVj9HfMTeFvZgi0FZNRk,org.sonarsource.sonarqube:sonar-db-migration2SonarQube :: Database MigrationBBRCbdefault-organization§
-$936356e8-f52f-4780-8179-4510f97ce907=org.sonarsource.sonar-dev-maven-plugin:sonar-dev-maven-plugin2"SonarQube Development Maven PluginBTRKbdefault-organizationä
-$69949290-cfe6-45b6-9dd0-53f1e467b810,org.sonarsource.sonarqube:sonar-duplications2SonarQube :: DuplicationsBBRCbdefault-organizationÖ
-$dcd2006a-9f35-4a0c-9e96-9c706eb86703)org.sonarsource.fxcop:sonar-fxcop-library2SonarQube FxCop LibraryBTRKbdefault-organizationî
-AVOfMZs51iu22sbktz95>org.sonarsource.generic-coverage:sonar-generic-coverage-plugin2!SonarQube Generic Coverage PluginBBRCbdefault-organizationê
-AVOfMZs51iu22sbktz9-4org.sonarsource.generic-coverage:it-generic-coverage2'SonarQube Generic Coverage plugin :: ITBBRCbdefault-organizationâ
-$000266fe-ab7a-4004-a41d-0919eabb3cd3*org.sonarsource.github:sonar-github-plugin2SonarQube :: GitHub PluginBTRKbdefault-organizationz
-$1e48aec3-5a9b-4a1c-9c1b-50deae94a32a$org.sonarsource.sonarqube:sonar-home2SonarQube :: HomeBBRCbdefault-organizationl
-$dd7c3556-ce3f-42d0-a348-914a582dc944org.sonarsource.java:java2SonarQube JavaBTRKbdefault-organization}
-$477b4f05-7a03-4560-8b5e-dc26d22ec305 org.sonarsource.java:java-checks2SonarQube Java :: ChecksBBRCbdefault-organizationÇ
-AVAFNjYYkNwLQprIXr15(org.sonarsource.java:java-checks-testkit2%SonarQube Java :: Check Test tool kitBBRCbdefault-organizationr
-AVM2y7UbI-23Ua--xcFa"org.sonarsource.java:java-frontend2SonarQube Java :: Front-endBBRCbdefault-organizationg
-AVFjs_DubZxRHR6CG7FYorg.sonarsource.java:java-its2SonarQube Java :: ITsBBRCbdefault-organizationÖ
-AVINWmMr56EjxZr1k03r*org.sonarsource.java:it-java-performancing2&SonarQube Java :: ITs :: PerformancingBBRCbdefault-organizationw
-AVINWmMt56EjxZr1k04B#org.sonarsource.java:it-java-plugin2SonarQube Java :: ITs :: PluginBBRCbdefault-organizationä
-AVINWmMs56EjxZr1k031+org.sonarsource.java:it-java-plugin-plugins2*SonarQube Java :: ITs :: Plugin :: PluginsBBRCbdefault-organizationÜ
-AVINWmMt56EjxZr1k04A)org.sonarsource.java:it-java-plugin-tests2(SonarQube Java :: ITs :: Plugin :: TestsBBRCbdefault-organizationw
-AVINWmMt56EjxZr1k04F#org.sonarsource.java:it-java-ruling2SonarQube Java :: ITs :: RulingBBRCbdefault-organization}
-$db61812b-783d-4735-b10b-680737308fba org.sonarsource.java:java-jacoco2SonarQube Java :: JaCoCoBBRCbdefault-organizationí
-$5ed73492-b537-45f5-9079-b4acaba2a6d6+org.sonarsource.java:sonar-jacoco-listeners2"SonarQube Java :: JaCoCo ListenersBBRCbdefault-organizationÅ
-AVGrFVEpWEjBJkVUUuyQ%org.sonarsource.java:java-maven-model2'SonarQube Java :: Maven model generatorBBRCbdefault-organizationÉ
-$3d6bf0b1-a989-4fa0-b2ce-d4d42d4f63a2&org.sonarsource.java:sonar-java-plugin2SonarQube Java :: PluginBBRCbdefault-organizationì
-AVMyXrVud_IQQUJLcHNS4org.sonarsource.javascript:javascript-checks-testkit2*SonarQube JavaScript :: Check Test ToolkitBBRCbdefault-organizationÅ
-$b37bff8b-613d-46c0-9414-affdf50a58e6"org.sonarsource.java:java-surefire2SonarQube Java :: SurefireBBRCbdefault-organizationb
-AVCEnziA_A6L_N0OvLkdorg.sonarsource.ldap:sonar-ldap2SonarQube LDAPBTRKbdefault-organizationp
-AVUR1zVA79cW_MTB9une&org.sonarsource.ldap:sonar-ldap-plugin2SonarQube LDAP PluginBBRCbdefault-organizationj
-AVeKZVHi0971mxzK0ji0org.sonarsource.ldap:server2SonarQube LDAP Test ServerBBRCbdefault-organizationÇ
-$30612dda-9bac-4468-b201-c63dbd0ddd64(org.sonarsource.sonarqube:sonar-markdown2SonarQube :: MarkdownBBRCbdefault-organizationú
-AVD2vXjJ_ke-n2PyKARoPsonar-scanner-msbuild:sonar-scanner-msbuild:AB14D4F9-F7B9-4CAB-A0DD-54068B236A6D2SonarQube.MSBuild.TasksBBRCbdefault-organization≠
-AVD2vXjI_ke-n2PyKARZPsonar-scanner-msbuild:sonar-scanner-msbuild:943D1B4C-578E-4A4D-ADB3-F823E13FBE282(SonarQube.MSBuild.Tasks.IntegrationTestsBBRCbdefault-organization¶
-AVD2vXjI_ke-n2PyKARhPsonar-scanner-msbuild:sonar-scanner-msbuild:9921D017-AAFC-48E3-8F48-E45DC084CEA42!SonarQube.MSBuild.Tasks.UnitTestsBBRCbdefault-organizationí
-$71960a0e-6bae-4fa1-a5e1-d212ed7346641org.sonarsource.dotnet:sonar-dotnet-tests-library2SonarQube .NET Tests LibraryBTRKbdefault-organizationü
-AVWRBlYsWhjlASkWGAm9Psonar-scanner-msbuild:sonar-scanner-msbuild:35848C6E-2018-4831-94FA-40D7E45B5A092SonarQube.Old.BootstrapperBBRCbdefault-organizationu
+$69e57151-be0d-4157-adff-c06741d88879#org.sonarsource.sonarqube:sonarqube2	CodeScanBTRKbdefault-organizationà
+$d6fd7c80-fe67-4828-957a-dcf1a12e81b1+org.sonarsource.sonarqube:sonar-application2CodeScan :: ApplicationBBRCbdefault-organizationõ
+AVD2vXi5_ke-n2PyKAQRPsonar-scanner-msbuild:sonar-scanner-msbuild:60AACBB4-1661-4EEB-A029-91289C1D3F7E2CodeScan.BootstrapperBBRCbdefault-organization°
+AVD2vXid_ke-n2PyKAQFPsonar-scanner-msbuild:sonar-scanner-msbuild:3410EA30-5F7A-4E0F-B5F6-8E83077A20DB2CodeScan.Bootstrapper.TestsBBRCbdefault-organizationÑ
+$dcb60b0c-e806-40da-aec1-6e0aa8b75cae)org.sonarsource.sonarqube:sonar-check-api2CodeScan :: Check APIBBRCbdefault-organizationâ
+$f555741e-4be3-48b5-9de5-16d5c0b39604)org.sonarsource.sonarqube:sonar-colorizer2CodeScan :: Code ColorizerBBRCbdefault-organizationï
+AVD2vXjG_ke-n2PyKARHPsonar-scanner-msbuild:sonar-scanner-msbuild:E312FDBB-BC13-4559-8F21-76CA5B88EBC52CodeScan.CommonBBRCbdefault-organizationü
+AVD2vXjC_ke-n2PyKAQhPsonar-scanner-msbuild:sonar-scanner-msbuild:A74AA08B-58D3-4B52-BC40-3A4F9A9977052CodeScan.Common.UnitTestsBBRCbdefault-organizationr
+AVOaRnPr1iu22sbktZYV"org.sonarsource.sonarqube:sonar-ce2CodeScan :: Compute EngineBBRCbdefault-organizationz
+$ae76c9a3-ec7b-4add-b083-76210185a608$org.sonarsource.sonarqube:sonar-core2CodeScan :: CoreBBRCbdefault-organizationÇ
+$69fb3099-46f1-4c6d-b9e0-c52fb9323044*org.sonarsource.dotnet:sonar-csharp-plugin2CodeScan C# PluginBTRKbdefault-organization|
+$951bbd84-3f22-4cdb-95c2-74cf3e2c1037"org.sonarsource.sonarqube:sonar-db2CodeScan :: DatabaseBBRCbdefault-organizationÄ
+$86115d13-7e1b-4ed9-9b66-b826ac9fe19d$com.sonarsource.dbcopy:sonar-db-copy2CodeScan Database CopyBTRKbdefault-organizationÄ
+AVj9HfMTeFvZgi0FZNRk,org.sonarsource.sonarqube:sonar-db-migration2CodeScan :: Database MigrationBBRCbdefault-organization§
+$936356e8-f52f-4780-8179-4510f97ce907=org.sonarsource.sonar-dev-maven-plugin:sonar-dev-maven-plugin2"CodeScan Development Maven PluginBTRKbdefault-organizationä
+$69949290-cfe6-45b6-9dd0-53f1e467b810,org.sonarsource.sonarqube:sonar-duplications2CodeScan :: DuplicationsBBRCbdefault-organizationÖ
+$dcd2006a-9f35-4a0c-9e96-9c706eb86703)org.sonarsource.fxcop:sonar-fxcop-library2CodeScan FxCop LibraryBTRKbdefault-organizationî
+AVOfMZs51iu22sbktz95>org.sonarsource.generic-coverage:sonar-generic-coverage-plugin2!CodeScan Generic Coverage PluginBBRCbdefault-organizationê
+AVOfMZs51iu22sbktz9-4org.sonarsource.generic-coverage:it-generic-coverage2'CodeScan Generic Coverage plugin :: ITBBRCbdefault-organizationâ
+$000266fe-ab7a-4004-a41d-0919eabb3cd3*org.sonarsource.github:sonar-github-plugin2CodeScan :: GitHub PluginBTRKbdefault-organizationz
+$1e48aec3-5a9b-4a1c-9c1b-50deae94a32a$org.sonarsource.sonarqube:sonar-home2CodeScan :: HomeBBRCbdefault-organizationl
+$dd7c3556-ce3f-42d0-a348-914a582dc944org.sonarsource.java:java2CodeScan JavaBTRKbdefault-organization}
+$477b4f05-7a03-4560-8b5e-dc26d22ec305 org.sonarsource.java:java-checks2CodeScan Java :: ChecksBBRCbdefault-organizationÇ
+AVAFNjYYkNwLQprIXr15(org.sonarsource.java:java-checks-testkit2%CodeScan Java :: Check Test tool kitBBRCbdefault-organizationr
+AVM2y7UbI-23Ua--xcFa"org.sonarsource.java:java-frontend2CodeScan Java :: Front-endBBRCbdefault-organizationg
+AVFjs_DubZxRHR6CG7FYorg.sonarsource.java:java-its2CodeScan Java :: ITsBBRCbdefault-organizationÖ
+AVINWmMr56EjxZr1k03r*org.sonarsource.java:it-java-performancing2&CodeScan Java :: ITs :: PerformancingBBRCbdefault-organizationw
+AVINWmMt56EjxZr1k04B#org.sonarsource.java:it-java-plugin2CodeScan Java :: ITs :: PluginBBRCbdefault-organizationä
+AVINWmMs56EjxZr1k031+org.sonarsource.java:it-java-plugin-plugins2*CodeScan Java :: ITs :: Plugin :: PluginsBBRCbdefault-organizationÜ
+AVINWmMt56EjxZr1k04A)org.sonarsource.java:it-java-plugin-tests2(CodeScan Java :: ITs :: Plugin :: TestsBBRCbdefault-organizationw
+AVINWmMt56EjxZr1k04F#org.sonarsource.java:it-java-ruling2CodeScan Java :: ITs :: RulingBBRCbdefault-organization}
+$db61812b-783d-4735-b10b-680737308fba org.sonarsource.java:java-jacoco2CodeScan Java :: JaCoCoBBRCbdefault-organizationí
+$5ed73492-b537-45f5-9079-b4acaba2a6d6+org.sonarsource.java:sonar-jacoco-listeners2"CodeScan Java :: JaCoCo ListenersBBRCbdefault-organizationÅ
+AVGrFVEpWEjBJkVUUuyQ%org.sonarsource.java:java-maven-model2'CodeScan Java :: Maven model generatorBBRCbdefault-organizationÉ
+$3d6bf0b1-a989-4fa0-b2ce-d4d42d4f63a2&org.sonarsource.java:sonar-java-plugin2CodeScan Java :: PluginBBRCbdefault-organizationì
+AVMyXrVud_IQQUJLcHNS4org.sonarsource.javascript:javascript-checks-testkit2*CodeScan JavaScript :: Check Test ToolkitBBRCbdefault-organizationÅ
+$b37bff8b-613d-46c0-9414-affdf50a58e6"org.sonarsource.java:java-surefire2CodeScan Java :: SurefireBBRCbdefault-organizationb
+AVCEnziA_A6L_N0OvLkdorg.sonarsource.ldap:sonar-ldap2CodeScan LDAPBTRKbdefault-organizationp
+AVUR1zVA79cW_MTB9une&org.sonarsource.ldap:sonar-ldap-plugin2CodeScan LDAP PluginBBRCbdefault-organizationj
+AVeKZVHi0971mxzK0ji0org.sonarsource.ldap:server2CodeScan LDAP Test ServerBBRCbdefault-organizationÇ
+$30612dda-9bac-4468-b201-c63dbd0ddd64(org.sonarsource.sonarqube:sonar-markdown2CodeScan :: MarkdownBBRCbdefault-organizationú
+AVD2vXjJ_ke-n2PyKARoPsonar-scanner-msbuild:sonar-scanner-msbuild:AB14D4F9-F7B9-4CAB-A0DD-54068B236A6D2CodeScan.MSBuild.TasksBBRCbdefault-organization≠
+AVD2vXjI_ke-n2PyKARZPsonar-scanner-msbuild:sonar-scanner-msbuild:943D1B4C-578E-4A4D-ADB3-F823E13FBE282(CodeScan.MSBuild.Tasks.IntegrationTestsBBRCbdefault-organization¶
+AVD2vXjI_ke-n2PyKARhPsonar-scanner-msbuild:sonar-scanner-msbuild:9921D017-AAFC-48E3-8F48-E45DC084CEA42!CodeScan.MSBuild.Tasks.UnitTestsBBRCbdefault-organizationí
+$71960a0e-6bae-4fa1-a5e1-d212ed7346641org.sonarsource.dotnet:sonar-dotnet-tests-library2CodeScan .NET Tests LibraryBTRKbdefault-organizationü
+AVWRBlYsWhjlASkWGAm9Psonar-scanner-msbuild:sonar-scanner-msbuild:35848C6E-2018-4831-94FA-40D7E45B5A092CodeScan.Old.BootstrapperBBRCbdefault-organizationu
 AVloxf-pEGldUc4Opkvw3com.sonarsource.sonarqube-website:sonarqube-website2sonarqube.orgBTRKbdefault-organization°
-AVBLzFBb5VDW_Ub0IDJvIorg.sonarsource.sonar-packaging-maven-plugin:sonar-packaging-maven-plugin2#SonarQube :: Packaging Maven PluginBTRKbdefault-organizationÜ
-$7feef7c3-11b9-4175-b5a7-527ca3c75cb7*org.sonarsource.sonarqube:sonar-plugin-api2SonarQube :: Plugin APIBBRCbdefault-organizationò
-$ade067d2-aad5-4a3f-889c-072b3ee313e1/org.sonarsource.sonarqube:sonar-plugin-api-deps2$SonarQube :: Plugin API DependenciesBBRCbdefault-organizationw
-AVbkwtEIA0aUSy3S1GII(com.sonarsource.burgr:sonar-burgr-plugin2SonarQube plugin for BurgrBBRCbdefault-organizationõ
-AVNa7kB6aETv_IpZn3c0Nsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:BB89698A-0807-44D2-87EC-6AA2712007592SonarQube.Plugins.CommonBBRCbdefault-organization†
-AVNa7kB6aETv_IpZn3ckNsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:2532FD2D-76A6-484D-86AE-732C415548852SonarQube.Plugins.CommonTestsBBRCbdefault-organization§
-AVNa7kB6aETv_IpZn3dNNsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:DB16CCFA-B97F-4C5E-A99A-A6062ECF5D982!SonarQube.Plugins.PluginGeneratorBBRCbdefault-organization©
-AVNa7kB6aETv_IpZn3c8Nsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:F6C01441-DD3F-465B-8E24-BCEB239819F52&SonarQube.Plugins.PluginGeneratorTestsBBRCbdefault-organization´
-AVNa7kB7aETv_IpZn3dqNsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:FF1A3253-1888-412C-A870-922C08B29A1A2(SonarQube.Plugins.Roslyn.PluginGeneratorBBRCbdefault-organization∂
-AVNa7kB7aETv_IpZn3d8Nsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:AAE84E64-5977-44D7-8959-80F59FA2B0C123SonarQube.Plugins.Roslyn.RoslynPluginGeneratorTestsBBRCbdefault-organizationì
-$1d9c31e0-1ab6-4be5-bbda-e4c4b1592c1c,org.sonarsource.scm.cvs:sonar-scm-cvs-plugin2"SonarQube :: Plugins :: SCM :: CVSBTRKbdefault-organizationÉ
-AVKEnFLZprNVR5Ye2TP1,org.sonarsource.scm.git:sonar-scm-git-plugin2"SonarQube :: Plugins :: SCM :: GitBBRCbdefault-organizationÇ
-$4ec2c7f5-af07-4b79-91e4-f0ae3aedb31eorg.sonarsource.scm.svn:svn2"SonarQube :: Plugins :: SCM :: SVNBTRKbdefault-organizationÉ
-AVQT7Nd-hAPuIZvepeI8,org.sonarsource.scm.svn:sonar-scm-svn-plugin2"SonarQube :: Plugins :: SCM :: SVNBBRCbdefault-organization†
-AVNa7kB7aETv_IpZn3eFNsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:F60478FF-1EEA-4FB4-9BF4-50D11F94FA572SonarQube.Plugins.Test.CommonBBRCbdefault-organizationà
-AVPMRaasmDZQuRGImbeE-org.sonarsource.sonarqube:sonar-plugin-bridge2&SonarQube :: Priviledged Plugin BridgeBBRCbdefault-organizationÄ
-$09cffcff-eb08-4b1a-b633-d1ead2059863'org.sonarsource.sonarqube:sonar-process2SonarQube :: ProcessBBRCbdefault-organizationê
-$1d492e65-8e43-4ced-9a20-127c95d11664/org.sonarsource.sonarqube:sonar-process-monitor2SonarQube :: Process MonitorBBRCbdefault-organizationf
-AVNa50gdaETv_IpZn3Tjsonarqube-roslyn-sdk2SonarQube Roslyn Analyzer SDKBTRKbdefault-organizations
-AVIxc5pmb1xUBDR1bkjw-org.sonarsource.scanner.cli:sonar-scanner-cli2SonarQube ScannerBTRKbdefault-organizationá
-$46918462-8d16-4120-9d85-3bb9ddeca326-org.sonarsource.scanner.api:sonar-scanner-api2SonarQube Scanner APIBBRCbdefault-organizationï
-$23a65c09-6ef4-48fb-83b4-61e1b8ecc3933org.sonarsource.scanner.api:sonar-scanner-api-batch2SonarQube Scanner API - BatchBBRCbdefault-organization©
-$fe2e379c-7c3b-4c8b-a00a-220453bcb574=org.sonarsource.scanner.api:sonar-scanner-api-batch-interface2'SonarQube Scanner API - Batch InterfaceBBRCbdefault-organizationó
-$3b22f38e-ad68-4792-9791-1435584a686c4org.sonarsource.scanner.api:sonar-scanner-api-parent2SonarQube Scanner API - ParentBTRKbdefault-organization~
-AVOJHUIdjh-Z7XOJi-iw.org.sonarsource.sonarqube:sonar-scanner-engine2SonarQube :: Scanner EngineBBRCbdefault-organizationå
-AVOJHUIdjh-Z7XOJi-jK5org.sonarsource.sonarqube:sonar-scanner-engine-shaded2"SonarQube :: Scanner Engine ShadedBBRCbdefault-organization}
-$fa08c165-4374-4c07-9703-5818132f95a0org.sonarsource.scanner.ant:ant2SonarQube Scanner for AntBTRKbdefault-organization|
-AVQKaEDSvnvz_K1ugFCN.org.sonarsource.scanner.ant:sonarqube-ant-task2SonarQube Scanner for AntBBRCbdefault-organizationó
-$b47555ee-1287-4fd3-81a5-193f1b1793256org.sonarsource.scanner.gradle:sonarqube-gradle-plugin2SonarQube Scanner for GradleBTRKbdefault-organizationê
-$ba422ef1-794e-4a4c-be6d-9ce77b4cd5fa0org.sonarsource.scanner.maven:sonar-maven-plugin2SonarQube Scanner for MavenBTRKbdefault-organizationg
-AVD2vVoG_ke-n2PyKAPusonar-scanner-msbuild2SonarQube Scanner for MSBuildBTRKbdefault-organizationÖ
-AVOJHUIdjh-Z7XOJi-jH0org.sonarsource.sonarqube:sonar-scanner-protocol2 SonarQube :: Scanner :: ProtocolBBRCbdefault-organization{
-$2c7994a2-3fcf-42c6-b9df-b8259662f249%org.sonarsource.scm.git:sonar-scm-git2SonarQube SCM GitBTRKbdefault-organization~
-$ca2a7217-cfc3-4b5b-b5e3-9bfd57beaa29&org.sonarsource.sonarqube:sonar-search2SonarQube :: SearchBBRCbdefault-organization~
-$e1f6f8bd-6b5f-4e2d-b936-4abffc9e4264&org.sonarsource.sonarqube:sonar-server2SonarQube :: ServerBBRCbdefault-organizationÇ
-$fec0492a-3c26-4fec-b4dc-e37e368ae3bb org.sonarsource.sonarqube:server2SonarQube :: Server :: ParentBBRCbdefault-organization§
-AVD2vXjc_ke-n2PyKASIPsonar-scanner-msbuild:sonar-scanner-msbuild:66CE9491-1C14-45D2-BEB6-A0695C63EBB22SonarQube.TeamBuild.IntegrationBBRCbdefault-organization™
-AVD2vXjK_ke-n2PyKAR0Psonar-scanner-msbuild:sonar-scanner-msbuild:D46E5A94-A9DD-4337-ADD7-2D79CB9D640A2%SonarQube.TeamBuild.Integration.TestsBBRCbdefault-organization¶
-AVD2vXje_ke-n2PyKASePsonar-scanner-msbuild:sonar-scanner-msbuild:80F02FAD-FE7E-41B6-9151-BB650FDD61032!SonarQube.TeamBuild.PostProcessorBBRCbdefault-organization¨
-AVD2vXjd_ke-n2PyKASTPsonar-scanner-msbuild:sonar-scanner-msbuild:BF55995C-B05B-44D0-B80E-2366CC5ACCDE2'SonarQube.TeamBuild.PostProcessor.TestsBBRCbdefault-organization•
-AVD2vXji_ke-n2PyKATMPsonar-scanner-msbuild:sonar-scanner-msbuild:F43364BB-E460-4AC4-87E9-DE460A9F55F52 SonarQube.TeamBuild.PreProcessorBBRCbdefault-organization´
-AVD2vXjg_ke-n2PyKAS4Psonar-scanner-msbuild:sonar-scanner-msbuild:81E8D103-270F-4363-87D1-72BE7FC4F94A2&SonarQube.TeamBuild.PreProcessor.TestsBBRCbdefault-organizationê
-$06ff009b-bf31-4d03-8f1d-1bbc779da2a4/org.sonarsource.sonarqube:sonar-testing-harness2SonarQube :: Testing HarnessBBRCbdefault-organizationx
-$eaaad7f4-ae9f-4e1c-97c5-e95d333571c9#org.sonarsource.sonarqube:sonar-web2SonarQube :: WebBBRCbdefault-organization
-$2549010d-7269-4efe-a561-7a35bd25ed5b"org.sonarsource.sonarqube:sonar-ws2SonarQube :: Web ServiceBBRCbdefault-organizationñ
+AVBLzFBb5VDW_Ub0IDJvIorg.sonarsource.sonar-packaging-maven-plugin:sonar-packaging-maven-plugin2#CodeScan :: Packaging Maven PluginBTRKbdefault-organizationÜ
+$7feef7c3-11b9-4175-b5a7-527ca3c75cb7*org.sonarsource.sonarqube:sonar-plugin-api2CodeScan :: Plugin APIBBRCbdefault-organizationò
+$ade067d2-aad5-4a3f-889c-072b3ee313e1/org.sonarsource.sonarqube:sonar-plugin-api-deps2$CodeScan :: Plugin API DependenciesBBRCbdefault-organizationw
+AVbkwtEIA0aUSy3S1GII(com.sonarsource.burgr:sonar-burgr-plugin2CodeScan plugin for BurgrBBRCbdefault-organizationõ
+AVNa7kB6aETv_IpZn3c0Nsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:BB89698A-0807-44D2-87EC-6AA2712007592CodeScan.Plugins.CommonBBRCbdefault-organization†
+AVNa7kB6aETv_IpZn3ckNsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:2532FD2D-76A6-484D-86AE-732C415548852CodeScan.Plugins.CommonTestsBBRCbdefault-organization§
+AVNa7kB6aETv_IpZn3dNNsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:DB16CCFA-B97F-4C5E-A99A-A6062ECF5D982!CodeScan.Plugins.PluginGeneratorBBRCbdefault-organization©
+AVNa7kB6aETv_IpZn3c8Nsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:F6C01441-DD3F-465B-8E24-BCEB239819F52&CodeScan.Plugins.PluginGeneratorTestsBBRCbdefault-organization´
+AVNa7kB7aETv_IpZn3dqNsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:FF1A3253-1888-412C-A870-922C08B29A1A2(CodeScan.Plugins.Roslyn.PluginGeneratorBBRCbdefault-organization∂
+AVNa7kB7aETv_IpZn3d8Nsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:AAE84E64-5977-44D7-8959-80F59FA2B0C123CodeScan.Plugins.Roslyn.RoslynPluginGeneratorTestsBBRCbdefault-organizationì
+$1d9c31e0-1ab6-4be5-bbda-e4c4b1592c1c,org.sonarsource.scm.cvs:sonar-scm-cvs-plugin2"CodeScan :: Plugins :: SCM :: CVSBTRKbdefault-organizationÉ
+AVKEnFLZprNVR5Ye2TP1,org.sonarsource.scm.git:sonar-scm-git-plugin2"CodeScan :: Plugins :: SCM :: GitBBRCbdefault-organizationÇ
+$4ec2c7f5-af07-4b79-91e4-f0ae3aedb31eorg.sonarsource.scm.svn:svn2"CodeScan :: Plugins :: SCM :: SVNBTRKbdefault-organizationÉ
+AVQT7Nd-hAPuIZvepeI8,org.sonarsource.scm.svn:sonar-scm-svn-plugin2"CodeScan :: Plugins :: SCM :: SVNBBRCbdefault-organization†
+AVNa7kB7aETv_IpZn3eFNsonarqube-roslyn-sdk:sonarqube-roslyn-sdk:F60478FF-1EEA-4FB4-9BF4-50D11F94FA572CodeScan.Plugins.Test.CommonBBRCbdefault-organizationà
+AVPMRaasmDZQuRGImbeE-org.sonarsource.sonarqube:sonar-plugin-bridge2&CodeScan :: Priviledged Plugin BridgeBBRCbdefault-organizationÄ
+$09cffcff-eb08-4b1a-b633-d1ead2059863'org.sonarsource.sonarqube:sonar-process2CodeScan :: ProcessBBRCbdefault-organizationê
+$1d492e65-8e43-4ced-9a20-127c95d11664/org.sonarsource.sonarqube:sonar-process-monitor2CodeScan :: Process MonitorBBRCbdefault-organizationf
+AVNa50gdaETv_IpZn3Tjsonarqube-roslyn-sdk2CodeScan Roslyn Analyzer SDKBTRKbdefault-organizations
+AVIxc5pmb1xUBDR1bkjw-org.sonarsource.scanner.cli:sonar-scanner-cli2CodeScan ScannerBTRKbdefault-organizationá
+$46918462-8d16-4120-9d85-3bb9ddeca326-org.sonarsource.scanner.api:sonar-scanner-api2CodeScan Scanner APIBBRCbdefault-organizationï
+$23a65c09-6ef4-48fb-83b4-61e1b8ecc3933org.sonarsource.scanner.api:sonar-scanner-api-batch2CodeScan Scanner API - BatchBBRCbdefault-organization©
+$fe2e379c-7c3b-4c8b-a00a-220453bcb574=org.sonarsource.scanner.api:sonar-scanner-api-batch-interface2'CodeScan Scanner API - Batch InterfaceBBRCbdefault-organizationó
+$3b22f38e-ad68-4792-9791-1435584a686c4org.sonarsource.scanner.api:sonar-scanner-api-parent2CodeScan Scanner API - ParentBTRKbdefault-organization~
+AVOJHUIdjh-Z7XOJi-iw.org.sonarsource.sonarqube:sonar-scanner-engine2CodeScan :: Scanner EngineBBRCbdefault-organizationå
+AVOJHUIdjh-Z7XOJi-jK5org.sonarsource.sonarqube:sonar-scanner-engine-shaded2"CodeScan :: Scanner Engine ShadedBBRCbdefault-organization}
+$fa08c165-4374-4c07-9703-5818132f95a0org.sonarsource.scanner.ant:ant2CodeScan Scanner for AntBTRKbdefault-organization|
+AVQKaEDSvnvz_K1ugFCN.org.sonarsource.scanner.ant:sonarqube-ant-task2CodeScan Scanner for AntBBRCbdefault-organizationó
+$b47555ee-1287-4fd3-81a5-193f1b1793256org.sonarsource.scanner.gradle:sonarqube-gradle-plugin2CodeScan Scanner for GradleBTRKbdefault-organizationê
+$ba422ef1-794e-4a4c-be6d-9ce77b4cd5fa0org.sonarsource.scanner.maven:sonar-maven-plugin2CodeScan Scanner for MavenBTRKbdefault-organizationg
+AVD2vVoG_ke-n2PyKAPusonar-scanner-msbuild2CodeScan Scanner for MSBuildBTRKbdefault-organizationÖ
+AVOJHUIdjh-Z7XOJi-jH0org.sonarsource.sonarqube:sonar-scanner-protocol2 CodeScan :: Scanner :: ProtocolBBRCbdefault-organization{
+$2c7994a2-3fcf-42c6-b9df-b8259662f249%org.sonarsource.scm.git:sonar-scm-git2CodeScan SCM GitBTRKbdefault-organization~
+$ca2a7217-cfc3-4b5b-b5e3-9bfd57beaa29&org.sonarsource.sonarqube:sonar-search2CodeScan :: SearchBBRCbdefault-organization~
+$e1f6f8bd-6b5f-4e2d-b936-4abffc9e4264&org.sonarsource.sonarqube:sonar-server2CodeScan :: ServerBBRCbdefault-organizationÇ
+$fec0492a-3c26-4fec-b4dc-e37e368ae3bb org.sonarsource.sonarqube:server2CodeScan :: Server :: ParentBBRCbdefault-organization§
+AVD2vXjc_ke-n2PyKASIPsonar-scanner-msbuild:sonar-scanner-msbuild:66CE9491-1C14-45D2-BEB6-A0695C63EBB22CodeScan.TeamBuild.IntegrationBBRCbdefault-organization™
+AVD2vXjK_ke-n2PyKAR0Psonar-scanner-msbuild:sonar-scanner-msbuild:D46E5A94-A9DD-4337-ADD7-2D79CB9D640A2%CodeScan.TeamBuild.Integration.TestsBBRCbdefault-organization¶
+AVD2vXje_ke-n2PyKASePsonar-scanner-msbuild:sonar-scanner-msbuild:80F02FAD-FE7E-41B6-9151-BB650FDD61032!CodeScan.TeamBuild.PostProcessorBBRCbdefault-organization¨
+AVD2vXjd_ke-n2PyKASTPsonar-scanner-msbuild:sonar-scanner-msbuild:BF55995C-B05B-44D0-B80E-2366CC5ACCDE2'CodeScan.TeamBuild.PostProcessor.TestsBBRCbdefault-organization•
+AVD2vXji_ke-n2PyKATMPsonar-scanner-msbuild:sonar-scanner-msbuild:F43364BB-E460-4AC4-87E9-DE460A9F55F52 CodeScan.TeamBuild.PreProcessorBBRCbdefault-organization´
+AVD2vXjg_ke-n2PyKAS4Psonar-scanner-msbuild:sonar-scanner-msbuild:81E8D103-270F-4363-87D1-72BE7FC4F94A2&CodeScan.TeamBuild.PreProcessor.TestsBBRCbdefault-organizationê
+$06ff009b-bf31-4d03-8f1d-1bbc779da2a4/org.sonarsource.sonarqube:sonar-testing-harness2CodeScan :: Testing HarnessBBRCbdefault-organizationx
+$eaaad7f4-ae9f-4e1c-97c5-e95d333571c9#org.sonarsource.sonarqube:sonar-web2CodeScan :: WebBBRCbdefault-organization
+$2549010d-7269-4efe-a561-7a35bd25ed5b"org.sonarsource.sonarqube:sonar-ws2CodeScan :: Web ServiceBBRCbdefault-organizationñ
 AVD2vXjk_ke-n2PyKATgPsonar-scanner-msbuild:sonar-scanner-msbuild:C28A09BF-6025-4EA1-90D7-4D5EC0AF815D2SonarScanner.ShimBBRCbdefault-organizationú
 AVD2vXjj_ke-n2PyKATUPsonar-scanner-msbuild:sonar-scanner-msbuild:F43FC14B-5249-46F4-9E89-F4AAFDDB27ED2SonarScanner.Shim.TestsBBRCbdefault-organizationÇ
 $d3019316-31e3-4188-ab46-9255785abb97 com.sonarsource.abap:abap-checks2SonarSource :: ABAP :: ChecksBBRCbdefault-organizationé
@@ -265,7 +265,7 @@ $a6b74bc6-94b9-431f-b7fd-524553d42405 com.sonarsource.rpg:rpg-analyzer2SonarSo
 $898b4de8-21fa-46e3-88d5-7de3c5a46448$com.sonarsource.rpg:sonar-rpg-plugin2"SonarSource :: RPG :: Sonar PluginBBRCbdefault-organization}
 AVd2owW5WTYdA12jLyAk&com.sonarsource.rpg:rpg-checks-testkit2"SonarSource :: RPG :: Test toolkitBBRCbdefault-organization}
 $7dd187e3-bc86-4f6d-b88b-14f61002db0b!com.sonarsource.rule-api:rule-api2SonarSource :: Rule APIBTRKbdefault-organizationz
-AVgkPxnzScvP3tsONNNU$com.sonarsource:sonarsource-branding2!SonarSource :: SonarQube BrandingBTRKbdefault-organizationt
+AVgkPxnzScvP3tsONNNU$com.sonarsource:sonarsource-branding2!SonarSource :: CodeScan BrandingBTRKbdefault-organizationt
 $9fd09f1a-3323-40a1-8a69-4b25644b1c30com.sonarsource.swift:swift2SonarSource :: SwiftBTRKbdefault-organizationÖ
 $d2a628c3-1d3e-4898-a290-ff6bb356145d"com.sonarsource.swift:swift-checks2SonarSource :: Swift :: ChecksBBRCbdefault-organizationâ
 $dacfb4a6-660e-48fe-891c-2d4dbe759a52$com.sonarsource.swift:swift-frontend2 SonarSource :: Swift :: FrontendBBRCbdefault-organizationë
@@ -286,5 +286,5 @@ $7b18a483-62d8-495f-bd7f-6c4d067edb5c1org.sonarsource.update-center:sonar-updat
 AVD2vXjm_ke-n2PyKAT2Psonar-scanner-msbuild:sonar-scanner-msbuild:D35AF999-A91E-4DE2-93D7-858DFB4DD0632V0_9UpgradeMessageExeBBRCbdefault-organizationW
 $118fb840-372e-4839-9bb7-1f3bb890df37	WALLBOARD2	wallboardBTRKbdefault-organization_
 $633a5180-1ad7-4008-a5cb-e1d3cec4c816org.sonarsource.xml:xml2XMLBTRKbdefault-organizationÄ
-$3c2d5928-206a-48ba-a1fe-85f8df7b5faa$org.sonarsource.xml:sonar-xml-plugin2XML :: SonarQube PluginBBRCbdefault-organizationn
+$3c2d5928-206a-48ba-a1fe-85f8df7b5faa$org.sonarsource.xml:sonar-xml-plugin2XML :: CodeScan PluginBBRCbdefault-organizationn
 $53fa036f-a5ed-4068-9aa8-797d5b50d9f9org.sonarsource.xml:xml-squid2XML :: SquidBBRCbdefault-organization
