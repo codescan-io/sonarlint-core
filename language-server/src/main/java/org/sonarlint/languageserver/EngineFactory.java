@@ -72,7 +72,7 @@ public class EngineFactory {
   
   public synchronized boolean updateConnected(Map<String, SonarQubeServer> servers, String workspaceServerId, String workspaceProjectKey, boolean forceUpdate) {
     if ( forceUpdate || !(this.engine instanceof ConnectedEngine) || this.workspaceServerId != workspaceServerId  || this.workspaceProjectKey != workspaceProjectKey ) {
-      client.logMessage(new MessageParams(MessageType.Log, "Updating standalone"));
+      client.logMessage(new MessageParams(MessageType.Log, "Updating connected"));
       
       if ( engine != null ) {
         engine.stop();
