@@ -89,12 +89,12 @@ public class StandaloneIssueMediumTest {
     StandaloneGlobalConfiguration config = StandaloneGlobalConfiguration.builder()
       .addPlugin(PluginLocator.getJavaScriptPluginUrl())
       .addPlugin(PluginLocator.getJavaPluginUrl())
-      .addPlugin(PluginLocator.getPhpPluginUrl())
-      .addPlugin(PluginLocator.getPythonPluginUrl())
-      .addPlugin(PluginLocator.getCppPluginUrl())
-      .addPlugin(PluginLocator.getXooPluginUrl())
-      .addPlugin(PluginLocator.getLicensePluginUrl())
-      .addPlugin(PluginLocator.getTypeScriptPluginUrl())
+//      .addPlugin(PluginLocator.getPhpPluginUrl())
+//      .addPlugin(PluginLocator.getPythonPluginUrl())
+//      .addPlugin(PluginLocator.getCppPluginUrl())
+//      .addPlugin(PluginLocator.getXooPluginUrl())
+//      .addPlugin(PluginLocator.getLicensePluginUrl())
+//      .addPlugin(PluginLocator.getTypeScriptPluginUrl())
       .setSonarLintUserHome(sonarlintUserHome)
       .setLogOutput((msg, level) -> System.out.println(msg))
       .setExtraProperties(extraProperties)
@@ -141,146 +141,6 @@ public class StandaloneIssueMediumTest {
     sonarlint.analyze(new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile), ImmutableMap.of()), i -> issues.add(i), null,
       null);
     assertThat(issues).isEmpty();
-  }
-
-  @Test
-  public void simpleTypeScript() throws Exception {
-
-    RuleDetails ruleDetails = sonarlint.getRuleDetails("typescript:S1764");
-    assertThat(ruleDetails.getName()).isEqualTo("Identical expressions should not be used on both sides of a binary operator");
-    assertThat(ruleDetails.getLanguage()).isEqualTo("ts");
-    assertThat(ruleDetails.getSeverity()).isEqualTo("MAJOR");
-    assertThat(ruleDetails.getTags()).containsOnly("cert");
-    assertThat(ruleDetails.getHtmlDescription()).contains("<p>", "Using the same value on either side of a binary operator is almost always a mistake");
-
-    final File tsConfig = new File(baseDir, "tsconfig.json");
-    FileUtils.write(tsConfig, "{}", StandardCharsets.UTF_8);
-
-    ClientInputFile inputFile = prepareInputFile("foo.ts", "function foo() {\n"
-      + "  if(bar() && bar()) { return 42; }\n"
-      + "}", false);
-
-    final List<Issue> issues = new ArrayList<>();
-    sonarlint.analyze(new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile), ImmutableMap.of()), i -> issues.add(i), null,
-      null);
-    assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path").containsOnly(
-      tuple("typescript:S1764", 2, inputFile.getPath()));
-
-  }
-
-  @Test
-  public void fileEncoding() throws IOException {
-    ClientInputFile inputFile = prepareInputFile("foo.xoo", "function xoo() {\n"
-      + "  var xoo1, xoo2;\n"
-      + "  var xoo; //NOSONAR\n"
-      + "}", false, StandardCharsets.UTF_16, null);
-
-    final List<Issue> issues = new ArrayList<>();
-    sonarlint.analyze(
-      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile), ImmutableMap.of()), issue -> issues.add(issue), null, null);
-    assertThat(issues).extracting("ruleKey", "startLine", "startLineOffset", "inputFile.path").containsOnly(
-      tuple("xoo:HasTag", 1, 9, inputFile.getPath()),
-      tuple("xoo:HasTag", 2, 6, inputFile.getPath()),
-      tuple("xoo:HasTag", 2, 12, inputFile.getPath()));
-  }
-
-  @Test
-  public void simpleXoo() throws Exception {
-    ClientInputFile inputFile = prepareInputFile("foo.xoo", "function xoo() {\n"
-      + "  var xoo1, xoo2;\n"
-      + "  var xoo; //NOSONAR\n"
-      + "}", false);
-
-    final List<Issue> issues = new ArrayList<>();
-    sonarlint.analyze(
-      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile), ImmutableMap.of()), issue -> issues.add(issue), null, null);
-    assertThat(issues).extracting("ruleKey", "startLine", "startLineOffset", "inputFile.path").containsOnly(
-      tuple("xoo:HasTag", 1, 9, inputFile.getPath()),
-      tuple("xoo:HasTag", 2, 6, inputFile.getPath()),
-      tuple("xoo:HasTag", 2, 12, inputFile.getPath()));
-  }
-
-  @Test
-  public void simpleCpp() throws Exception {
-    ClientInputFile inputFile = prepareInputFile("foo.cpp", "void fun() {\n "
-      + "  int a = 0; \n"
-      + "  if (a) {fun();}\n"
-      + "  if (a) {fun();} // NOSONAR\n"
-      + "}\n", false, StandardCharsets.UTF_8, "cpp");
-
-    final List<Issue> issues = new ArrayList<>();
-    sonarlint.analyze(
-      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile),
-        ImmutableMap.of("sonar.cfamily.build-wrapper-output.bypass", "true")),
-      issue -> issues.add(issue), null, null);
-    assertThat(issues).extracting("ruleKey", "startLine", "startLineOffset", "inputFile.path").containsOnly(
-      tuple("cpp:S2583", 3, 6, inputFile.getPath()));
-  }
-
-  @Test
-  public void analysisErrors() throws Exception {
-    ClientInputFile inputFile = prepareInputFile("foo.xoo", "function foo() {\n"
-      + "  var xoo;\n"
-      + "  var y; //NOSONAR\n"
-      + "}", false);
-    prepareInputFile("foo.xoo.error", "1,2,error analysing\n2,3,error analysing", false);
-
-    final List<Issue> issues = new ArrayList<>();
-    AnalysisResults results = sonarlint.analyze(
-      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile), ImmutableMap.of()), issue -> issues.add(issue), null, null);
-    assertThat(results.failedAnalysisFiles()).containsExactly(inputFile);
-    assertThat(issues).extracting("ruleKey", "startLine", "startLineOffset", "inputFile.path").containsOnly(
-      tuple("xoo:HasTag", 2, 6, inputFile.getPath()));
-  }
-
-  @Test
-  public void simplePhp() throws Exception {
-
-    ClientInputFile inputFile = prepareInputFile("foo.php", "<?php\n"
-      + "function writeMsg($fname) {\n"
-      + "    $i = 0; // NOSONAR\n"
-      + "    echo \"Hello world!\";\n"
-      + "}\n"
-      + "?>", false);
-
-    final List<Issue> issues = new ArrayList<>();
-    sonarlint.analyze(new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile), ImmutableMap.of()), issue -> issues.add(issue),
-      null, null);
-    assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path").containsOnly(
-      tuple("php:S1172", 2, inputFile.getPath()));
-  }
-
-  @Test
-  public void simplePython() throws Exception {
-
-    ClientInputFile inputFile = prepareInputFile("foo.py", "def my_function(name):\n"
-      + "    print \"Hello\"\n"
-      + "    print \"world!\" # NOSONAR\n"
-      + "\n", false);
-
-    final List<Issue> issues = new ArrayList<>();
-    sonarlint.analyze(new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile), ImmutableMap.of()), issue -> issues.add(issue),
-      null, null);
-    assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path").containsOnly(
-      tuple("python:PrintStatementUsage", 2, inputFile.getPath()));
-  }
-
-  // SLCORE-162
-  @Test
-  public void useRelativePathToEvaluatePathPatterns() throws Exception {
-
-    final File file = new File(baseDir, "foo.tmp"); // Temporary file doesn't have the correct file suffix
-    FileUtils.write(file, "def my_function(name):\n"
-      + "    print \"Hello\"\n"
-      + "    print \"world!\" # NOSONAR\n"
-      + "\n", StandardCharsets.UTF_8);
-    ClientInputFile inputFile = new TestClientInputFile(file.toPath(), "foo.py", false, StandardCharsets.UTF_8, null);
-
-    final List<Issue> issues = new ArrayList<>();
-    sonarlint.analyze(new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Arrays.asList(inputFile), ImmutableMap.of()), issue -> issues.add(issue),
-      null, null);
-    assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path").containsOnly(
-      tuple("python:PrintStatementUsage", 2, inputFile.getPath()));
   }
 
   @Test

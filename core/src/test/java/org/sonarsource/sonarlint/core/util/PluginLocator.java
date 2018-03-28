@@ -42,29 +42,29 @@ public class PluginLocator {
     return getPluginUrl(SONAR_JAVASCRIPT_PLUGIN_JAR);
   }
 
-  public static URL getPhpPluginUrl() {
-    return getPluginUrl("sonar-php-plugin-2.12.0.2871.jar");
-  }
+//  public static URL getPhpPluginUrl() {
+//    return getPluginUrl("sonar-php-plugin-2.12.0.2871.jar");
+//  }
 
-  public static URL getPythonPluginUrl() {
-    return getPluginUrl("sonar-python-plugin-1.8.0.1496.jar");
-  }
+//  public static URL getPythonPluginUrl() {
+//    return getPluginUrl("sonar-python-plugin-1.8.0.1496.jar");
+//  }
 
-  public static URL getCppPluginUrl() {
-    return getPluginUrl("sonar-cfamily-plugin-5.0.0.9359.jar");
-  }
+//  public static URL getCppPluginUrl() {
+//    return getPluginUrl("sonar-cfamily-plugin-5.0.0.9359.jar");
+//  }
 
-  public static URL getLicensePluginUrl() {
-    return getPluginUrl("sonar-license-plugin-3.3.0.1341.jar");
-  }
+//  public static URL getLicensePluginUrl() {
+//    return getPluginUrl("sonar-license-plugin-3.3.0.1341.jar");
+//  }
 
-  public static URL getTypeScriptPluginUrl() {
-    return getPluginUrl("sonar-typescript-plugin-1.5.0.2122.jar");
-  }
+//  public static URL getTypeScriptPluginUrl() {
+//    return getPluginUrl("sonar-typescript-plugin-1.5.0.2122.jar");
+//  }
 
-  public static URL getXooPluginUrl() {
-    return getPluginUrlUnknownVersion(SONAR_XOO_PLUGIN_NAME);
-  }
+//  public static URL getXooPluginUrl() {
+//    return getPluginUrlUnknownVersion(SONAR_XOO_PLUGIN_NAME);
+//  }
 
   private static URL getPluginUrl(String file) {
     try {

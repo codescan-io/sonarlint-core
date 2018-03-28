@@ -185,21 +185,7 @@ public class ServerMainTest {
 
     assertThat(waitForDiagnostics(uri))
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
-      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "sonarlint", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
-  }
-
-  @Test
-  public void analyzeSimpleTsFileOnOpen() throws Exception {
-    File tsconfig = temp.newFile("tsconfig.json");
-    FileUtils.write(tsconfig, "{}", StandardCharsets.UTF_8);
-    String uri = getUri("foo.ts");
-    lsProxy.getTextDocumentService()
-      .didOpen(new DidOpenTextDocumentParams(new TextDocumentItem(uri, "typescript", 1, "function foo() {\n if(bar() && bar()) { return 42; }\n}")));
-
-    assertThat(waitForDiagnostics(uri))
-      .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
-      .containsExactly(tuple(1, 4, 1, 18, "typescript:S1764", "sonarlint", "Correct one of the identical sub-expressions on both sides of operator \"&&\" (typescript:S1764)",
-        DiagnosticSeverity.Warning));
+      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "codescan", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
   }
 
   @Test
@@ -211,19 +197,9 @@ public class ServerMainTest {
     assertThat(waitForDiagnostics(uri))
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
       .containsExactly(
-        tuple(1, 2, 1, 7, "python:PrintStatementUsage", "sonarlint", "Replace print statement by built-in function. (python:PrintStatementUsage)", DiagnosticSeverity.Error));
+        tuple(1, 2, 1, 7, "python:PrintStatementUsage", "codescan", "Replace print statement by built-in function. (python:PrintStatementUsage)", DiagnosticSeverity.Error));
   }
 
-  @Test
-  public void analyzeSimplePhpFileOnOpen() throws Exception {
-    String uri = getUri("foo.php");
-    lsProxy.getTextDocumentService()
-      .didOpen(new DidOpenTextDocumentParams(new TextDocumentItem(uri, "php", 1, "<?php\nfunction foo() {\n  echo(\"Hello\");\n}\n?>")));
-
-    assertThat(waitForDiagnostics(uri))
-      .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
-      .containsExactly(tuple(2, 2, 2, 6, "php:S2041", "sonarlint", "Remove the parentheses from this \"echo\" call. (php:S2041)", DiagnosticSeverity.Error));
-  }
 
   @Test
   public void noIssueOnTestJSFiles() throws Exception {
@@ -253,7 +229,7 @@ public class ServerMainTest {
     Map<String, Object> values = new HashMap<>();
     values.put(TEST_FILE_PATTERN, testFilePattern);
     values.put(DISABLE_TELEMETRY, disableTelemetry);
-    return new DidChangeConfigurationParams(ImmutableMap.of("sonarlint", values));
+    return new DidChangeConfigurationParams(ImmutableMap.of("codescan", values));
   }
 
   @Test
@@ -266,7 +242,7 @@ public class ServerMainTest {
 
     assertThat(waitForDiagnostics(uri))
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
-      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "sonarlint", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
+      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "codescan", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
   }
 
   @Test
@@ -277,7 +253,7 @@ public class ServerMainTest {
 
     assertThat(waitForDiagnostics(uri))
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
-      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "sonarlint", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
+      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "codescan", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
   }
 
   @Test
