@@ -16,7 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */package org.sonarlint.languageserver;
+ */
+package org.sonarlint.languageserver;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -141,10 +142,24 @@ public class ConnectedEngine extends AbstractEngine {
 
   @Override
   public AnalysisResults analyze(URI uri, Path baseDir, Iterable<ClientInputFile> inputFiles, Map<String, String> analyzerProperties, IssueListener issueListener) {
-      ConnectedAnalysisConfiguration configuration  = new ConnectedAnalysisConfiguration(workspaceProjectKey, baseDir, baseDir.resolve(".sonarlint"),
+    
+    //pass sonar host credentials in so that we can resolve license.
+    analyzerProperties.put("sonar.host.url", server.url());
+    analyzerProperties.put("sonar.organization", server.organization());
+    String token = server.token();
+    if ( token != null ) {
+      analyzerProperties.put("sonar.login", token);
+    }else {
+      analyzerProperties.put("sonar.login", server.login());
+      analyzerProperties.put("sonar.password", server.password());
+    }
+    
+    ConnectedAnalysisConfiguration configuration  = new ConnectedAnalysisConfiguration(workspaceProjectKey, baseDir, baseDir.resolve(".sonarlint"),
         inputFiles,
         analyzerProperties);
     debug("Connected Analysis triggered on " + uri + " with configuration: \n" + configuration.toString());
+    
+    
     return engine.analyze( configuration, issueListener, logOutput, null);
   }
 
