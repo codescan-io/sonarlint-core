@@ -19,16 +19,46 @@
  */
 package org.sonarlint.languageserver;
 
-import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
-import org.eclipse.lsp4j.services.LanguageClient;
+import java.util.Map;
 
-public interface SonarLintLanguageClient extends LanguageClient {
+public class SonarQubeServer {
+  private String id;
+  private String url;
+  private String token;
+  private String login;
+  private String password;
+  private String organization;
 
-  /**
-   * This command is sent from a server to a client to ask
-   * the client to display a rule description in the user interface.
-   */
-  @JsonNotification("codescan/openRuleDescription")
-  void openRuleDescription(RuleDescription notification);
+  public SonarQubeServer(Map<String, String> map) {
+	this.id = map.get("id");
+	this.url = map.get("url");
+	this.token = map.get("token");
+	this.login = map.get("login");
+	this.password = map.get("password");
+	this.organization = map.get("organization");
+  }
 
+  public String id() {
+    return id;
+  }
+
+  public String url() {
+    return url;
+  }
+
+  public String token() {
+    return token;
+  }
+
+  public String login() {
+    return login;
+  }
+
+  public String password() {
+    return password;
+  }
+
+  public String organization() {
+    return organization;
+  }
 }

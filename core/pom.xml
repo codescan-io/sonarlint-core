@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-parent</artifactId>
-    <version>3.4-SNAPSHOT</version>
+    <version>3.4.0.CODESCAN</version>
   </parent>
   <artifactId>sonarlint-core</artifactId>
   <packaging>bundle</packaging>
@@ -11,6 +11,11 @@
   <description>Library used by SonarLint clients (CLI, Eclipse, ...)</description>
 
   <dependencies>
+    <dependency>
+    	<groupId>commons-logging</groupId>
+	<artifactId>commons-logging</artifactId>
+	<version>1.2</version>
+    </dependency>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>jsr305</artifactId>
@@ -220,6 +225,12 @@
                     <include>**</include>
                   </includes>
                 </filter>
+                <filter>
+                  <artifact>commons-logging:commons-logging</artifact>
+                  <includes>
+                    <include>**</include>
+                  </includes>
+                </filter>
               </filters>
             </configuration>
           </execution>
@@ -301,18 +312,6 @@
                   <groupId>org.sonarsource.python</groupId>
                   <artifactId>sonar-python-plugin</artifactId>
                   <version>1.8.0.1496</version>
-                  <type>jar</type>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>com.sonarsource.cpp</groupId>
-                  <artifactId>sonar-cfamily-plugin</artifactId>
-                  <version>5.0.0.9359</version>
-                  <type>jar</type>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>com.sonarsource.license</groupId>
-                  <artifactId>sonar-license-plugin</artifactId>
-                  <version>3.3.0.1341</version>
                   <type>jar</type>
                 </artifactItem>
                 <artifactItem>

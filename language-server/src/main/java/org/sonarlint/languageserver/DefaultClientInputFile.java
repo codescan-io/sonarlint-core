@@ -108,6 +108,10 @@ public class DefaultClientInputFile implements ClientInputFile {
       case "typescript":
       case "typescriptreact":
         return "ts";
+      case "apex":
+        return "sf";
+      case "visualforce":
+        return "vf";
       default:
         return clientLanguageId;
     }
