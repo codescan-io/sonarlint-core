@@ -126,7 +126,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class SonarLintLanguageServer implements LanguageServer, WorkspaceService, TextDocumentService {
 
-  private static final String USER_AGENT = "SonarLint Language Server";
+  private static final String USER_AGENT = "CodeScan Language Server";
 
   static final String DISABLE_TELEMETRY = "disableTelemetry";
   static final String TYPESCRIPT_LOCATION = "typeScriptLocation";
@@ -137,11 +137,11 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
   static final String CONNECTED_MODE_PROJECT_PROP = "connectedModeProject";
   private static final String TYPESCRIPT_PATH_PROP = "sonar.typescript.internal.typescriptLocation";
 
-  private static final String SONARLINT_CONFIGURATION_NAMESPACE = "sonarlint";
+  private static final String SONARLINT_CONFIGURATION_NAMESPACE = "codescan";
   private static final String SONARLINT_SOURCE = SONARLINT_CONFIGURATION_NAMESPACE;
-  private static final String SONARLINT_OPEN_RULE_DESCRIPTION_COMMAND = "SonarLint.OpenRuleDesc";
-  static final String SONARLINT_UPDATE_SERVER_STORAGE_COMMAND = "SonarLint.UpdateServerStorage";
-  static final String SONARLINT_UPDATE_PROJECT_BINDING_COMMAND = "SonarLint.UpdateProjectBinding";
+  private static final String SONARLINT_OPEN_RULE_DESCRIPTION_COMMAND = "codescan.OpenRuleDesc";
+  static final String SONARLINT_UPDATE_SERVER_STORAGE_COMMAND = "codescan.UpdateServerStorage";
+  static final String SONARLINT_UPDATE_PROJECT_BINDING_COMMAND = "codescan.UpdateProjectBinding";
   private static final List<String> SONARLINT_COMMANDS = Arrays.asList(
     SONARLINT_UPDATE_SERVER_STORAGE_COMMAND,
     SONARLINT_UPDATE_PROJECT_BINDING_COMMAND);
@@ -185,6 +185,18 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
     this.logger = loggerFactory.apply(this.client);
     this.engineCache = engineCacheFactory.apply(logOutput, logger);
     this.serverInfoCache = new ServerInfoCache(logger);
+  }
+
+  static SonarLintLanguageServer chromeNativeMessaging(Collection<URL> analyzers){
+    BiFunction<LanguageClientLogOutput, ClientLogger, EngineCache> engineCacheFactory = (logOutput, logger) -> {
+      StandaloneEngineFactory standaloneEngineFactory = new StandaloneEngineFactory(analyzers, logOutput, logger);
+      ConnectedEngineFactory connectedEngineFactory = new ConnectedEngineFactory(logOutput, logger);
+      return new DefaultEngineCache(standaloneEngineFactory, connectedEngineFactory);
+    };
+
+    Function<SonarLintLanguageClient, ClientLogger> loggerFactory = DefaultClientLogger::new;
+    
+    return new SonarLintLanguageServer(new ChromeNativeMessaging.In(), new ChromeNativeMessaging.Out(), engineCacheFactory, loggerFactory);
   }
 
   static SonarLintLanguageServer bySocket(int port, Collection<URL> analyzers) throws IOException {
@@ -684,14 +696,25 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
 
     @Override
     public AnalysisResultsWrapper analyze(Path baseDir, URI uri, String content, IssueListener issueListener, boolean shouldFetchServerIssues) {
-      ConnectedAnalysisConfiguration configuration = new ConnectedAnalysisConfiguration(projectKey, baseDir, baseDir.resolve(".sonarlint"),
-        Collections.singletonList(new DefaultClientInputFile(baseDir, uri, content, userSettings.testFilePattern, languageIdPerFileURI.get(uri))),
-        userSettings.analyzerProperties);
-      logger.debug("Analysis triggered on " + uri + " with configuration: \n" + configuration.toString());
-
-      List<Issue> issues = new LinkedList<>();
-      IssueListener collector = issues::add;
       ServerInfo serverInfo = serverInfoCache.get(binding.serverId);
+      Map<String, String> extraProperties = userSettings.analyzerProperties;
+      if ( serverInfo != null ) {
+        extraProperties = new HashMap<>();
+        extraProperties.putAll(userSettings.analyzerProperties);
+        
+        //pass sonar host credentials in so that we can resolve license.
+        extraProperties.put("sonar.host.url", serverInfo.serverUrl);
+        extraProperties.put("sonar.organization", serverInfo.organizationKey);
+        extraProperties.put("sonar.login", serverInfo.token);
+      }
+      
+      ConnectedAnalysisConfiguration configuration = new ConnectedAnalysisConfiguration(projectKey, baseDir, baseDir.resolve(".sonarlint"),
+          Collections.singletonList(new DefaultClientInputFile(baseDir, uri, content, userSettings.testFilePattern, languageIdPerFileURI.get(uri))),
+          extraProperties);
+        logger.debug("Analysis triggered on " + uri + " with configuration: \n" + configuration.toString());
+
+        List<Issue> issues = new LinkedList<>();
+        IssueListener collector = issues::add;
 
       long start = System.currentTimeMillis();
       AnalysisResults analysisResults;
@@ -706,7 +729,7 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
         analysisResults = analyze(configuration, collector);
       }
 
-      String filePath = FileUtils.toSonarQubePath(getFilePath(baseDir, uri));
+      String filePath = FileUtils.toCodeScanPath(getFilePath(baseDir, uri));
       serverIssueTracker.matchAndTrack(filePath, issues, issueListener, shouldFetchServerIssues);
 
       int analysisTime = (int) (System.currentTimeMillis() - start);

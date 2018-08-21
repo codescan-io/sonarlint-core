@@ -105,13 +105,7 @@ public class StandaloneIssueMediumTest {
       .setExtraProperties(extraProperties);
 
     // commercial plugins might not be available (if you pass -Dcommercial to maven, a profile will be activated that downloads the commercial plugins)
-    if (System.getProperty("commercial") != null) {
-      commercialEnabled = true;
-      configBuilder.addPlugin(PluginLocator.getCppPluginUrl());
-      configBuilder.addPlugin(PluginLocator.getLicensePluginUrl());
-    } else {
-      commercialEnabled = false;
-    }
+    commercialEnabled = false;
     sonarlint = new StandaloneSonarLintEngineImpl(configBuilder.build());
   }
 
@@ -213,24 +207,6 @@ public class StandaloneIssueMediumTest {
       tuple("xoo:HasTag", 1, 9, inputFile.getPath()),
       tuple("xoo:HasTag", 2, 6, inputFile.getPath()),
       tuple("xoo:HasTag", 2, 12, inputFile.getPath()));
-  }
-
-  @Test
-  public void simpleCpp() throws Exception {
-    assumeTrue(commercialEnabled);
-    ClientInputFile inputFile = prepareInputFile("foo.cpp", "void fun() {\n "
-      + "  int a = 0; \n"
-      + "  if (a) {fun();}\n"
-      + "  if (a) {fun();} // NOSONAR\n"
-      + "}\n", false, StandardCharsets.UTF_8, "cpp");
-
-    final List<Issue> issues = new ArrayList<>();
-    sonarlint.analyze(
-      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Collections.singletonList(inputFile),
-        ImmutableMap.of("sonar.cfamily.build-wrapper-output.bypass", "true")),
-      issues::add, null, null);
-    assertThat(issues).extracting("ruleKey", "startLine", "startLineOffset", "inputFile.path").containsOnly(
-      tuple("cpp:S2583", 3, 6, inputFile.getPath()));
   }
 
   @Test

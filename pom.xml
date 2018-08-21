@@ -25,8 +25,6 @@
   <modules>
     <module>client-api</module>
     <module>core</module>
-    <module>daemon</module>
-    <module>daemon-protocol</module>
     <module>language-server</module>
     <module>rule-extractor</module>
     <module>slf4j-sonar-log</module>

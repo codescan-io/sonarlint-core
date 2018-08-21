@@ -28,8 +28,8 @@ import java.nio.file.Paths;
 
 public class PluginLocator {
 
-  public static final String SONAR_JAVA_PLUGIN_JAR = "sonar-java-plugin-5.6.0.15032.jar";
-  public static final String SONAR_JAVA_PLUGIN_JAR_HASH = "9d01ee578a5f2f437b3927554bbc3380";
+  public static final String SONAR_JAVA_PLUGIN_JAR = "sonar-java-plugin-5.6.1.15064.jar";
+  public static final String SONAR_JAVA_PLUGIN_JAR_HASH = "1763b21e82aecbdd5fb164ec310e1b68";
   public static final String SONAR_JAVASCRIPT_PLUGIN_JAR = "sonar-javascript-plugin-4.0.0.5862.jar";
   public static final String SONAR_JAVASCRIPT_PLUGIN_JAR_HASH = "cc8ad346e85db9d3735898b533d37d34";
   public static final String SONAR_XOO_PLUGIN_NAME = "sonar-xoo-plugin";
@@ -48,10 +48,6 @@ public class PluginLocator {
 
   public static URL getPythonPluginUrl() {
     return getPluginUrl("sonar-python-plugin-1.8.0.1496.jar");
-  }
-
-  public static URL getCppPluginUrl() {
-    return getPluginUrl("sonar-cfamily-plugin-5.0.0.9359.jar");
   }
 
   public static URL getLicensePluginUrl() {

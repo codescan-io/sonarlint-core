@@ -25,7 +25,6 @@
     
     <!-- embedded analyzers -->
     <sonar.javascript.version>4.0.0.5862</sonar.javascript.version>
-    <sonar.cfamily.version>5.0.0.9359</sonar.cfamily.version>
     <sonar.license.version>3.3.0.1341</sonar.license.version>
   </properties>
 
@@ -152,22 +151,6 @@
                   <groupId>org.sonarsource.javascript</groupId>
                   <artifactId>sonar-javascript-plugin</artifactId>
                   <version>${sonar.javascript.version}</version>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/plugins</outputDirectory>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>com.sonarsource.cpp</groupId>
-                  <artifactId>sonar-cfamily-plugin</artifactId>
-                  <version>${sonar.cfamily.version}</version>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/plugins</outputDirectory>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>com.sonarsource.license</groupId>
-                  <artifactId>sonar-license-plugin</artifactId>
-                  <version>${sonar.license.version}</version>
                   <type>jar</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/plugins</outputDirectory>

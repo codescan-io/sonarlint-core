@@ -21,9 +21,6 @@ package org.sonarsource.sonarlint.core.analyzer.sensor.noop;
 
 import org.junit.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
-
 public class NoOpNewIssueLocationTest {
   @Test
   public void visit_all_builder_fields() {

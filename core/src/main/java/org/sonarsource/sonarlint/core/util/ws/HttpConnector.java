@@ -46,7 +46,7 @@ import static okhttp3.internal.http.StatusLine.HTTP_PERM_REDIRECT;
 import static okhttp3.internal.http.StatusLine.HTTP_TEMP_REDIRECT;
 
 /**
- * Connect to any SonarQube server available through HTTP or HTTPS.
+ * Connect to any CodeScan server available through HTTP or HTTPS.
  * <p>TLS 1.0, 1.1 and 1.2 are supported on both Java 7 and 8. SSLv3 is not supported.</p>
  * <p>The JVM system proxies are used.</p>
  */

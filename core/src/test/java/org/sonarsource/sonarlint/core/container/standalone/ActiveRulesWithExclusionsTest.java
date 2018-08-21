@@ -19,13 +19,10 @@
  */
 package org.sonarsource.sonarlint.core.container.standalone;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.CheckForNull;
 import org.junit.*;
 import org.sonar.api.batch.rule.ActiveRule;

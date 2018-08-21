@@ -53,15 +53,18 @@ public class ServerMain {
       }
     }
 
-    LOG.info("Binding to {}", jsonRpcPort);
-    try {
-      SonarLintLanguageServer.bySocket(jsonRpcPort, analyzers);
-    } catch (IOException e) {
-      LOG.error("Unable to connect to the client", e);
-      System.exit(1);
-      return;
+    if ( jsonRpcPort == -1 ) {
+      SonarLintLanguageServer.chromeNativeMessaging(analyzers);
+    }else {
+      LOG.info("Binding to {}", jsonRpcPort);
+      try {
+        SonarLintLanguageServer.bySocket(jsonRpcPort, analyzers);
+      } catch (IOException e) {
+        LOG.error("Unable to connect to the client", e);
+        System.exit(1);
+        return;
+      }
     }
-
   }
 
   private static int parsePortArgument(String... args) {

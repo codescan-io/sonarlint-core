@@ -77,7 +77,7 @@ public class ModuleStorageUpdateExecutor {
       if (!qProfileKeys.contains(qpKey)) {
         throw new IllegalStateException(
           "Module '" + moduleKey + "' is associated to quality profile '" + qpKey + "' that is not in the storage. "
-            + "The SonarQube server binding is probably outdated,  please update it.");
+            + "The CodeScan server binding is probably outdated,  please update it.");
       }
     }
     ProtobufUtil.writeToFile(moduleConfiguration, temp.resolve(StoragePaths.MODULE_CONFIGURATION_PB));

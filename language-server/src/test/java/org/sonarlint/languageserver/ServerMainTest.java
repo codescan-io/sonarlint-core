@@ -188,7 +188,7 @@ public class ServerMainTest {
 
     assertThat(waitForDiagnostics(uri))
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
-      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "sonarlint", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
+      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "codescan", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
   }
 
   @Test
@@ -204,7 +204,7 @@ public class ServerMainTest {
 
     assertThat(waitForDiagnostics(uri))
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
-      .containsExactly(tuple(1, 4, 1, 18, "typescript:S1764", "sonarlint", "Correct one of the identical sub-expressions on both sides of operator \"&&\" (typescript:S1764)",
+      .containsExactly(tuple(1, 4, 1, 18, "typescript:S1764", "codescan", "Correct one of the identical sub-expressions on both sides of operator \"&&\" (typescript:S1764)",
         DiagnosticSeverity.Warning));
   }
 
@@ -217,7 +217,7 @@ public class ServerMainTest {
     assertThat(waitForDiagnostics(uri))
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
       .containsExactly(
-        tuple(1, 2, 1, 7, "python:PrintStatementUsage", "sonarlint", "Replace print statement by built-in function. (python:PrintStatementUsage)", DiagnosticSeverity.Warning));
+        tuple(1, 2, 1, 7, "python:PrintStatementUsage", "codescan", "Replace print statement by built-in function. (python:PrintStatementUsage)", DiagnosticSeverity.Warning));
   }
 
   @Test
@@ -228,7 +228,7 @@ public class ServerMainTest {
 
     assertThat(waitForDiagnostics(uri))
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
-      .containsExactly(tuple(2, 2, 2, 6, "php:S2041", "sonarlint", "Remove the parentheses from this \"echo\" call. (php:S2041)", DiagnosticSeverity.Error));
+      .containsExactly(tuple(2, 2, 2, 6, "php:S2041", "codescan", "Remove the parentheses from this \"echo\" call. (php:S2041)", DiagnosticSeverity.Error));
   }
 
   @Test
@@ -259,7 +259,7 @@ public class ServerMainTest {
     Map<String, Object> values = new HashMap<>();
     values.put(TEST_FILE_PATTERN, testFilePattern);
     values.put(DISABLE_TELEMETRY, disableTelemetry);
-    return new DidChangeConfigurationParams(ImmutableMap.of("sonarlint", values));
+    return new DidChangeConfigurationParams(ImmutableMap.of("codescan", values));
   }
 
   @Test
@@ -272,7 +272,7 @@ public class ServerMainTest {
 
     assertThat(waitForDiagnostics(uri))
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
-      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "sonarlint", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
+      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "codescan", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
   }
 
   @Test
@@ -283,7 +283,7 @@ public class ServerMainTest {
 
     assertThat(waitForDiagnostics(uri))
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
-      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "sonarlint", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
+      .containsExactly(tuple(1, 2, 1, 15, "javascript:S1442", "codescan", "Remove this usage of alert(...). (javascript:S1442)", DiagnosticSeverity.Information));
   }
 
   @Test
@@ -298,7 +298,7 @@ public class ServerMainTest {
     assertThat(diagnostics)
       .extracting("range.start.line", "range.start.character", "range.end.line", "range.end.character", "code", "source", "message", "severity")
       .containsExactly(
-        tuple(2, 3, 2, 25, "javascript:S930", "sonarlint", "\"foo\" declared at line 1 expects 0 arguments, but 1 was provided. (javascript:S930)", DiagnosticSeverity.Error));
+        tuple(2, 3, 2, 25, "javascript:S930", "codescan", "\"foo\" declared at line 1 expects 0 arguments, but 1 was provided. (javascript:S930)", DiagnosticSeverity.Error));
 
     assertThat(diagnostics.get(0).getRelatedInformation())
       .extracting("location.range.start.line", "location.range.start.character", "location.range.end.line", "location.range.end.character", "location.uri", "message")

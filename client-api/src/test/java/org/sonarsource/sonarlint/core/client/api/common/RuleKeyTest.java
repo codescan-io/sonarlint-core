@@ -22,7 +22,6 @@ package org.sonarsource.sonarlint.core.client.api.common;
 import org.junit.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 public class RuleKeyTest {
 

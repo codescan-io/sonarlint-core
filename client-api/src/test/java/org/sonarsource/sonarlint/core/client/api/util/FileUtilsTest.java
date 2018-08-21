@@ -38,7 +38,6 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class FileUtilsTest {
@@ -158,9 +157,9 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void toSonarQubePath_should_return_slash_separated_path() {
+  public void toCodeScanPath_should_return_slash_separated_path() {
     Path path = Paths.get("some").resolve("relative").resolve("path");
-    assertThat(FileUtils.toSonarQubePath(path.toString())).isEqualTo("some/relative/path");
+    assertThat(FileUtils.toCodeScanPath(path.toString())).isEqualTo("some/relative/path");
   }
 
   @Test

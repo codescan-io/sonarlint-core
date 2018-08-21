@@ -33,7 +33,7 @@ import com.google.common.annotations.VisibleForTesting;
  */
 public class TelemetryManager {
 
-  public static final String TELEMETRY_ENDPOINT = "https://chestnutsl.sonarsource.com";
+  public static final String TELEMETRY_ENDPOINT = "https://chestnutsl.codescan.io";
 
   static final int MIN_HOURS_BETWEEN_UPLOAD = 5;
 

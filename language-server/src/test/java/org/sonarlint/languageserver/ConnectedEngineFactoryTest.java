@@ -20,11 +20,8 @@
 package org.sonarlint.languageserver;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Collections;
 import java.util.Map;
 import org.junit.*;
-import org.mockito.ArgumentCaptor;
-import org.sonarsource.sonarlint.core.ConnectedSonarLintEngineImpl;
 import org.sonarsource.sonarlint.core.client.api.common.LogOutput;
 import org.sonarsource.sonarlint.core.client.api.connected.ConnectedGlobalConfiguration;
 import org.sonarsource.sonarlint.core.client.api.connected.ConnectedSonarLintEngine;
