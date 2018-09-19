@@ -120,6 +120,7 @@ import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneAnalysisCo
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneSonarLintEngine;
 import org.sonarsource.sonarlint.core.client.api.util.FileUtils;
 import org.sonarsource.sonarlint.core.telemetry.TelemetryPathManager;
+import org.sonarsource.sonarlint.core.client.api.common.RuleKey;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang.StringUtils.isBlank;
@@ -132,6 +133,7 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
   static final String TYPESCRIPT_LOCATION = "typeScriptLocation";
   static final String TEST_FILE_PATTERN = "testFilePattern";
   private static final String ANALYZER_PROPERTIES = "analyzerProperties";
+  private static final String EXCLUDED_RULES = "excludedRules";
   private static final String INCLUDE_RULE_DETAILS_IN_CODE_ACTION = "includeRuleDetailsInCodeAction";
   static final String CONNECTED_MODE_SERVERS_PROP = "connectedModeServers";
   static final String CONNECTED_MODE_PROJECT_PROP = "connectedModeProject";
@@ -217,6 +219,7 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
     @CheckForNull
     final String testFilePattern;
     final Map<String, String> analyzerProperties;
+    final Collection<RuleKey> excludedRules;
     final boolean disableTelemetry;
 
     private UserSettings() {
@@ -225,8 +228,27 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
 
     private UserSettings(Map<String, Object> params) {
       this.testFilePattern = (String) params.get(TEST_FILE_PATTERN);
+      this.excludedRules = getExcludedRules(params);
       this.analyzerProperties = getAnalyzerProperties(params);
       this.disableTelemetry = (Boolean) params.getOrDefault(DISABLE_TELEMETRY, false);
+    }
+    private static Collection<RuleKey> getExcludedRules(Map<String, Object> params) {
+      Collection list = (Collection) params.get(EXCLUDED_RULES);
+      if (list == null) {
+        return Collections.emptyList();
+      }
+      List<RuleKey> ret = new ArrayList<RuleKey>();
+      for ( Object o : list ){
+        if ( o instanceof RuleKey ) {
+          System.out.println("adding o");
+          ret.add((RuleKey) o);
+        }else {
+          System.out.println("parsing " + o);
+          ret.add(RuleKey.parse(o.toString()));
+          System.out.println(RuleKey.parse(o.toString()).toString());
+        }
+      }
+      return ret;
     }
 
     private static Map<String, String> getAnalyzerProperties(Map<String, Object> params) {
@@ -668,7 +690,7 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
     public AnalysisResultsWrapper analyze(Path baseDir, URI uri, String content, IssueListener issueListener, boolean shouldFetchServerIssues) {
       StandaloneAnalysisConfiguration configuration = new StandaloneAnalysisConfiguration(baseDir, baseDir.resolve(".sonarlint"),
         Collections.singletonList(new DefaultClientInputFile(baseDir, uri, content, userSettings.testFilePattern, languageIdPerFileURI.get(uri))),
-        userSettings.analyzerProperties);
+        userSettings.analyzerProperties, userSettings.excludedRules, Collections.emptyList());
       logger.debug("Analysis triggered on " + uri + " with configuration: \n" + configuration.toString());
 
       long start = System.currentTimeMillis();
