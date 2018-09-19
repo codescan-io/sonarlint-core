@@ -15,3 +15,4 @@ typescript=1.5
 web=2.5
 salesforce=4.0
 codescan=4.0
+codescanlang=4.0
