@@ -69,7 +69,7 @@ public class SonarLintTelemetry {
 
   private static TelemetryClientConfig getTelemetryClientConfig() {
     return new TelemetryClientConfig.Builder()
-      .userAgent("SonarLint")
+      .userAgent("CodeScan")
       .build();
   }
 

@@ -53,7 +53,7 @@ public class StorageAnalyzer {
         throw new StorageException(String.format("No data stored for project '%s'. Please update the binding.", projectKey), false);
       } else if (moduleUpdateStatus.isStale()) {
         throw new StorageException(String.format("Stored data for project '%s' is stale because "
-          + "it was created with a different version of SonarLint. Please update the binding.", projectKey), false);
+          + "it was created with a different version of CodeScan. Please update the binding.", projectKey), false);
       }
     }
   }

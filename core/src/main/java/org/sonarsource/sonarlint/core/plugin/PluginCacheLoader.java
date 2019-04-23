@@ -86,16 +86,16 @@ public class PluginCacheLoader {
 
   private boolean shouldSkip(PluginInfo info) {
     if (!info.isCompatibleWith(IMPLEMENTED_SQ_API)) {
-      LOG.warn("Code analyzer '{}' needs CodeScan plugin API {} while SonarLint supports only up to {}. Skip loading it.", info.getName(), info.getMinimalSqVersion(),
+      LOG.warn("Code analyzer '{}' needs CodeScan plugin API {} while CodeScan supports only up to {}. Skip loading it.", info.getName(), info.getMinimalSqVersion(),
         IMPLEMENTED_SQ_API);
       return true;
     }
     if (excludedPlugins.contains(info.getKey())) {
-      LOG.warn("Code analyzer '{}' is excluded in this version of SonarLint. Skip loading it.", info.getName());
+      LOG.warn("Code analyzer '{}' is excluded in this version of CodeScan. Skip loading it.", info.getName());
       return true;
     }
     if (info.getRequiredPlugins().stream().anyMatch(required -> excludedPlugins.contains(required.getKey()))) {
-      LOG.debug("Code analyzer '{}' is excluded in this version of SonarLint. Skip loading it.", info.getName());
+      LOG.debug("Code analyzer '{}' is excluded in this version of CodeScan. Skip loading it.", info.getName());
       return true;
     }
     String minVersion = pluginVersionChecker.getMinimumVersion(info.getKey());
@@ -106,7 +106,7 @@ public class PluginCacheLoader {
     }
     Boolean sonarLintSupported = info.isSonarLintSupported();
     if (sonarLintSupported == null || !sonarLintSupported.booleanValue()) {
-      LOG.warn("Code analyzer '{}' is not compatible with SonarLint. Skip loading it.", info.getName());
+      LOG.warn("Code analyzer '{}' is not compatible with CodeScan. Skip loading it.", info.getName());
       return true;
     }
 

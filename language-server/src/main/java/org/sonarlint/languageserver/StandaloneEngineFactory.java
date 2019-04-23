@@ -45,7 +45,7 @@ class StandaloneEngineFactory {
   }
 
   StandaloneSonarLintEngine create() {
-    logger.debug("Starting standalone SonarLint engine...");
+    logger.debug("Starting standalone CodeScan engine...");
     logger.debug("Using " + analyzers.size() + " analyzers");
 
     try {
@@ -56,10 +56,10 @@ class StandaloneEngineFactory {
         .build();
 
       StandaloneSonarLintEngine engine = new StandaloneSonarLintEngineImpl(configuration);
-      logger.debug("Standalone SonarLint engine started");
+      logger.debug("Standalone CodeScan engine started");
       return engine;
     } catch (Exception e) {
-      logger.error("Error starting standalone SonarLint engine", e);
+      logger.error("Error starting standalone CodeScan engine", e);
       throw new IllegalStateException(e);
     }
   }

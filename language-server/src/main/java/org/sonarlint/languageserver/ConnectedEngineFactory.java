@@ -45,7 +45,7 @@ class ConnectedEngineFactory {
   @CheckForNull
   ConnectedSonarLintEngine create(ServerInfo serverInfo) {
     String serverId = serverInfo.serverId;
-    logger.debug("Starting connected SonarLint engine for " + serverId + "...");
+    logger.debug("Starting connected CodeScan engine for " + serverId + "...");
 
     try {
       ConnectedGlobalConfiguration configuration = ConnectedGlobalConfiguration.builder()
@@ -56,11 +56,11 @@ class ConnectedEngineFactory {
 
       ConnectedSonarLintEngine engine = createEngine(configuration);
 
-      logger.debug("Connected SonarLint engine started for " + serverId);
+      logger.debug("Connected CodeScan engine started for " + serverId);
 
       return engine;
     } catch (Exception e) {
-      logger.error("Error starting connected SonarLint engine for " + serverId, e);
+      logger.error("Error starting connected CodeScan engine for " + serverId, e);
     }
     return null;
   }

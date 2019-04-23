@@ -25,7 +25,7 @@ import org.sonar.api.utils.log.Loggers;
  * A slf4j logger that delegates all logs to a sonar API logger. 
  */
 public class LoggerAdapter implements Logger {
-  private static final org.sonar.api.utils.log.Logger SONAR_LOGGER = Loggers.get("SonarLint");
+  private static final org.sonar.api.utils.log.Logger SONAR_LOGGER = Loggers.get("CodeScan");
 
   @Override
   public String getName() {

@@ -358,18 +358,18 @@ public class ServerMainTest {
 
   @Test(expected = ExecutionException.class)
   public void testInvalidCommand() throws Exception {
-    lsProxy.getWorkspaceService().executeCommand(new ExecuteCommandParams("SonarLint.OpenRuleDesc", Collections.singletonList("missingRule"))).get();
+    lsProxy.getWorkspaceService().executeCommand(new ExecuteCommandParams("CodeScan.OpenRuleDesc", Collections.singletonList("missingRule"))).get();
   }
 
   @Test
   public void testCommandFailure() throws Exception {
     try {
-      lsProxy.getWorkspaceService().executeCommand(new ExecuteCommandParams("SonarLint.UpdateServerStorage", Collections.singletonList("invalidMap"))).get();
+      lsProxy.getWorkspaceService().executeCommand(new ExecuteCommandParams("CodeScan.UpdateServerStorage", Collections.singletonList("invalidMap"))).get();
       fail("Expected exception");
     } catch (Exception e) {
       assertThat(e).isInstanceOf(ExecutionException.class).hasCauseInstanceOf(ResponseErrorException.class);
       assertThat(((ResponseErrorException) e.getCause()).getResponseError().getMessage())
-        .isEqualTo("Unable to process command 'SonarLint.UpdateServerStorage': Expected a JSON map but was: \"invalidMap\"");
+        .isEqualTo("Unable to process command 'CodeScan.UpdateServerStorage': Expected a JSON map but was: \"invalidMap\"");
     }
   }
 
@@ -407,7 +407,7 @@ public class ServerMainTest {
     List<Either<Command, CodeAction>> list = lsProxy.getTextDocumentService().codeAction(codeActionParams).get();
     assertThat(list).hasSize(1);
     Command command = list.get(0).getLeft();
-    assertThat(command.getCommand()).isEqualTo("SonarLint.OpenRuleDesc");
+    assertThat(command.getCommand()).isEqualTo("CodeScan.OpenRuleDesc");
     assertThat(command.getArguments()).hasSize(5);
     assertThat(((JsonPrimitive) command.getArguments().get(0)).getAsString()).isEqualTo("javascript:S930");
     assertThat(((JsonPrimitive) command.getArguments().get(1)).getAsString()).isEqualTo("Function calls should not pass extra arguments");

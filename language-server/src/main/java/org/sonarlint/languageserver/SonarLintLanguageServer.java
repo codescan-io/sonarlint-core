@@ -132,7 +132,7 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class SonarLintLanguageServer implements LanguageServer, WorkspaceService, TextDocumentService {
-  private static final String USER_AGENT = "SonarLint Language Server";
+  private static final String USER_AGENT = "CodeScan Language Server";
 
   static final String DISABLE_TELEMETRY = "disableTelemetry";
   static final String TYPESCRIPT_LOCATION = "typeScriptLocation";
@@ -144,9 +144,9 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
 
   private static final String SONARLINT_CONFIGURATION_NAMESPACE = "codescan";
   private static final String SONARLINT_SOURCE = SONARLINT_CONFIGURATION_NAMESPACE;
-  private static final String SONARLINT_OPEN_RULE_DESCRIPTION_COMMAND = "SonarLint.OpenRuleDesc";
-  static final String SONARLINT_UPDATE_SERVER_STORAGE_COMMAND = "SonarLint.UpdateServerStorage";
-  static final String SONARLINT_UPDATE_PROJECT_BINDING_COMMAND = "SonarLint.UpdateProjectBinding";
+  private static final String SONARLINT_OPEN_RULE_DESCRIPTION_COMMAND = "CodeScan.OpenRuleDesc";
+  static final String SONARLINT_UPDATE_SERVER_STORAGE_COMMAND = "CodeScan.UpdateServerStorage";
+  static final String SONARLINT_UPDATE_PROJECT_BINDING_COMMAND = "CodeScan.UpdateProjectBinding";
   private static final List<String> SONARLINT_COMMANDS = Arrays.asList(
     SONARLINT_UPDATE_SERVER_STORAGE_COMMAND,
     SONARLINT_UPDATE_PROJECT_BINDING_COMMAND);

@@ -67,7 +67,7 @@ public class PluginReferencesDownloader {
 
   private static boolean analyzerFilter(SonarAnalyzer analyzer) {
     if (!analyzer.sonarlintCompatible()) {
-      LOG.debug("Code analyzer '{}' is not compatible with SonarLint. Skip downloading it.", analyzer.key());
+      LOG.debug("Code analyzer '{}' is not compatible with CodeScan. Skip downloading it.", analyzer.key());
       return false;
     } else if (!analyzer.versionSupported()) {
       LOG.debug("Code analyzer '{}' version '{}' is not supported (minimal version is '{}'). Skip downloading it.",

@@ -39,7 +39,7 @@ import org.sonarsource.sonarlint.core.client.api.exceptions.StorageException;
 import org.sonarsource.sonarlint.core.client.api.exceptions.UnsupportedServerException;
 
 /**
- * Entry point for SonarLint.
+ * Entry point for CodeScan.
  */
 public interface ConnectedSonarLintEngine {
 

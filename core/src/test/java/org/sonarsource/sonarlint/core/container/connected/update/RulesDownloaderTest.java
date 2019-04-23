@@ -94,7 +94,7 @@ public class RulesDownloaderTest {
     WsClientTestUtils.addResponse(wsClient, RULES_SEARCH_URL + "&severities=MAJOR&p=1&ps=500", response);
 
     exception.expect(IllegalStateException.class);
-    exception.expectMessage("Found more than 10000 rules for severity 'MAJOR' in the CodeScan server, which is not supported by SonarLint.");
+    exception.expectMessage("Found more than 10000 rules for severity 'MAJOR' in the CodeScan server, which is not supported by CodeScan.");
 
     RulesDownloader rulesUpdate = new RulesDownloader(wsClient);
     rulesUpdate.fetchRulesTo(tempDir.toPath(), new ProgressWrapper(null));

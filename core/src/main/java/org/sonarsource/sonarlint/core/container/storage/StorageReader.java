@@ -77,7 +77,7 @@ public class StorageReader {
     if (Files.exists(activeRulesPath)) {
       return ProtobufUtil.readFile(activeRulesPath, Sonarlint.ActiveRules.parser());
     } else {
-      LOG.info("Unable to find the quality profile {} in the SonarLint storage. You should update the storage, or ignore this message if the profile is empty.", qProfileKey);
+      LOG.info("Unable to find the quality profile {} in the CodeScan storage. You should update the storage, or ignore this message if the profile is empty.", qProfileKey);
       return Sonarlint.ActiveRules.newBuilder().build();
     }
   }

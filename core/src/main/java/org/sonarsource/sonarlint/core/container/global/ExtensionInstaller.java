@@ -79,7 +79,7 @@ public class ExtensionInstaller {
           container.addExtension(pluginInfo, extension);
         }
       } else {
-        LOG.debug("Extension {} was blacklisted as it is not used by SonarLint", className(extension));
+        LOG.debug("Extension {} was blacklisted as it is not used by CodeScan", className(extension));
       }
     }
   }
