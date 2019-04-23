@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-parent</artifactId>
-    <version>4.2-SNAPSHOT</version>
+    <version>4.2.0.CODESCAN</version>
   </parent>
   <artifactId>sonarlint-core</artifactId>
   <packaging>bundle</packaging>
@@ -450,51 +450,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>commercial</id>
-      <activation>
-        <property>
-          <name>commercial</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-commercial-plugins</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>com.sonarsource.cpp</groupId>
-                      <artifactId>sonar-cfamily-plugin</artifactId>
-                      <version>5.0.0.9359</version>
-                      <type>jar</type>
-                    </artifactItem>
-                    <artifactItem>
-                      <groupId>com.sonarsource.license</groupId>
-                      <artifactId>sonar-license-plugin</artifactId>
-                      <version>3.3.0.1341</version>
-                      <type>jar</type>
-                    </artifactItem>
-                  </artifactItems>
-                  <outputDirectory>${project.build.directory}/plugins</outputDirectory>
-                  <overWriteReleases>false</overWriteReleases>
-                  <overWriteSnapshots>true</overWriteSnapshots>
-                  <stripVersion>false</stripVersion>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <profile>
       <id>protobuf-compile</id>
       <activation>

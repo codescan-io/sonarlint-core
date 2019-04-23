@@ -60,7 +60,7 @@ public class StorageFileExclusions {
       }
       String sqPath = issueStorePaths.idePathToSqPath(projectBinding, idePath);
       if (sqPath == null) {
-        // we can't map it to a SonarQube path, so just apply exclusions to the original ide path
+        // we can't map it to a CodeScan path, so just apply exclusions to the original ide path
         sqPath = idePath;
       }
       Type type = testFilePredicate.test(file) ? Type.TEST : Type.MAIN;

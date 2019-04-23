@@ -46,7 +46,7 @@ public class ServerVersionAndStatusChecker {
   }
 
   /**
-   * Checks SonarQube version against the minimum version supported by the library
+   * Checks CodeScan version against the minimum version supported by the library
    * @return ServerInfos
    * @throws UnsupportedServerException if version &lt; minimum supported version
    * @throws IllegalStateException If server is not ready
@@ -56,7 +56,7 @@ public class ServerVersionAndStatusChecker {
   }
 
   /**
-   * Checks SonarQube version against a provided minimum version
+   * Checks CodeScan version against a provided minimum version
    * @return ServerInfos
    * @throws UnsupportedServerException if version &lt; minimum supported version
    * @throws IllegalStateException If server is not ready
@@ -74,7 +74,7 @@ public class ServerVersionAndStatusChecker {
   }
 
   private static String unsupportedVersion(ServerInfos serverStatus, String minVersion) {
-    return "SonarQube server has version " + serverStatus.getVersion() + ". Version should be greater or equal to " + minVersion;
+    return "CodeScan server has version " + serverStatus.getVersion() + ". Version should be greater or equal to " + minVersion;
   }
 
   private static String serverNotReady(ServerInfos serverStatus) {

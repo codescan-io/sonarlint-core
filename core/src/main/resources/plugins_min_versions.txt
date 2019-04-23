@@ -1,6 +1,5 @@
-# Minimum supported analyzer versions: the first versions supported by SonarQube 6.7,
+# Minimum supported analyzer versions: the first versions supported by CodeScan 6.7,
 # as defined in https://github.com/SonarSource/sonar-update-center-properties
-sonarapex=1.4
 java=5.1
 php=2.12
 javascript=4.0
@@ -21,3 +20,6 @@ tsql=1.1
 xml=2.0.1
 # Only used by ITs
 xoo=1.0
+salesforce=3.8
+codescan=3.8
+

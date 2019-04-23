@@ -50,14 +50,6 @@ public class PluginLocator {
     return getPluginUrl("sonar-python-plugin-1.9.1.2080.jar");
   }
 
-  public static URL getCppPluginUrl() {
-    return getPluginUrl("sonar-cfamily-plugin-5.0.0.9359.jar");
-  }
-
-  public static URL getLicensePluginUrl() {
-    return getPluginUrl("sonar-license-plugin-3.3.0.1341.jar");
-  }
-
   public static URL getTypeScriptPluginUrl() {
     return getPluginUrl("sonar-typescript-plugin-1.5.0.2122.jar");
   }

@@ -27,7 +27,7 @@ interface ClientLogger {
     INVALID_BINDING_SERVER("Invalid binding: the specified serverId doesn't exist."),
     ANALYSIS_FAILED("Analysis failed."),
     START_CONNECTED_ENGINE_FAILED("Failed to start connected engine."),
-    PROJECT_NOT_FOUND("Project was not found on SonarQube server (was it deleted?)"),
+    PROJECT_NOT_FOUND("Project was not found on CodeScan server (was it deleted?)"),
     ;
 
     final String message;

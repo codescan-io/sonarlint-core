@@ -241,7 +241,7 @@ public class PluginInfo implements Comparable<PluginInfo> {
   }
 
   /**
-   * Find out if this plugin is compatible with a given version of SonarQube.
+   * Find out if this plugin is compatible with a given version of CodeScan.
    * The version of SQ must be greater than or equal to the minimal version
    * needed by the plugin.
    */

@@ -142,7 +142,7 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
   static final String CONNECTED_MODE_PROJECT_PROP = "connectedModeProject";
   private static final String TYPESCRIPT_PATH_PROP = "sonar.typescript.internal.typescriptLocation";
 
-  private static final String SONARLINT_CONFIGURATION_NAMESPACE = "sonarlint";
+  private static final String SONARLINT_CONFIGURATION_NAMESPACE = "codescan";
   private static final String SONARLINT_SOURCE = SONARLINT_CONFIGURATION_NAMESPACE;
   private static final String SONARLINT_OPEN_RULE_DESCRIPTION_COMMAND = "SonarLint.OpenRuleDesc";
   static final String SONARLINT_UPDATE_SERVER_STORAGE_COMMAND = "SonarLint.UpdateServerStorage";
@@ -723,7 +723,7 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
         analysisResults = analyze(configuration, collector);
       }
 
-      String filePath = FileUtils.toSonarQubePath(getFileRelativePath(baseDir, uri));
+      String filePath = FileUtils.toCodeScanPath(getFileRelativePath(baseDir, uri));
       serverIssueTracker.matchAndTrack(filePath, issues, issueListener, shouldFetchServerIssues);
 
       int analysisTime = (int) (System.currentTimeMillis() - start);

@@ -86,7 +86,7 @@ public class RulesDownloader {
       SearchResponse response = loadFromStream(wsClient.get(getUrl(severity, page, pageSize)));
       if (response.getTotal() > 10_000) {
         throw new IllegalStateException(
-          String.format("Found more than 10000 rules for severity '%s' in the SonarQube server, which is not supported by SonarLint.", severity));
+          String.format("Found more than 10000 rules for severity '%s' in the CodeScan server, which is not supported by SonarLint.", severity));
       }
       readPage(rulesBuilder, activeRulesBuildersByQProfile, response);
       loaded += response.getPs();

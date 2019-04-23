@@ -86,7 +86,7 @@ public class PluginCacheLoader {
 
   private boolean shouldSkip(PluginInfo info) {
     if (!info.isCompatibleWith(IMPLEMENTED_SQ_API)) {
-      LOG.warn("Code analyzer '{}' needs SonarQube plugin API {} while SonarLint supports only up to {}. Skip loading it.", info.getName(), info.getMinimalSqVersion(),
+      LOG.warn("Code analyzer '{}' needs CodeScan plugin API {} while SonarLint supports only up to {}. Skip loading it.", info.getName(), info.getMinimalSqVersion(),
         IMPLEMENTED_SQ_API);
       return true;
     }

@@ -47,7 +47,7 @@ import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
- * Connect to any SonarQube server available through HTTP or HTTPS.
+ * Connect to any CodeScan server available through HTTP or HTTPS.
  * <p>TLS 1.0, 1.1 and 1.2 are supported on both Java 7 and 8. SSLv3 is not supported.</p>
  * <p>The JVM system proxies are used.</p>
  */
