@@ -108,6 +108,7 @@ import org.eclipse.lsp4j.services.LanguageServer;
 import org.eclipse.lsp4j.services.TextDocumentService;
 import org.eclipse.lsp4j.services.WorkspaceService;
 import org.sonar.api.internal.apachecommons.lang.StringUtils;
+import org.sonar.api.rule.RuleKey;
 import org.sonarsource.sonarlint.core.client.api.common.RuleDetails;
 import org.sonarsource.sonarlint.core.client.api.common.analysis.AnalysisResults;
 import org.sonarsource.sonarlint.core.client.api.common.analysis.ClientInputFile;
@@ -189,6 +190,19 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
     this.serverInfoCache = new ServerInfoCache(logger);
   }
 
+  static SonarLintLanguageServer chromeNativeMessaging(Collection<URL> analyzers){
+    BiFunction<LanguageClientLogOutput, ClientLogger, EngineCache> engineCacheFactory = (logOutput, logger) -> {
+      StandaloneEngineFactory standaloneEngineFactory = new StandaloneEngineFactory(analyzers, logOutput, logger);
+      ConnectedEngineFactory connectedEngineFactory = new ConnectedEngineFactory(logOutput, logger);
+      return new DefaultEngineCache(standaloneEngineFactory, connectedEngineFactory);
+    };
+
+    Function<SonarLintLanguageClient, ClientLogger> loggerFactory = DefaultClientLogger::new;
+    
+    return new SonarLintLanguageServer(new ChromeNativeMessaging.In(), new ChromeNativeMessaging.Out(), engineCacheFactory, loggerFactory);
+  }
+
+
   static SonarLintLanguageServer bySocket(int port, Collection<URL> analyzers) throws IOException {
     Socket socket = new Socket("localhost", port);
 
@@ -218,7 +232,7 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
       this.analyzerProperties = getAnalyzerProperties(params);
       this.disableTelemetry = (Boolean) params.getOrDefault(DISABLE_TELEMETRY, false);
     }
-
+    
     private static Map<String, String> getAnalyzerProperties(Map<String, Object> params) {
       Map map = (Map) params.get(ANALYZER_PROPERTIES);
       if (map == null) {
@@ -701,14 +715,25 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
 
     @Override
     public AnalysisResultsWrapper analyze(Path baseDir, URI uri, String content, IssueListener issueListener, boolean shouldFetchServerIssues) {
+      ServerInfo serverInfo = serverInfoCache.get(binding.serverId);
+      Map<String, String> extraProperties = userSettings.analyzerProperties;
+      if ( serverInfo != null ) {
+        extraProperties = new HashMap<>();
+        extraProperties.putAll(userSettings.analyzerProperties);
+        
+        //pass sonar host credentials in so that we can resolve license.
+        extraProperties.put("sonar.host.url", serverInfo.serverUrl);
+        extraProperties.put("sonar.organization", serverInfo.organizationKey);
+        extraProperties.put("sonar.login", serverInfo.token);
+      }
+
       ConnectedAnalysisConfiguration configuration = new ConnectedAnalysisConfiguration(projectKey, baseDir, baseDir.resolve(".sonarlint"),
-        Collections.singletonList(new DefaultClientInputFile(uri, getFileRelativePath(baseDir, uri), content, isTest(uri), languageIdPerFileURI.get(uri))),
-        userSettings.analyzerProperties);
-      logger.debug("Analysis triggered on " + uri + " with configuration: \n" + configuration.toString());
+          Collections.singletonList(new DefaultClientInputFile(uri, getFileRelativePath(baseDir, uri), content, isTest(uri), languageIdPerFileURI.get(uri))),
+          extraProperties);
+        logger.debug("Analysis triggered on " + uri + " with configuration: \n" + configuration.toString());
 
       List<Issue> issues = new LinkedList<>();
       IssueListener collector = issues::add;
-      ServerInfo serverInfo = serverInfoCache.get(binding.serverId);
 
       long start = System.currentTimeMillis();
       AnalysisResults analysisResults;

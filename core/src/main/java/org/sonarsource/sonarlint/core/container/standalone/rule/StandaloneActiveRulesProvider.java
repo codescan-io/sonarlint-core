@@ -111,6 +111,14 @@ public class StandaloneActiveRulesProvider {
   private static void registerProfilesForLanguage(ActiveRulesBuilder builder, String language, List<RulesProfile> defs) {
     for (Map.Entry<String, Collection<RulesProfile>> entry : profilesByName(defs).entrySet()) {
       String name = entry.getKey();
+      if ("Salesforce Lightning".equals(name) || "CodeScan way".equals(name)) {
+        registerProfile(builder, language, entry);
+        return;
+      }
+    }
+  
+	for (Map.Entry<String, Collection<RulesProfile>> entry : profilesByName(defs).entrySet()) {
+      String name = entry.getKey();
       if ("Sonar way".equals(name)) {
         registerProfile(builder, language, entry);
       }

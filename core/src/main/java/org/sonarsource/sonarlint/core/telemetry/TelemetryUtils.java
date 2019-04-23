@@ -65,7 +65,17 @@ class TelemetryUtils {
       case "js":
         return "javascript";
       case "py":
-        return "python";
+          return "python";
+      case "cls":
+      case "trigger":
+          return "sf";
+      case "page":
+      case "component":
+      case "app":
+      case "evt":
+      case "cmp":
+      case "intf":
+          return "vf";
       default:
         return "others";
     }

@@ -28,7 +28,7 @@ public interface SonarLintLanguageClient extends LanguageClient {
    * This command is sent from a server to a client to ask
    * the client to display a rule description in the user interface.
    */
-  @JsonNotification("sonarlint/openRuleDescription")
+  @JsonNotification("codescan/openRuleDescription")
   void openRuleDescription(RuleDescription notification);
 
 }

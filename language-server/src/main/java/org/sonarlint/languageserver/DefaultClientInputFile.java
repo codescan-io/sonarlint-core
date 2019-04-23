@@ -111,6 +111,10 @@ public class DefaultClientInputFile implements ClientInputFile {
         return "ts";
       case "html":
         return "web";
+      case "apex":
+        return "sf";
+      case "visualforce":
+        return "vf";
       default:
         return clientLanguageId;
     }

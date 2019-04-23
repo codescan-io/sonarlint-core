@@ -109,13 +109,13 @@ public class StandaloneIssueMediumTest {
 
     // commercial plugins might not be available (if you pass -Dcommercial to maven, a profile will be activated that downloads the
     // commercial plugins)
-    if (System.getProperty("commercial") != null) {
-      commercialEnabled = true;
-      configBuilder.addPlugin(PluginLocator.getCppPluginUrl());
-      configBuilder.addPlugin(PluginLocator.getLicensePluginUrl());
-    } else {
+//    if (System.getProperty("commercial") != null) {
+//      commercialEnabled = true;
+//      configBuilder.addPlugin(PluginLocator.getCppPluginUrl());
+//      configBuilder.addPlugin(PluginLocator.getLicensePluginUrl());
+//    } else {
       commercialEnabled = false;
-    }
+//    }
     sonarlint = new StandaloneSonarLintEngineImpl(configBuilder.build());
   }
 
