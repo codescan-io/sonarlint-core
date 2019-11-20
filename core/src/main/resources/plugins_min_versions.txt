@@ -22,4 +22,4 @@ xml=2.0.1
 xoo=1.0
 salesforce=3.8
 codescan=3.8
-
+codescanlang=4.2
