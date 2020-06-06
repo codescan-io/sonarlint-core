@@ -193,9 +193,9 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void toSonarQubePath_should_return_slash_separated_path() {
+  public void toCodeScanPath_should_return_slash_separated_path() {
     Path path = Paths.get("some").resolve("relative").resolve("path");
-    assertThat(FileUtils.toSonarQubePath(path.toString())).isEqualTo("some/relative/path");
+    assertThat(FileUtils.toCodeScanPath(path.toString())).isEqualTo("some/relative/path");
   }
 
   @Test

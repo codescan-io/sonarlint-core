@@ -123,7 +123,7 @@ public class PluginCacheLoader {
     for (RequiredPlugin required : info.getRequiredPlugins()) {
       if (Language.JS.getPluginKey().equals(info.getKey()) && Language.TS.getPluginKey().equals(required.getKey())) {
         // Workaround for SLCORE-259
-        // This dependency was added to ease migration on SonarQube, but can be ignored on SonarLint
+        // This dependency was added to ease migration on CodeScan, but can be ignored on SonarLint
         continue;
       }
       if (excludedSonarSourceAnalyzer(required.getKey())) {

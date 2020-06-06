@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-parent</artifactId>
-    <version>4.10-SNAPSHOT</version>
+    <version>4.10.0-CODESCAN</version>
   </parent>
 
   <artifactId>sonarlint-daemon</artifactId>
@@ -184,65 +184,6 @@
                   </descriptors>
                   <filters>
                     <filter>src/main/assembly/noarch.properties</filter>
-                  </filters>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>dist-windows</id>
-      <activation>
-        <property>
-          <name>!skipDistWindows</name>
-        </property>
-      </activation>
-      <properties>
-        <jre.dirname.windows>jdk-11.0.3+7-jre</jre.dirname.windows>
-        <unpack.dir>${project.build.directory}/unpack</unpack.dir>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.googlecode.maven-download-plugin</groupId>
-            <artifactId>download-maven-plugin</artifactId>
-            <version>1.4.2</version>
-            <executions>
-              <execution>
-                <id>unpack-windows</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>wget</goal>
-                </goals>
-                <configuration>
-                  <url>https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.3%2B7/OpenJDK11U-jre_x64_windows_hotspot_11.0.3_7.zip</url>
-                  <unpack>true</unpack>
-                  <outputDirectory>${unpack.dir}/windows</outputDirectory>
-                  <sha512>370100688282a5c43fe0ac736980eeff64cf212a0fb573181fff8039c121097cbbbd540a652cc6d17397789b894c820b802b875bbd1743eb2b8469009d5fa8f9</sha512>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>assemble-windows</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <finalName>sonarlint-daemon-${project.version}</finalName>
-                  <escapeString>\</escapeString>
-                  <descriptors>
-                    <descriptor>src/main/assembly/dist-windows.xml</descriptor>
-                  </descriptors>
-                  <filters>
-                    <filter>src/main/assembly/windows.properties</filter>
                   </filters>
                 </configuration>
               </execution>

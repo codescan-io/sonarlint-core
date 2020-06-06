@@ -79,7 +79,7 @@ public class ProjectStorageUpdateExecutor {
       if (!qProfileKeys.contains(qpKey)) {
         throw new IllegalStateException(
           "Project '" + projectKey + "' is associated to quality profile '" + qpKey + "' that is not in the storage. "
-            + "The SonarQube server binding is probably outdated,  please update it.");
+            + "The CodeScan server binding is probably outdated,  please update it.");
       }
     }
     ProtobufUtil.writeToFile(projectConfiguration, temp.resolve(StoragePaths.PROJECT_CONFIGURATION_PB));

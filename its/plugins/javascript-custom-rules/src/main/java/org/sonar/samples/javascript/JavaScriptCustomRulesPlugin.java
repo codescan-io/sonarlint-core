@@ -22,7 +22,7 @@ package org.sonar.samples.javascript;
 import org.sonar.api.Plugin;
 
 /**
- * Extension point to define a SonarQube Plugin.
+ * Extension point to define a CodeScan Plugin.
  */
 public class JavaScriptCustomRulesPlugin implements Plugin {
 
