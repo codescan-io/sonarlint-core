@@ -21,6 +21,7 @@ web=3.0.0.1411
 xml=2.0.1.2020
 salesforce=4.3
 codescan=4.3
+codescanlang=4.3
 
 # Only used by ITs
 xoo=1.0
