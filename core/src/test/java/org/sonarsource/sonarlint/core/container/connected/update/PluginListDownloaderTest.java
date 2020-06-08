@@ -96,7 +96,7 @@ public class PluginListDownloaderTest {
         // Not part of enabled languages
         tuple("java", "sonar-java-plugin-4.0.0.1234.jar", "foobar", "4.0.0.1234", false, true),
         // Enabled language
-        tuple("javascript", "sonar-javascript-plugin-3.4.0.5828.jar", "d136fdb31fe38c3d780650f7228a49fa", "3.4.0.5828", true, false),
+        tuple("javascript", "sonar-javascript-plugin-3.4.0.5828.jar", "d136fdb31fe38c3d780650f7228a49fa", "3.4.0.5828", false, false),
         // TS disabled
         tuple("typescript", "sonar-typescript-plugin-1.2.3.4.jar", "123456789", "1.2.3.4", false, true));
   }

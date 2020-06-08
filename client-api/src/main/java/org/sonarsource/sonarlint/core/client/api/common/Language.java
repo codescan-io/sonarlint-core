@@ -31,14 +31,15 @@ import java.util.stream.Stream;
 public enum Language {
 
   ABAP("abap", "abap", "ABAP", new String[] {".abap", ".ab4", ".flow", ".asprog"}, "sonar.abap.file.suffixes"),
-  APEX("apex", "sonarapex", "Apex", new String[] {".cls", ".trigger"}, "sonar.apex.file.suffixes"),
+  APEX("apex", "codescan", "Apex", new String[] {".cls", ".trigger"}, "sonar.apex.file.suffixes"),
+  VF("vf", "codescan", "VisualForce", new String[] {".page", ".component", ".app", ".evt", ".cmp", ".intf"}, "sonar.vf.file.suffixes"),
   C("c", "cpp", "C", new String[] {".c", ".h"}, "sonar.c.file.suffixes"),
   CPP("cpp", "cpp", "C++", new String[] {".cc", ".cpp", ".cxx", ".c++", ".hh", ".hpp", ".hxx", ".h++", ".ipp"}, "sonar.cpp.file.suffixes"),
   OBJC("objc", "cpp", "Objective-C", new String[] {".m"}, "sonar.objc.file.suffixes"),
   COBOL("cobol", "cobol", "COBOL", new String[0], "sonar.cobol.file.suffixes"),
   HTML("web", "web", "HTML", new String[] {".html", ".xhtml", ".cshtml", ".vbhtml", ".aspx", ".ascx", ".rhtml", ".erb", ".shtm", ".shtml"}, "sonar.html.file.suffixes"),
   JAVA("java", "java", "Java", new String[] {".java", ".jav"}, "sonar.java.file.suffixes"),
-  JS("js", "javascript", "JavaScript", new String[] {".js", ".jsx", ".vue"}, "sonar.javascript.file.suffixes"),
+  JS("js", "codescanlang", "JavaScript", new String[] {".js", ".jsx", ".vue"}, "sonar.javascript.file.suffixes"),
   KOTLIN("kotlin", "kotlin", "Kotlin", new String[] {".kt"}, "sonar.kotlin.file.suffixes"),
   PHP("php", "php", "PHP", new String[] {"php", "php3", "php4", "php5", "phtml", "inc"}, "sonar.php.file.suffixes"),
   PLI("pli", "pli", "PL/I", new String[] {".pli"}, "sonar.pli.file.suffixes"),
