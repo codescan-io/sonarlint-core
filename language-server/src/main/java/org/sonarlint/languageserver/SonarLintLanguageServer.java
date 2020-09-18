@@ -334,6 +334,7 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
       .token(serverInfo.token)
       .organizationKey(serverInfo.organizationKey)
       .userAgent(USER_AGENT)
+      .proxyCredentials(System.getProperty("http.proxyUser"), System.getProperty("http.proxyPassword"))
       .build();
   }
 
