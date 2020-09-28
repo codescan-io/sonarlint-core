@@ -199,7 +199,9 @@ public class OkHttpClientBuilder {
     X509TrustManager trustManager = sslTrustManager != null ? sslTrustManager : systemDefaultTrustManager();
     SSLSocketFactory sslFactory = sslSocketFactory != null ? sslSocketFactory : systemDefaultSslSocketFactory(trustManager);
     builder.sslSocketFactory(sslFactory, trustManager);
-    builder.hostnameVerifier(hostnameVerifier);
+    if (hostnameVerifier != null) {
+      builder.hostnameVerifier(hostnameVerifier);
+    }
     return builder.build();
   }
 
