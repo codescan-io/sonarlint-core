@@ -78,6 +78,7 @@ public class SonarLintWsClient {
       .connectTimeoutMilliseconds(serverConfig.getConnectTimeoutMs())
       .setSSLSocketFactory(serverConfig.getSSLSocketFactory())
       .setTrustManager(serverConfig.getTrustManager())
+      .setHostnameVerifier(serverConfig.getHostnameVerifier())
       .build();
   }
 

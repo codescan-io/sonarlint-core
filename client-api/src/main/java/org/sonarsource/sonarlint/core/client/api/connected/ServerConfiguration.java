@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.X509TrustManager;
 
@@ -44,6 +45,7 @@ public class ServerConfiguration {
   private final int readTimeoutMs;
   private SSLSocketFactory sslSocketFactory = null;
   private X509TrustManager sslTrustManager = null;
+  private HostnameVerifier hostnameVerifier = null;
 
   private ServerConfiguration(Builder builder) {
     this.url = builder.url;
@@ -58,6 +60,7 @@ public class ServerConfiguration {
     this.readTimeoutMs = builder.readTimeoutMs;
     this.sslSocketFactory = builder.sslSocketFactory;
     this.sslTrustManager = builder.sslTrustManager;
+    this.hostnameVerifier = builder.hostnameVerifier;
   }
 
   @Override
@@ -117,6 +120,11 @@ public class ServerConfiguration {
   }
 
   @CheckForNull
+  public HostnameVerifier getHostnameVerifier() {
+    return hostnameVerifier;
+  }
+
+  @CheckForNull
   public String getPassword() {
     return password;
   }
@@ -161,6 +169,7 @@ public class ServerConfiguration {
     private int readTimeoutMs = DEFAULT_READ_TIMEOUT_MILLISECONDS;
     private SSLSocketFactory sslSocketFactory = null;
     private X509TrustManager sslTrustManager = null;
+    private HostnameVerifier hostnameVerifier = null;
 
     private Builder() {
     }
@@ -197,6 +206,11 @@ public class ServerConfiguration {
 
     public Builder trustManager(X509TrustManager sslTrustManager) {
       this.sslTrustManager = sslTrustManager;
+      return this;
+    }
+
+    public Builder hostnameVerifier(HostnameVerifier hostnameVerifier) {
+      this.hostnameVerifier = hostnameVerifier;
       return this;
     }
 
