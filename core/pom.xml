@@ -56,7 +56,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>19.0</version>
+      <version>r03</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.sonar</groupId>
@@ -316,15 +316,15 @@
                 <configuration>
                   <target>
                     <fileset id="fileset" dir="${project.basedir}/src/main/protobuf">
-                      <include name="*.proto" />
+                      <include name="*.proto"/>
                     </fileset>
-                    <pathconvert refid="fileset" property="protos" pathsep=" " />
-                    <mkdir dir="${project.build.directory}/generated-sources/protobuf" />
-                    <chmod file="${protobuf.compiler}" perm="u+x" />
+                    <pathconvert refid="fileset" property="protos" pathsep=" "/>
+                    <mkdir dir="${project.build.directory}/generated-sources/protobuf"/>
+                    <chmod file="${protobuf.compiler}" perm="u+x"/>
                     <exec failonerror="true" executable="${protobuf.compiler}">
-                      <arg value="--proto_path=${project.basedir}/src/main/protobuf" />
-                      <arg value="--java_out=${project.build.directory}/generated-sources/protobuf" />
-                      <arg line="${protos}" />
+                      <arg value="--proto_path=${project.basedir}/src/main/protobuf"/>
+                      <arg value="--java_out=${project.build.directory}/generated-sources/protobuf"/>
+                      <arg line="${protos}"/>
                     </exec>
                   </target>
                 </configuration>
