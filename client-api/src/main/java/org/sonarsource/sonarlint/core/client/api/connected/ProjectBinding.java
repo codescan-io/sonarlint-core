@@ -22,7 +22,7 @@ package org.sonarsource.sonarlint.core.client.api.connected;
 import java.util.Objects;
 
 /**
- * Describes the link between a project in the IDE and a project in SonarQube.
+ * Describes the link between a project in the IDE and a project in CodeScan.
  *
  * @since 3.10
  */

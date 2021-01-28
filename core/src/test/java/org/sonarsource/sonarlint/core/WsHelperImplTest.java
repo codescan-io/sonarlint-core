@@ -163,7 +163,7 @@ public class WsHelperImplTest {
     when(serverChecker.checkVersionAndStatus()).thenThrow(UnsupportedServerException.class);
     ValidationResult validation = WsHelperImpl.validateConnection(client, null);
     assertThat(validation.success()).isFalse();
-    assertThat(validation.message()).isEqualTo("SonarQube server has version 4.5. Version should be greater or equal to 6.7");
+    assertThat(validation.message()).isEqualTo("CodeScan server has version 4.5. Version should be greater or equal to 6.7");
   }
 
   @Test

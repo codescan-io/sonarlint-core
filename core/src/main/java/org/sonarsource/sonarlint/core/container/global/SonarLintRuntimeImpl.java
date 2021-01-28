@@ -47,12 +47,12 @@ public class SonarLintRuntimeImpl implements SonarRuntime {
 
   @Override
   public SonarQubeSide getSonarQubeSide() {
-    throw new UnsupportedOperationException("Can only be called in SonarQube");
+    throw new UnsupportedOperationException("Can only be called in CodeScan");
   }
 
   @Override
   public SonarEdition getEdition() {
-    throw new UnsupportedOperationException("Can only be called in SonarQube");
+    throw new UnsupportedOperationException("Can only be called in CodeScan");
   }
 
 }

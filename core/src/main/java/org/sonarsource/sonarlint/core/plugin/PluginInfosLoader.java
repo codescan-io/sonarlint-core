@@ -149,7 +149,7 @@ public class PluginInfosLoader {
       }
       if (Language.JS.getPluginKey().equals(info.getKey()) && OLD_SONARTS_PLUGIN_KEY.equals(required.getKey())) {
         // Workaround for SLCORE-259
-        // This dependency was added to ease migration on SonarQube, but can be ignored on SonarLint
+        // This dependency was added to ease migration on CodeScan, but can be ignored on SonarLint
         // Note: The dependency was removed in SonarJS 6.3 but we should still keep the workaround as long as we want to support older
         // versions
         continue;

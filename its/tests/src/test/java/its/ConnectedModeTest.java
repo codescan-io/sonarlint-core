@@ -478,7 +478,7 @@ public class ConnectedModeTest extends AbstractConnectedTest {
 
   @Test
   public void canFetchHotspot() throws InvalidProtocolBufferException {
-    assumeTrue("SonarQube should support opening security hotspots",
+    assumeTrue("CodeScan should support opening security hotspots",
       ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(8, 6));
 
     analyzeMavenProject(PROJECT_KEY_JAVA_HOTSPOT);
