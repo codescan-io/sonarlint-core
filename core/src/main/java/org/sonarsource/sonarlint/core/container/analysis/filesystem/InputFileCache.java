@@ -35,6 +35,7 @@ public class InputFileCache implements FileSystem.Index {
   private final Set<InputFile> inputFileCache = new LinkedHashSet<>();
   private final SetMultimap<String, InputFile> filesByNameCache = LinkedHashMultimap.create();
   private final SetMultimap<String, InputFile> filesByExtensionCache = LinkedHashMultimap.create();
+  private final SetMultimap<String, InputFile> filesByRelativePathCache = LinkedHashMultimap.create();
   private final SortedSet<String> languages = new TreeSet<>();
 
   @Override
@@ -49,11 +50,12 @@ public class InputFileCache implements FileSystem.Index {
     inputFileCache.add(inputFile);
     filesByNameCache.put(inputFile.filename(), inputFile);
     filesByExtensionCache.put(FileExtensionPredicate.getExtension(inputFile), inputFile);
+    filesByRelativePathCache.put(inputFile.relativePath(), inputFile);
   }
 
   @Override
   public InputFile inputFile(String relativePath) {
-    throw new UnsupportedOperationException("inputFile(String relativePath)");
+    return filesByRelativePathCache.get(relativePath).stream().findFirst().orElse(null);
   }
 
   @Override
