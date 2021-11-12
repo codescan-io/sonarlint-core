@@ -101,7 +101,7 @@ public class SonarQubeActiveRulesProvider extends ProviderAdapter {
     try {
       storageRule = storageRules.getRulesByKeyOrThrow(ruleKey.toString());
     } catch (IllegalArgumentException e) {
-      throw new StorageException("Unknown active rule in the quality profile of the project. Please update the SonarQube server binding.", e);
+      throw new StorageException("Unknown active rule in the quality profile of the project. Please update the CodeScan server binding.", e);
     }
 
     return new StorageActiveRuleAdapter(activeRule, storageRule);

@@ -49,8 +49,6 @@ class InputFileCacheTests {
     cache.doAdd(file2);
     assertThat(cache.inputFiles()).containsOnly(file1, file2);
 
-    assertThrows(UnsupportedOperationException.class, () -> cache.inputFile("file1.java"));
-
     assertThat(cache.getFilesByExtension("java")).containsOnly(file1);
     assertThat(cache.getFilesByExtension("")).containsOnly(file2);
     assertThat(cache.getFilesByName("file1.java")).containsOnly(file1);

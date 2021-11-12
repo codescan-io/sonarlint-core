@@ -69,7 +69,7 @@ class ServerVersionAndStatusCheckerTests {
 
     ValidationResult validationResult = futureResult.get();
     assertThat(validationResult.success()).isFalse();
-    assertThat(validationResult.message()).isEqualTo("SonarQube server has version 6.7. Version should be greater or equal to 7.9");
+    assertThat(validationResult.message()).isEqualTo("CodeScan server has version 6.7. Version should be greater or equal to 7.9");
   }
 
   @Test
@@ -78,7 +78,7 @@ class ServerVersionAndStatusCheckerTests {
 
     Throwable throwable = catchThrowable(() -> underTest.checkVersionAndStatus());
 
-    assertThat(throwable).hasMessage("SonarQube server has version 6.7. Version should be greater or equal to 7.9");
+    assertThat(throwable).hasMessage("CodeScan server has version 6.7. Version should be greater or equal to 7.9");
   }
 
   @Test

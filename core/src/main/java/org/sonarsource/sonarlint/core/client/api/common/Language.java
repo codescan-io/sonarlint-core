@@ -49,11 +49,13 @@ public enum Language {
   RUBY("ruby", "ruby", "Ruby", new String[] {".rb"}, "sonar.ruby.file.suffixes"),
   SCALA("scala", "sonarscala", "Scala", new String[] {".scala"}, "sonar.scala.file.suffixes"),
   SECRETS("secrets", "secrets", "Secrets", new String[0], "sonar.secrets.file.suffixes"),
+  SF("sf", "sf", "SF", new String[] {".cls", ".trigger"}, "sonar.sf.file.suffixes"),
   SWIFT("swift", "swift", "Swift", new String[] {".swift"}, "sonar.swift.file.suffixes"),
   TSQL("tsql", "tsql", "T-SQL", new String[] {".tsql"}, "sonar.tsql.file.suffixes"),
   TS("ts", "javascript", "TypeScript", new String[] {".ts", ".tsx"},
     "sonar.typescript.file.suffixes"),
   JSP("jsp", "web", "JSP", new String[] {".jsp", ".jspf", ".jspx"}, "sonar.jsp.file.suffixes"),
+  VF("vf", "vf", "VF", new String[] {".page", ".component", ".app", ".evt", ".cmp", ".intf"}, "sonar.vf.file.suffixes"),
   XML("xml", "xml", "XML", new String[] {".xml", ".xsd", ".xsl"}, "sonar.xml.file.suffixes"),
   // For ITs
   XOO("xoo", "xoo", "Xoo", new String[] {".xoo"}, "sonar.xoo.file.suffixes");

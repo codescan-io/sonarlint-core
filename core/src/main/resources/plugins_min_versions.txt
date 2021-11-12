@@ -1,4 +1,4 @@
-# Minimum supported analyzer versions: the first versions supported by SonarQube 7.9,
+# Minimum supported analyzer versions: the first versions supported by CodeScan 7.9,
 # as defined in https://github.com/SonarSource/sonar-update-center-properties
 abap=3.8.0.2034
 cobol=4.4.0.3403
@@ -19,3 +19,6 @@ tsql=1.4.0.3334
 typescript=1.9.0.3766
 web=3.1.0.1615
 xml=2.0.1.2020
+salesforce=4.3
+codescan=4.3
+codescanlang=4.3
