@@ -103,6 +103,11 @@
       <artifactId>sonar-plugin-api</artifactId>
       <version>${sonarqube.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.sonarsource.sonarqube</groupId>
+      <artifactId>sonar-plugin-api-impl</artifactId>
+      <version>${sonarqube.version}</version>
+    </dependency>
     <!-- For RulesDefinitionXmlLoader, can be removed after upgrading sonar-plugin-api to 9.0 (SONAR-14882) -->
     <dependency>
       <groupId>com.fasterxml.staxmate</groupId>
@@ -221,6 +226,78 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-slf4j-sonar-log</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>sonarlint-slf4j-sonar-log</artifactId>
+                  <version>${project.version}</version>
+                  <type>jar</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.outputDirectory}/</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-sonar-plugins</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.sonarsource.java</groupId>
+                  <artifactId>sonar-java-plugin</artifactId>
+                  <version>6.0.0.20538</version>
+                  <type>jar</type>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.sonarsource.sonarqube</groupId>
+                  <artifactId>sonar-xoo-plugin</artifactId>
+                  <version>${sonarqube.version}</version>
+                  <type>jar</type>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.sonarsource.javascript</groupId>
+                  <artifactId>sonar-javascript-plugin</artifactId>
+                  <version>6.5.0.13383</version>
+                  <type>jar</type>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.sonarsource.php</groupId>
+                  <artifactId>sonar-php-plugin</artifactId>
+                  <version>3.2.0.4868</version>
+                  <type>jar</type>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.sonarsource.python</groupId>
+                  <artifactId>sonar-python-plugin</artifactId>
+                  <version>1.14.0.3086</version>
+                  <type>jar</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}/plugins</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+              <stripVersion>false</stripVersion>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <executions>
           <execution>
@@ -330,6 +407,7 @@
             </Import-Package>
             <Export-Package>
               org.sonarsource.sonarlint.core.*;version="${project.version}",
+              org.sonar.api.batch.fs.internal.*,
               com.google.protobuf,
             </Export-Package>
             <Include-Resource>
