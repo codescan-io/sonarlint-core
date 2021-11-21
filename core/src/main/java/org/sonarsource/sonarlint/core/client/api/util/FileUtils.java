@@ -171,7 +171,7 @@ public class FileUtils {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
           if (!isHidden(file)) {
-            retry(() -> paths.add(toSonarQubePath(dir.relativize(file).toString())));
+            retry(() -> paths.add(toCodeScanPath(dir.relativize(file).toString())));
           }
           return FileVisitResult.CONTINUE;
         }
@@ -210,12 +210,12 @@ public class FileUtils {
   }
 
   /**
-   * Converts path to format used by SonarQube
+   * Converts path to format used by CodeScan
    *
    * @param path path string in the local OS
-   * @return SonarQube path
+   * @return CodeScan path
    */
-  public static String toSonarQubePath(String path) {
+  public static String toCodeScanPath(String path) {
     if (File.separatorChar != '/') {
       return path.replaceAll(PATH_SEPARATOR_PATTERN, "/");
     }
