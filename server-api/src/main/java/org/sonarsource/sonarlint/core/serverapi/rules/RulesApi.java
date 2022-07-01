@@ -75,7 +75,7 @@ public class RulesApi {
       Rules.SearchResponse response = loadFromStream(helper.get(getUrl(severity, enabledLanguageKeys, page, pageSize)));
       if (response.getTotal() > 10_000) {
         throw new IllegalStateException(
-          String.format("Found more than 10000 rules for severity '%s' in the SonarQube server, which is not supported by SonarLint.", severity));
+          String.format("Found more than 10000 rules for severity '%s' in the SonarQube server, which is not supported by CodeScan.", severity));
       }
       readPage(rulesByKey, activeRulesByQProfileKey, response);
       loaded += response.getPs();

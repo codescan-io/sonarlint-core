@@ -38,7 +38,7 @@ import org.sonarsource.sonarlint.core.client.api.common.analysis.ClientInputFile
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.sonarsource.sonarlint.core.client.api.util.FileUtils.toSonarQubePath;
+import static org.sonarsource.sonarlint.core.client.api.util.FileUtils.toCodeScanPath;
 
 class SonarLintInputFileTests {
 
@@ -51,7 +51,7 @@ class SonarLintInputFileTests {
 
     assertThat(file.contents()).isEqualTo("test string");
     assertThat(file.charset()).isEqualByComparingTo(StandardCharsets.UTF_8);
-    assertThat(file.absolutePath()).isEqualTo(toSonarQubePath(inputFile.getPath()));
+    assertThat(file.absolutePath()).isEqualTo(toCodeScanPath(inputFile.getPath()));
     assertThat(file.file()).isEqualTo(filePath.toFile());
     assertThat(file.path()).isEqualTo(filePath);
     assertThat(file.getClientInputFile()).isEqualTo(inputFile);

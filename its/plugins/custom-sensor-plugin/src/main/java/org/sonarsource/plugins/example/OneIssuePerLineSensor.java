@@ -1,5 +1,5 @@
 /*
- * Example Plugin for SonarQube
+ * Example Plugin for CodeScan
  * Copyright (C) 2016-2022 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *

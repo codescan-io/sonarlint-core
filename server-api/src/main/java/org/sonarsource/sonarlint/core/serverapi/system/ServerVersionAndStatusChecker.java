@@ -49,7 +49,7 @@ public class ServerVersionAndStatusChecker {
   }
 
   /**
-   * Checks SonarQube version against the minimum version supported by the library
+   * Checks CodeScan version against the minimum version supported by the library
    * @return ServerInfos
    * @throws UnsupportedServerException if version &lt; minimum supported version
    * @throws IllegalStateException If server is not ready
@@ -59,7 +59,7 @@ public class ServerVersionAndStatusChecker {
   }
 
   /**
-   * Checks SonarQube version against a provided minimum version
+   * Checks CodeScan version against a provided minimum version
    * @return ServerInfos
    * @throws UnsupportedServerException if version &lt; minimum supported version
    * @throws IllegalStateException If server is not ready

@@ -141,7 +141,7 @@ class PluginInfosLoaderTests {
 
     assertThat(underTest.load().values()).extracting(PluginInfo::getName, PluginInfo::isSkipped, p -> p.getSkipReason().orElse(null))
       .containsOnly(tuple("pluginkey", true, SkipReason.IncompatiblePluginApi.INSTANCE));
-    assertThat(logsWithoutStartStop()).contains("Plugin 'pluginkey' requires plugin API 99.9 while SonarLint supports only up to 8.9. Skip loading it.");
+    assertThat(logsWithoutStartStop()).contains("Plugin 'pluginkey' requires plugin API 99.9 while CodeScan supports only up to 8.9. Skip loading it.");
   }
 
   @Test
@@ -161,7 +161,7 @@ class PluginInfosLoaderTests {
     when(pluginIndex.references()).thenReturn(singletonList(fakePlugin));
 
     assertThat(underTest.load()).hasSize(0);
-    assertThat(logsWithoutStartStop()).contains("Plugin 'pluginkey' is not compatible with SonarLint. Skip loading it.");
+    assertThat(logsWithoutStartStop()).contains("Plugin 'pluginkey' is not compatible with CodeScan. Skip loading it.");
   }
 
   @Test
@@ -170,7 +170,7 @@ class PluginInfosLoaderTests {
     when(pluginIndex.references()).thenReturn(singletonList(fakePlugin));
 
     assertThat(underTest.load()).hasSize(0);
-    assertThat(logsWithoutStartStop()).contains("Plugin 'pluginkey' is not compatible with SonarLint. Skip loading it.");
+    assertThat(logsWithoutStartStop()).contains("Plugin 'pluginkey' is not compatible with CodeScan. Skip loading it.");
   }
 
   @Test

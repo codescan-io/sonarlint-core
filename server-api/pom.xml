@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-parent</artifactId>
-    <version>7.1-SNAPSHOT</version>
+    <version>7.1-CODESCAN</version>
   </parent>
   <artifactId>sonarlint-server-api</artifactId>
   <name>SonarLint Server API</name>

@@ -116,7 +116,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
 
   public StorageContainer getGlobalContainer() {
     if (storageContainer == null) {
-      throw new IllegalStateException("SonarLint Engine for connection '" + globalConfig.getConnectionId() + "' is stopped.");
+      throw new IllegalStateException("CodeScan Engine for connection '" + globalConfig.getConnectionId() + "' is stopped.");
     }
     return storageContainer;
   }
@@ -144,7 +144,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       LOG.debug(e.getMessage(), e);
       changeState(State.NEED_UPDATE);
     } catch (RuntimeException e) {
-      LOG.error("Unable to start the SonarLint engine", e);
+      LOG.error("Unable to start the CodeScan engine", e);
       changeState(State.UNKNOWN);
     } finally {
       rwl.writeLock().unlock();

@@ -171,7 +171,7 @@ public class ConnectedModeTest extends AbstractConnectedTest {
     adminWsClient = newAdminWsClient(ORCHESTRATOR);
     sonarUserHome = temp.newFolder().toPath();
 
-    adminWsClient.users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("SonarLint"));
+    adminWsClient.users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("CodeScan"));
 
     ORCHESTRATOR.getServer().provisionProject(PROJECT_KEY_JAVA, "Sample Java");
     ORCHESTRATOR.getServer().provisionProject(PROJECT_KEY_JAVA_PACKAGE, "Sample Java Package");
@@ -189,21 +189,21 @@ public class ConnectedModeTest extends AbstractConnectedTest {
     ORCHESTRATOR.getServer().provisionProject(PROJECT_KEY_SCALA, "Sample Scala");
     ORCHESTRATOR.getServer().provisionProject(PROJECT_KEY_XML, "Sample XML");
 
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA, "java", "SonarLint IT Java");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA_PACKAGE, "java", "SonarLint IT Java Package");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA_HOTSPOT, "java", "SonarLint IT Java Hotspot");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA_EMPTY, "java", "SonarLint IT Java Empty");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_PHP, "php", "SonarLint IT PHP");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVASCRIPT, "js", "SonarLint IT Javascript");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA_CUSTOM, "java", "SonarLint IT Java Custom");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_PYTHON, "py", "SonarLint IT Python");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_WEB, "web", "SonarLint IT Web");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA_CUSTOM_SENSOR, "java", "SonarLint IT Custom Sensor");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_RUBY, "ruby", "SonarLint IT Ruby");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_KOTLIN, "kotlin", "SonarLint IT Kotlin");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_SCALA, "scala", "SonarLint IT Scala");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_XML, "xml", "SonarLint IT XML");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_GLOBAL_EXTENSION, "xoo", "SonarLint IT Global Extension");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA, "java", "CodeScan IT Java");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA_PACKAGE, "java", "CodeScan IT Java Package");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA_HOTSPOT, "java", "CodeScan IT Java Hotspot");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA_EMPTY, "java", "CodeScan IT Java Empty");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_PHP, "php", "CodeScan IT PHP");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVASCRIPT, "js", "CodeScan IT Javascript");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA_CUSTOM, "java", "CodeScan IT Java Custom");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_PYTHON, "py", "CodeScan IT Python");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_WEB, "web", "CodeScan IT Web");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVA_CUSTOM_SENSOR, "java", "CodeScan IT Custom Sensor");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_RUBY, "ruby", "CodeScan IT Ruby");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_KOTLIN, "kotlin", "CodeScan IT Kotlin");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_SCALA, "scala", "CodeScan IT Scala");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_XML, "xml", "CodeScan IT XML");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_GLOBAL_EXTENSION, "xoo", "CodeScan IT Global Extension");
 
     // Build project to have bytecode
     ORCHESTRATOR.executeBuild(MavenBuild.create(new File("projects/sample-java/pom.xml")).setGoals("clean compile"));
@@ -567,13 +567,13 @@ public class ConnectedModeTest extends AbstractConnectedTest {
   @Test
   public void analysisTemplateRule() throws Exception {
     SearchRequest searchReq = new SearchRequest();
-    searchReq.setQualityProfile("SonarLint IT Java");
+    searchReq.setQualityProfile("CodeScan IT Java");
     searchReq.setProject(PROJECT_KEY_JAVA);
     searchReq.setDefaults("false");
     SearchWsResponse search = adminWsClient.qualityprofiles().search(searchReq);
     QualityProfile qp = null;
     for (QualityProfile q : search.getProfilesList()) {
-      if (q.getName().equals("SonarLint IT Java")) {
+      if (q.getName().equals("CodeScan IT Java")) {
         qp = q;
       }
     }
@@ -698,12 +698,12 @@ public class ConnectedModeTest extends AbstractConnectedTest {
     setSettingsMultiValue(null, "sonar.inclusions", "**/*");
     // Activate a new rule
     SearchWsResponse response = newAdminWsClient(ORCHESTRATOR).qualityprofiles().search(new SearchRequest().setLanguage("java"));
-    String profileKey = response.getProfilesList().stream().filter(p -> p.getName().equals("SonarLint IT Java")).findFirst().get().getKey();
+    String profileKey = response.getProfilesList().stream().filter(p -> p.getName().equals("CodeScan IT Java")).findFirst().get().getKey();
     adminWsClient.qualityprofiles().activateRule(new ActivateRuleRequest().setKey(profileKey).setRule(javaRuleKey("S1228")));
 
     result = engine.checkIfGlobalStorageNeedUpdate(serverConfig, sqHttpClient(), null);
     assertThat(result.needUpdate()).isTrue();
-    assertThat(result.changelog()).containsOnly("Global settings updated", "Quality profile 'SonarLint IT Java' for language 'Java' updated");
+    assertThat(result.changelog()).containsOnly("Global settings updated", "Quality profile 'CodeScan IT Java' for language 'Java' updated");
 
     result = engine.checkIfProjectStorageNeedUpdate(serverConfig, sqHttpClient(), PROJECT_KEY_JAVA, null);
     assertThat(result.needUpdate()).isFalse();

@@ -199,7 +199,7 @@ public class ConnectedIssueMediumTest {
       fail("Expected exception");
     } catch (Exception e) {
       assertThat(e).isInstanceOf(StorageException.class)
-        .hasMessage("Stored data for project 'stale_module' is stale because it was created with a different version of SonarLint. Please update the binding.");
+        .hasMessage("Stored data for project 'stale_module' is stale because it was created with a different version of CodeScan. Please update the binding.");
     }
   }
 

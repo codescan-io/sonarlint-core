@@ -78,7 +78,7 @@ public class ConnectedFileMatchingTest extends AbstractConnectedTest {
 
   @BeforeClass
   public static void prepare() {
-    newAdminWsClient(ORCHESTRATOR).users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("SonarLint"));
+    newAdminWsClient(ORCHESTRATOR).users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("CodeScan"));
 
     // Project has 5 modules: B, B/B1, B/B2, A, A/A1 and A/A2
     analyzeMavenProject("multi-modules-sample");

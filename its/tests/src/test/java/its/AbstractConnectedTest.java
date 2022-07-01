@@ -58,7 +58,7 @@ public abstract class AbstractConnectedTest {
   protected static final String SONARLINT_PWD = "sonarlintpwd";
 
   protected static final OkHttpClient CLIENT_NO_AUTH = new OkHttpClient.Builder()
-    .addNetworkInterceptor(new UserAgentInterceptor("SonarLint ITs"))
+    .addNetworkInterceptor(new UserAgentInterceptor("CodeScan ITs"))
     .build();
 
   private static final OkHttpClient SQ_CLIENT = CLIENT_NO_AUTH.newBuilder()

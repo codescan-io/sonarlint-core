@@ -114,7 +114,7 @@ public interface ConnectedSonarLintEngine extends SonarLintEngine {
   Map<String, ServerProject> allProjectsByKey();
 
   /**
-   * Tries to find the best way to match files in a IDE project with files in the sonarqube project identified
+   * Tries to find the best way to match files in a IDE project with files in the codescan project identified
    * with {@code projectKey}, by finding file path prefixes to be used later in other interactions with the project storage.
    * Requires the storage of the project to be up to date.
    *

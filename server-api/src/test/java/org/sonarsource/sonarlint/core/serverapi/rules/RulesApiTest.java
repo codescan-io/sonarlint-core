@@ -58,7 +58,7 @@ class RulesApiTest {
     RulesApi rulesApi = new RulesApi(mockServer.serverApiHelper());
 
     IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> rulesApi.getAll(enabledLanguageKeys, progress));
-    assertThat(thrown).hasMessage("Found more than 10000 rules for severity 'MAJOR' in the SonarQube server, which is not supported by SonarLint.");
+    assertThat(thrown).hasMessage("Found more than 10000 rules for severity 'MAJOR' in the SonarQube server, which is not supported by CodeScan.");
   }
 
   @Test

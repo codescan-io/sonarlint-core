@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Describes the link between a project in the IDE and a project in SonarQube.
+ * Describes the link between a project in the IDE and a project in CodeScan.
  *
  * @since 3.10
  */
