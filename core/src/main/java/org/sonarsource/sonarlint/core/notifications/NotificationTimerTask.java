@@ -90,7 +90,7 @@ class NotificationTimerTask extends TimerTask {
         });
       }
     } catch (Exception e) {
-      LOG.warn("Failed to request SonarLint notifications", e);
+      LOG.warn("Failed to request CodeScan notifications", e);
     }
   }
 

@@ -82,7 +82,7 @@ public class ConnectedModeExcludeByVersionTest extends AbstractConnectedTest {
   public void prepare() throws Exception {
     sonarUserHome = temp.newFolder().toPath();
 
-    newAdminWsClient(ORCHESTRATOR).users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("SonarLint"));
+    newAdminWsClient(ORCHESTRATOR).users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("CodeScan"));
   }
 
   private ConnectedSonarLintEngine createEngine(Consumer<ConnectedGlobalConfiguration.Builder> configurator) {

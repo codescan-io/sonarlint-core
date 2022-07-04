@@ -91,12 +91,12 @@ public class ConnectedModeRequirementsTest extends AbstractConnectedTest {
   public static void prepare() throws Exception {
     sonarUserHome = temp.newFolder().toPath();
 
-    newAdminWsClient(ORCHESTRATOR).users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("SonarLint"));
+    newAdminWsClient(ORCHESTRATOR).users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("CodeScan"));
 
     ORCHESTRATOR.getServer().provisionProject(PROJECT_KEY_JAVASCRIPT, "Sample Javascript");
     ORCHESTRATOR.getServer().provisionProject(PROJECT_KEY_TYPESCRIPT, "Sample Typescript");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVASCRIPT, "js", "SonarLint IT Javascript");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_TYPESCRIPT, "ts", "SonarLint IT Typescript");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_JAVASCRIPT, "js", "CodeScan IT Javascript");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY_TYPESCRIPT, "ts", "CodeScan IT Typescript");
   }
 
   @Before
@@ -132,7 +132,7 @@ public class ConnectedModeRequirementsTest extends AbstractConnectedTest {
   public void dontDownloadPluginIfNotEnabledLanguage() {
     engine = createEngine(e -> e.addEnabledLanguages(Language.JS, Language.PHP, Language.TS));
     engine.update(endpointParams(ORCHESTRATOR), sqHttpClient(), null);
-    assertThat(logs).contains("Code analyzer 'java' is not compatible with SonarLint. Skip downloading it.");
+    assertThat(logs).contains("Code analyzer 'java' is not compatible with CodeScan. Skip downloading it.");
     assertThat(engine.getPluginDetails().stream().map(PluginDetails::key))
       .containsOnly(Language.JS.getPluginKey(), Language.PHP.getPluginKey(), OLD_SONARTS_PLUGIN_KEY, CUSTOM_JAVA_PLUGIN_KEY);
   }
@@ -198,7 +198,7 @@ public class ConnectedModeRequirementsTest extends AbstractConnectedTest {
       .setExtraProperties(extraProperties)
       .addEnabledLanguages(Language.JS, Language.PHP));
     engine.update(endpointParams(ORCHESTRATOR), sqHttpClient(), null);
-    assertThat(logs).doesNotContain("Code analyzer 'SonarJS' is transitively excluded in this version of SonarLint. Skip loading it.");
+    assertThat(logs).doesNotContain("Code analyzer 'SonarJS' is transitively excluded in this version of CodeScan. Skip loading it.");
     assertThat(engine.getPluginDetails().stream().map(PluginDetails::key)).contains(Language.JS.getPluginKey());
 
     engine.updateProject(endpointParams(ORCHESTRATOR), sqHttpClient(), PROJECT_KEY_TYPESCRIPT, false, null,null);

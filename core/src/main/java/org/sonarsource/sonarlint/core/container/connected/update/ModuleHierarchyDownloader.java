@@ -32,7 +32,7 @@ import org.sonarsource.sonarlint.core.serverapi.component.ComponentPath;
 import org.sonarsource.sonarlint.core.serverapi.component.ComponentApi;
 import org.sonarsource.sonarlint.core.util.ProgressWrapper;
 
-import static org.sonarsource.sonarlint.core.client.api.util.FileUtils.toSonarQubePath;
+import static org.sonarsource.sonarlint.core.client.api.util.FileUtils.toCodeScanPath;
 
 public class ModuleHierarchyDownloader {
   static final int PAGE_SIZE = 500;
@@ -78,6 +78,6 @@ public class ModuleHierarchyDownloader {
       c = ancestors.get(c);
     } while (c != null);
 
-    return toSonarQubePath(path.toString());
+    return toCodeScanPath(path.toString());
   }
 }

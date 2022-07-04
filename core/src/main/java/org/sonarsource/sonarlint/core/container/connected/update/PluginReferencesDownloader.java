@@ -81,7 +81,7 @@ public class PluginReferencesDownloader {
       return true;
     }
     if (!analyzer.sonarlintCompatible()) {
-      LOG.debug("Code analyzer '{}' is not compatible with SonarLint. Skip downloading it.", analyzer.key());
+      LOG.debug("Code analyzer '{}' is not compatible with CodeScan. Skip downloading it.", analyzer.key());
       return false;
     } else if (!analyzer.versionSupported()) {
       LOG.debug("Code analyzer '{}' version '{}' is not supported (minimal version is '{}'). Skip downloading it.",
@@ -97,7 +97,7 @@ public class PluginReferencesDownloader {
     float refCount = refs.getReferenceList().size();
     for (PluginReference ref : refs.getReferenceList()) {
       if (configuration.getEmbeddedPluginUrlsByKey().containsKey(ref.getKey())) {
-        LOG.debug("Code analyzer '{}' is embedded in SonarLint. Skip downloading it.", ref.getKey());
+        LOG.debug("Code analyzer '{}' is embedded in CodeScan. Skip downloading it.", ref.getKey());
         continue;
       }
       progress.setProgressAndCheckCancel("Loading analyzer " + ref.getKey(), i / refCount);

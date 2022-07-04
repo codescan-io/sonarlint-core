@@ -86,7 +86,7 @@ public class TaintVulnerabilitiesDownloadTest extends AbstractConnectedTest {
     adminWsClient.users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("SonarLint"));
 
     ORCHESTRATOR.getServer().provisionProject(PROJECT_KEY, "Java With Taint Vulnerabilities");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY, "java", "SonarLint Taint Java");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY, "java", "CodeScan Taint Java");
 
     analyzeMavenProject(PROJECT_KEY);
 

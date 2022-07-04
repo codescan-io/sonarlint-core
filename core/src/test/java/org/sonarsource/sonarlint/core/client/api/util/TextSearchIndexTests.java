@@ -35,7 +35,7 @@ class TextSearchIndexTests {
 
   @Test
   void testTokenizer() {
-    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij SonarLint Intellij");
+    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij CodeScan Intellij");
     index.index("o2", "org.codehaus.sonar-plugins:sonar-scm-jazzrtc-plugin Jazz RTC SCM Plugin");
 
     assertThat(index.getTokens()).contains("org", "sonarsource", "sonarlint", "intellij",
@@ -44,7 +44,7 @@ class TextSearchIndexTests {
 
   @Test
   void testSearch() {
-    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij SonarLint Intellij");
+    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij CodeScan Intellij");
     index.index("o2", "org.codehaus.sonar-plugins:sonar-scm-jazzrtc-plugin Jazz RTC SCM Plugin");
 
     assertThat(index.search("org").keySet()).containsOnly("o1", "o2");
@@ -60,7 +60,7 @@ class TextSearchIndexTests {
   void testSearchNoTerms() {
     assertThat(index.size()).isEqualTo(0);
     assertThat(index.isEmpty()).isTrue();
-    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij SonarLint Intellij");
+    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij CodeScan Intellij");
     index.index("o2", "org.codehaus.sonar-plugins:sonar-scm-jazzrtc-plugin Jazz RTC SCM Plugin");
 
     assertThat(index.size()).isEqualTo(2);
@@ -71,7 +71,7 @@ class TextSearchIndexTests {
 
   @Test
   void clear() {
-    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij SonarLint Intellij");
+    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij CodeScan Intellij");
     index.index("o2", "org.codehaus.sonar-plugins:sonar-scm-jazzrtc-plugin Jazz RTC SCM Plugin");
 
     index.clear();
@@ -80,7 +80,7 @@ class TextSearchIndexTests {
     assertThat(index.search("org")).isEmpty();
 
     // no errors
-    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij SonarLint Intellij");
+    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij CodeScan Intellij");
     index.index("o2", "org.codehaus.sonar-plugins:sonar-scm-jazzrtc-plugin Jazz RTC SCM Plugin");
   }
 
@@ -94,7 +94,7 @@ class TextSearchIndexTests {
 
   @Test
   void testMultiTermPositionalSearch() {
-    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij SonarLint Intellij");
+    index.index("o1", "org.sonarsource.sonarlint.intellij:sonarlint-intellij CodeScan Intellij");
     index.index("o2", "org.codehaus.sonar-plugins:sonar-scm-jazzrtc-plugin Jazz RTC SCM Plugin");
 
     assertThat(index.search("sonar-plugins").keySet()).contains("o2");

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-parent</artifactId>
-    <version>7.1-SNAPSHOT</version>
+    <version>7.1-CODESCAN</version>
   </parent>
   <artifactId>sonarlint-core</artifactId>
   <packaging>bundle</packaging>
@@ -444,46 +444,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>commercial</id>
-      <activation>
-        <property>
-          <name>commercial</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-commercial-plugins</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>com.sonarsource.cpp</groupId>
-                      <artifactId>sonar-cfamily-plugin</artifactId>
-                      <version>6.18.0.29274</version>
-                      <type>jar</type>
-                    </artifactItem>
-                  </artifactItems>
-                  <outputDirectory>${project.build.directory}/plugins</outputDirectory>
-                  <overWriteReleases>false</overWriteReleases>
-                  <overWriteSnapshots>true</overWriteSnapshots>
-                  <stripVersion>false</stripVersion>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

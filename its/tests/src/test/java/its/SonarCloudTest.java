@@ -156,18 +156,18 @@ public class SonarCloudTest extends AbstractConnectedTest {
     provisionProject(PROJECT_KEY_SCALA, "Sample Scala");
     provisionProject(PROJECT_KEY_XML, "Sample XML");
 
-    associateProjectToQualityProfile(PROJECT_KEY_JAVA, "java", "SonarLint IT Java");
-    associateProjectToQualityProfile(PROJECT_KEY_JAVA_PACKAGE, "java", "SonarLint IT Java Package");
-    associateProjectToQualityProfile(PROJECT_KEY_JAVA_HOTSPOT, "java", "SonarLint IT Java Hotspot");
-    associateProjectToQualityProfile(PROJECT_KEY_JAVA_EMPTY, "java", "SonarLint IT Java Empty");
-    associateProjectToQualityProfile(PROJECT_KEY_PHP, "php", "SonarLint IT PHP");
-    associateProjectToQualityProfile(PROJECT_KEY_JAVASCRIPT, "js", "SonarLint IT Javascript");
-    associateProjectToQualityProfile(PROJECT_KEY_PYTHON, "py", "SonarLint IT Python");
-    associateProjectToQualityProfile(PROJECT_KEY_WEB, "web", "SonarLint IT Web");
-    associateProjectToQualityProfile(PROJECT_KEY_RUBY, "ruby", "SonarLint IT Ruby");
-    associateProjectToQualityProfile(PROJECT_KEY_KOTLIN, "kotlin", "SonarLint IT Kotlin");
-    associateProjectToQualityProfile(PROJECT_KEY_SCALA, "scala", "SonarLint IT Scala");
-    associateProjectToQualityProfile(PROJECT_KEY_XML, "xml", "SonarLint IT XML");
+    associateProjectToQualityProfile(PROJECT_KEY_JAVA, "java", "CodeScan IT Java");
+    associateProjectToQualityProfile(PROJECT_KEY_JAVA_PACKAGE, "java", "CodeScan IT Java Package");
+    associateProjectToQualityProfile(PROJECT_KEY_JAVA_HOTSPOT, "java", "CodeScan IT Java Hotspot");
+    associateProjectToQualityProfile(PROJECT_KEY_JAVA_EMPTY, "java", "CodeScan IT Java Empty");
+    associateProjectToQualityProfile(PROJECT_KEY_PHP, "php", "CodeScan IT PHP");
+    associateProjectToQualityProfile(PROJECT_KEY_JAVASCRIPT, "js", "CodeScan IT Javascript");
+    associateProjectToQualityProfile(PROJECT_KEY_PYTHON, "py", "CodeScan IT Python");
+    associateProjectToQualityProfile(PROJECT_KEY_WEB, "web", "CodeScan IT Web");
+    associateProjectToQualityProfile(PROJECT_KEY_RUBY, "ruby", "CodeScan IT Ruby");
+    associateProjectToQualityProfile(PROJECT_KEY_KOTLIN, "kotlin", "CodeScan IT Kotlin");
+    associateProjectToQualityProfile(PROJECT_KEY_SCALA, "scala", "CodeScan IT Scala");
+    associateProjectToQualityProfile(PROJECT_KEY_XML, "xml", "CodeScan IT XML");
 
     // Build project to have bytecode
     String line = "mvn clean compile";
@@ -477,7 +477,7 @@ public class SonarCloudTest extends AbstractConnectedTest {
 
     // Toggle a rule to ensure quality profile date is changed
     SearchWsResponse response = adminWsClient.qualityprofiles().search(new SearchRequest().setOrganization(SONARCLOUD_ORGANIZATION).setLanguage("java"));
-    String profileKey = response.getProfilesList().stream().filter(p -> p.getName().equals("SonarLint IT Java")).findFirst().get().getKey();
+    String profileKey = response.getProfilesList().stream().filter(p -> p.getName().equals("CodeScan IT Java")).findFirst().get().getKey();
     adminWsClient.qualityprofiles().deactivateRule(new DeactivateRuleRequest()
       .setKey(profileKey)
       .setRule("java:S1228"));
@@ -487,7 +487,7 @@ public class SonarCloudTest extends AbstractConnectedTest {
 
     result = engine.checkIfGlobalStorageNeedUpdate(serverConfig, new SonarLintHttpClientOkHttpImpl(SC_CLIENT), null);
     assertThat(result.needUpdate()).isTrue();
-    assertThat(result.changelog()).contains("Quality profile 'SonarLint IT Java' for language 'Java' updated");
+    assertThat(result.changelog()).contains("Quality profile 'CodeScan IT Java' for language 'Java' updated");
 
     result = engine.checkIfProjectStorageNeedUpdate(serverConfig, new SonarLintHttpClientOkHttpImpl(SC_CLIENT), projectKey(PROJECT_KEY_JAVA), null);
     assertThat(result.needUpdate()).isFalse();
@@ -517,7 +517,7 @@ public class SonarCloudTest extends AbstractConnectedTest {
     Optional<ServerOrganization> org = helper.getOrganization(SONARCLOUD_ORGANIZATION, progress);
     assertThat(org).isPresent();
     assertThat(org.get().getKey()).isEqualTo(SONARCLOUD_ORGANIZATION);
-    assertThat(org.get().getName()).isEqualTo("SonarLint IT Tests");
+    assertThat(org.get().getName()).isEqualTo("CodeScan IT Tests");
   }
 
   @Test

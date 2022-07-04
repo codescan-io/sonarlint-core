@@ -40,7 +40,7 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 /**
  * Loads the plugin JAR files by creating the appropriate classloaders and by instantiating
  * the entry point classes as defined in manifests. It assumes that JAR files are compatible with current
- * environment (minimal sonarqube version, compatibility between plugins, ...):
+ * environment (minimal codescan version, compatibility between plugins, ...):
  * <ul>
  *   <li>server verifies compatibility of JARs before deploying them at startup (see ServerPluginRepository)</li>
  *   <li>batch loads only the plugins deployed on server (see BatchPluginRepository)</li>

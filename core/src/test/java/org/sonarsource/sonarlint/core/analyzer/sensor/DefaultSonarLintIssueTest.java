@@ -85,7 +85,7 @@ public class DefaultSonarLintIssueTest {
 
     assertThatExceptionOfType(UnsupportedOperationException.class)
       .isThrownBy(() -> issue.gap())
-      .withMessage("No gap in SonarLint");
+      .withMessage("No gap in CodeScan");
 
     NewQuickFix newQuickFix = issue.newQuickFix().message("Fix this issue");
     NewInputFileEdit newInputFileEdit = newQuickFix.newInputFileEdit().on(inputFile);

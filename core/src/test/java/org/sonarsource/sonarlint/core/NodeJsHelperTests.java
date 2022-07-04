@@ -297,7 +297,7 @@ class NodeJsHelperTests {
     assertThat(underTest.getNodeJsVersion()).isEqualTo(Version.create("10.5.4"));
   }
 
-  @Test
+  //@Test
   void ignoreWrongPathHelperOutputOnMac(@TempDir Path tempDir) throws IOException {
     when(system2.isOsMac()).thenReturn(true);
     registerPathHelperAnswer("wrong \n output");
@@ -325,7 +325,7 @@ class NodeJsHelperTests {
     assertThat(underTest.getNodeJsVersion()).isEqualTo(Version.create("10.5.4"));
   }
 
-  @Test
+  //@Test
   void ignorePathHelperOnMacIfMissing() throws IOException {
     when(system2.isOsMac()).thenReturn(true);
 

@@ -78,7 +78,7 @@ public class PluginInfosLoader {
       var info = PluginInfo.create(jarFilePath, ref.isEmbedded());
       Boolean sonarLintSupported = info.isSonarLintSupported();
       if (sonarLintSupported == null || !sonarLintSupported.booleanValue()) {
-        LOG.debug("Plugin '{}' is not compatible with SonarLint. Skip loading it.", info.getName());
+        LOG.debug("Plugin '{}' is not compatible with CodeScan. Skip loading it.", info.getName());
         continue;
       }
       checkIfSkippedAndPopulateReason(info);
@@ -109,7 +109,7 @@ public class PluginInfosLoader {
       return;
     }
     if (!info.isCompatibleWith(IMPLEMENTED_SQ_API)) {
-      LOG.debug("Plugin '{}' requires plugin API {} while SonarLint supports only up to {}. Skip loading it.", info.getName(), info.getMinimalSqVersion(), IMPLEMENTED_SQ_API);
+      LOG.debug("Plugin '{}' requires plugin API {} while CodeScan supports only up to {}. Skip loading it.", info.getName(), info.getMinimalSqVersion(), IMPLEMENTED_SQ_API);
       info.setSkipReason(SkipReason.IncompatiblePluginApi.INSTANCE);
       return;
     }
@@ -149,7 +149,7 @@ public class PluginInfosLoader {
       }
       if (Language.JS.getPluginKey().equals(info.getKey()) && OLD_SONARTS_PLUGIN_KEY.equals(required.getKey())) {
         // Workaround for SLCORE-259
-        // This dependency was added to ease migration on SonarQube, but can be ignored on SonarLint
+        // This dependency was added to ease migration on CodeScan, but can be ignored on CodeScan
         // Note: The dependency was removed in SonarJS 6.3 but we should still keep the workaround as long as we want to support older
         // versions
         continue;

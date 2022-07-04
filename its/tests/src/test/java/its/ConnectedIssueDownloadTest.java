@@ -86,10 +86,10 @@ public class ConnectedIssueDownloadTest extends AbstractConnectedTest {
   @BeforeClass
   public static void prepare() {
     WsClient adminWsClient = newAdminWsClient(ORCHESTRATOR);
-    adminWsClient.users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("SonarLint"));
+    adminWsClient.users().create(new CreateRequest().setLogin(SONARLINT_USER).setPassword(SONARLINT_PWD).setName("CodeScan"));
 
     ORCHESTRATOR.getServer().provisionProject(PROJECT_KEY, "Sample Xoo");
-    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY, "xoo", "SonarLint IT Xoo");
+    ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY, "xoo", "CodeScan IT Xoo");
 
     analyzeProject("sample-xoo-v1");
     // Second analysis with less issues to have closed issues

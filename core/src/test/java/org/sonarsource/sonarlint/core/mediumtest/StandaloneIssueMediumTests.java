@@ -477,7 +477,7 @@ class StandaloneIssueMediumTests {
     ClientInputFile inputFile = prepareInputFile("foo/Foo.java",
       "package foo;\n"
         + "public class Foo {\n"
-        + "  String ip = \"192.168.12.42\"; // Hotspots should not be reported in SonarLint\n"
+        + "  String ip = \"192.168.12.42\"; // Hotspots should not be reported in CodeScan\n"
         + "}",
       false);
 

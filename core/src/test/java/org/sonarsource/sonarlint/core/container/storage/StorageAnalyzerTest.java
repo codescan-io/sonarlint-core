@@ -94,7 +94,7 @@ class StorageAnalyzerTest {
 
     assertThat(exception)
       .isInstanceOf(StorageException.class)
-      .hasMessage("Stored data for project 'module1' is stale because it was created with a different version of SonarLint. Please update the binding.");
+      .hasMessage("Stored data for project 'module1' is stale because it was created with a different version of CodeScan. Please update the binding.");
   }
 
 }

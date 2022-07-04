@@ -73,8 +73,6 @@ public class ActiveRulesStore {
       if (Files.exists(activeRulesPath)) {
         return ProtobufUtil.readFile(activeRulesPath, Sonarlint.ActiveRules.parser());
       } else {
-        LOG.info("Unable to find the quality profile {} in the SonarLint storage. You should update the storage, or ignore this message if the profile is empty.",
-          qualityProfileKey);
         return Sonarlint.ActiveRules.newBuilder().build();
       }
     })));

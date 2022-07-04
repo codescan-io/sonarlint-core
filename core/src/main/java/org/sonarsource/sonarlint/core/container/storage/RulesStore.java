@@ -87,7 +87,7 @@ public class RulesStore {
       if (Files.exists(rulesPath)) {
         return ProtobufUtil.readFile(rulesPath, Sonarlint.Rules.parser());
       } else {
-        LOG.info("Unable to find rules in the SonarLint storage. You should update the storage.");
+        LOG.info("Unable to find rules in the CodeScan storage. You should update the storage.");
         return Sonarlint.Rules.newBuilder().build();
       }
     }));

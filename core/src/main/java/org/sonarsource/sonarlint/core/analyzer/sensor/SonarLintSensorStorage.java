@@ -79,7 +79,7 @@ public class SonarLintSensorStorage implements SensorStorage {
   @Override
   public void store(Issue issue) {
     if (!(issue instanceof DefaultSonarLintIssue)) {
-      throw new IllegalArgumentException("Trying to store a non-SonarLint issue?");
+      throw new IllegalArgumentException("Trying to store a non-CodeScan issue?");
     }
     DefaultSonarLintIssue sonarLintIssue = (DefaultSonarLintIssue) issue;
     var inputComponent = sonarLintIssue.primaryLocation().inputComponent();

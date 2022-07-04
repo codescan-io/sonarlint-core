@@ -113,7 +113,7 @@ public class PluginClassloaderFactory {
   }
 
   /**
-   * The resources (packages) that API exposes to plugins. Other core classes (SonarQube, MyBatis, ...)
+   * The resources (packages) that API exposes to plugins. Other core classes (CodeScan, MyBatis, ...)
    * can't be accessed.
    * <p>To sum-up, these are the classes packaged in sonar-plugin-api.jar or available as
    * a transitive dependency of sonar-plugin-api</p>
