@@ -21,6 +21,8 @@ package org.sonarsource.sonarlint.core.container.analysis.filesystem;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
+
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -53,7 +55,12 @@ public class InputFileCache implements FileSystem.Index {
 
   @Override
   public InputFile inputFile(String relativePath) {
-    throw new UnsupportedOperationException("inputFile(String relativePath)");
+    for (Iterator<InputFile> it = inputFileCache.iterator(); it.hasNext(); ) {
+      InputFile inputFile = it.next();
+      if (inputFile.relativePath().equals(relativePath))
+        return inputFile;
+    }
+    return null;
   }
 
   @Override

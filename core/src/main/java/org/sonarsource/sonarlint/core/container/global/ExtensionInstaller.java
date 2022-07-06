@@ -33,6 +33,7 @@ import org.sonarsource.sonarlint.core.client.api.common.AbstractGlobalConfigurat
 import org.sonarsource.sonarlint.core.client.api.common.Language;
 import org.sonarsource.sonarlint.core.container.ComponentContainer;
 import org.sonarsource.sonarlint.core.container.ContainerLifespan;
+import org.sonarsource.sonarlint.core.container.connected.validate.PluginVersionChecker;
 import org.sonarsource.sonarlint.core.plugin.PluginInfo;
 import org.sonarsource.sonarlint.core.plugin.PluginRepository;
 import org.sonarsource.sonarlint.plugin.api.SonarLintRuntime;
@@ -45,12 +46,14 @@ public class ExtensionInstaller {
   private final PluginRepository pluginRepository;
   private final Configuration bootConfiguration;
   private final Set<Language> enabledLanguages;
+  private final PluginVersionChecker pluginVersionChecker;
 
-  public ExtensionInstaller(SonarLintRuntime sonarRuntime, PluginRepository pluginRepository, Configuration bootConfiguration, AbstractGlobalConfiguration globalConfig) {
+  public ExtensionInstaller(SonarLintRuntime sonarRuntime, PluginRepository pluginRepository, Configuration bootConfiguration, AbstractGlobalConfiguration globalConfig, PluginVersionChecker pluginVersionChecker) {
     this.sonarRuntime = sonarRuntime;
     this.pluginRepository = pluginRepository;
     this.bootConfiguration = bootConfiguration;
     this.enabledLanguages = globalConfig.getEnabledLanguages();
+    this.pluginVersionChecker = pluginVersionChecker;
   }
 
   public void installEmbeddedOnly(ComponentContainer container, ContainerLifespan lifespan) {
@@ -101,7 +104,7 @@ public class ExtensionInstaller {
       LOG.debug("TypeScript sensor excluded");
       return false;
     }
-    return Language.containsPlugin(pluginInfo.getKey()) || isNotSensor(extension);
+    return pluginVersionChecker.getMinimumVersion(pluginInfo.getKey()) != null || isNotSensor(extension);
   }
 
   private static ContainerLifespan getSonarLintSideLifespan(Object extension) {
