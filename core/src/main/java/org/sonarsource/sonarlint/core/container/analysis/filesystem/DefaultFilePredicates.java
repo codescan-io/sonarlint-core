@@ -56,7 +56,7 @@ public class DefaultFilePredicates implements FilePredicates {
 
   @Override
   public FilePredicate hasAbsolutePath(String s) {
-    throw new UnsupportedOperationException("hasAbsolutePath");
+    return new AbsolutePathPredicate(s);
   }
 
   /**
@@ -64,7 +64,7 @@ public class DefaultFilePredicates implements FilePredicates {
    */
   @Override
   public FilePredicate hasRelativePath(String s) {
-    throw new UnsupportedOperationException("hasRelativePath");
+    return new RelativePathPredicate(s);
   }
 
   @Override
@@ -104,7 +104,11 @@ public class DefaultFilePredicates implements FilePredicates {
 
   @Override
   public FilePredicate hasPath(String s) {
-    throw new UnsupportedOperationException("hasPath");
+    File file = new File(s);
+    if (file.isAbsolute()) {
+      return hasAbsolutePath(s);
+    }
+    return hasRelativePath(s);
   }
 
   @Override
@@ -188,7 +192,7 @@ public class DefaultFilePredicates implements FilePredicates {
 
   @Override
   public FilePredicate hasStatus(Status status) {
-    throw new UnsupportedOperationException("hasStatus");
+    return new StatusPredicate(status);
   }
 
   @Override

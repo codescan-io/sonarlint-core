@@ -37,6 +37,7 @@ import org.sonarsource.sonarlint.core.client.api.connected.ConnectedGlobalConfig
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneGlobalConfiguration;
 import org.sonarsource.sonarlint.core.container.ComponentContainer;
 import org.sonarsource.sonarlint.core.container.ContainerLifespan;
+import org.sonarsource.sonarlint.core.container.connected.validate.PluginVersionChecker;
 import org.sonarsource.sonarlint.core.plugin.PluginInfo;
 import org.sonarsource.sonarlint.core.plugin.PluginRepository;
 import org.sonarsource.sonarlint.plugin.api.SonarLintRuntime;
@@ -62,12 +63,13 @@ class ExtensionInstallerTests {
   private ExtensionInstaller underTest;
   private PluginRepository pluginRepository;
   private ComponentContainer container;
+  private PluginVersionChecker pluginVersionChecker;
 
   @BeforeEach
   public void prepare() {
     pluginRepository = mock(PluginRepository.class);
     container = mock(ComponentContainer.class);
-    underTest = new ExtensionInstaller(RUNTIME, pluginRepository, CONFIG, StandaloneGlobalConfiguration.builder().build());
+    underTest = new ExtensionInstaller(RUNTIME, pluginRepository, CONFIG, StandaloneGlobalConfiguration.builder().build(), pluginVersionChecker);
   }
 
   @Test
@@ -187,7 +189,7 @@ class ExtensionInstallerTests {
     when(pluginRepository.getPluginInstance("javascript")).thenReturn(new FakePlugin());
 
     underTest = new ExtensionInstaller(RUNTIME, pluginRepository, CONFIG, ConnectedGlobalConfiguration.builder()
-      .addEnabledLanguage(Language.TS).build());
+      .addEnabledLanguage(Language.TS).build(), pluginVersionChecker);
 
     underTest.install(container, ContainerLifespan.ANALYSIS);
 
@@ -203,7 +205,7 @@ class ExtensionInstallerTests {
     when(pluginRepository.getPluginInstance("foo")).thenReturn(new FakePlugin());
 
     underTest = new ExtensionInstaller(RUNTIME, pluginRepository, CONFIG, ConnectedGlobalConfiguration.builder()
-      .addEnabledLanguage(Language.JS).build());
+      .addEnabledLanguage(Language.JS).build(), pluginVersionChecker);
 
     underTest.install(container, ContainerLifespan.ANALYSIS);
 
@@ -221,7 +223,7 @@ class ExtensionInstallerTests {
     when(pluginRepository.getPluginInstance("javascript")).thenReturn(new FakePlugin());
 
     underTest = new ExtensionInstaller(RUNTIME, pluginRepository, CONFIG, StandaloneGlobalConfiguration.builder()
-      .addEnabledLanguage(Language.TS).build());
+      .addEnabledLanguage(Language.TS).build(), pluginVersionChecker);
 
     underTest.install(container, ContainerLifespan.ANALYSIS);
 
@@ -242,7 +244,7 @@ class ExtensionInstallerTests {
     when(pluginRepository.getPluginInstance("notembedded")).thenReturn(new FakePlugin());
     when(pluginRepository.getPluginInstance("embedded")).thenReturn(new FakePlugin());
 
-    underTest = new ExtensionInstaller(RUNTIME, pluginRepository, CONFIG, ConnectedGlobalConfiguration.builder().build());
+    underTest = new ExtensionInstaller(RUNTIME, pluginRepository, CONFIG, ConnectedGlobalConfiguration.builder().build(), pluginVersionChecker);
 
     underTest.installEmbeddedOnly(container, ContainerLifespan.ANALYSIS);
 
@@ -258,7 +260,7 @@ class ExtensionInstallerTests {
     when(pluginRepository.getActivePluginInfos()).thenReturn(singletonList(plugin));
     PluginStoringSonarLintPluginApiVersion pluginInstance = new PluginStoringSonarLintPluginApiVersion();
     when(pluginRepository.getPluginInstance("plugin")).thenReturn(pluginInstance);
-    underTest = new ExtensionInstaller(RUNTIME, pluginRepository, CONFIG, ConnectedGlobalConfiguration.builder().build());
+    underTest = new ExtensionInstaller(RUNTIME, pluginRepository, CONFIG, ConnectedGlobalConfiguration.builder().build(), pluginVersionChecker);
 
     underTest.install(container, ContainerLifespan.ANALYSIS);
 
