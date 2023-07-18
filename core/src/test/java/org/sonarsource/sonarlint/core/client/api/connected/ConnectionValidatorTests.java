@@ -62,7 +62,7 @@ class ConnectionValidatorTests {
 
     mockServer.addStringResponse("/api/system/status", "{\"id\": \"20160308094653\",\"version\": \"7.9\",\"status\": \"UP\"}");
     mockServer.addStringResponse("/api/authentication/validate?format=json", "{\"valid\": true}");
-    mockServer.addResponseFromResource("/api/organizations/search.protobuf?organizations=myOrg&ps=500&p=1", "/orgs/empty.pb");
+    mockServer.addResponseFromResource("_codescan/organizations/myOrg", "/orgs/empty.pb");
 
     CompletableFuture<ValidationResult> futureValidation = underTest.validateConnection();
 
@@ -77,8 +77,8 @@ class ConnectionValidatorTests {
 
     mockServer.addStringResponse("/api/system/status", "{\"id\": \"20160308094653\",\"version\": \"7.9\",\"status\": \"UP\"}");
     mockServer.addStringResponse("/api/authentication/validate?format=json", "{\"valid\": true}");
-    mockServer.addResponseFromResource("/api/organizations/search.protobuf?organizations=henryju-github&ps=500&p=1", "/orgs/single.pb");
-    mockServer.addResponseFromResource("/api/organizations/search.protobuf?organizations=henryju-github&ps=500&p=2", "/orgs/empty.pb");
+    mockServer.addResponseFromResource("_codescan/organizations/henryju-github", "/orgs/single.pb");
+    mockServer.addResponseFromResource("_codescan/organizations/henryju-github", "/orgs/empty.pb");
 
     CompletableFuture<ValidationResult> futureValidation = underTest.validateConnection();
 

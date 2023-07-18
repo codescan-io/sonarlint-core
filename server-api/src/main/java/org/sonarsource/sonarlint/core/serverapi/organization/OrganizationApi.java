@@ -62,14 +62,14 @@ public class OrganizationApi {
   }
 
   public Optional<ServerOrganization> fetchOrganization(String organizationKey, Progress progress) {
-    String url = "api/organizations/search.protobuf?organizations=" + StringUtils.urlEncode(organizationKey);
+    String url = "_codescan/organizations/" + StringUtils.urlEncode(organizationKey);
     return getPaginatedOrganizations(url, progress)
       .stream()
       .findFirst();
   }
 
   private List<ServerOrganization> fetchUserOrganizations(Progress progress) {
-    var url = "api/organizations/search.protobuf?member=true";
+    var url = "_codescan/organizations";
     return getPaginatedOrganizations(url, progress);
   }
 
