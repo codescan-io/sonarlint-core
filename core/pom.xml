@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-parent</artifactId>
-    <version>7.1-SNAPSHOT</version>
+    <version>7.3.0-CODESCAN</version>
   </parent>
   <artifactId>sonarlint-core</artifactId>
   <packaging>bundle</packaging>
@@ -101,6 +101,11 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
+      <version>${sonarqube.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonarsource.sonarqube</groupId>
+      <artifactId>sonar-plugin-api-impl</artifactId>
       <version>${sonarqube.version}</version>
     </dependency>
     <!-- For RulesDefinitionXmlLoader, can be removed after upgrading sonar-plugin-api to 9.0 (SONAR-14882) -->
@@ -402,6 +407,7 @@
             </Import-Package>
             <Export-Package>
               org.sonarsource.sonarlint.core.*;version="${project.version}",
+              org.sonar.api.batch.fs.internal.*,
               com.google.protobuf,
             </Export-Package>
             <Include-Resource>

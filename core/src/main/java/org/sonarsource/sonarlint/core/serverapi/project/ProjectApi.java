@@ -58,7 +58,7 @@ public class ProjectApi {
 
   private String getAllProjectsUrl() {
     StringBuilder searchUrl = new StringBuilder();
-    searchUrl.append("api/components/search.protobuf?qualifiers=TRK");
+    searchUrl.append("api/components/search_projects.protobuf?qualifiers=TRK");
     helper.getOrganizationKey()
       .ifPresent(org -> searchUrl.append("&organization=").append(StringUtils.urlEncode(org)));
     return searchUrl.toString();

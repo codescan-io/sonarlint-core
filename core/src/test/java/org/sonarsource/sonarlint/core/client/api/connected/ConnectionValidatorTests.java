@@ -97,7 +97,7 @@ class ConnectionValidatorTests {
 
     ValidationResult validation = futureValidation.get();
     assertThat(validation.success()).isFalse();
-    assertThat(validation.message()).isEqualTo("SonarQube server has version 6.7. Version should be greater or equal to 7.9");
+    assertThat(validation.message()).isEqualTo("CodeScan server has version 6.7. Version should be greater or equal to 7.9");
   }
 
   @Test

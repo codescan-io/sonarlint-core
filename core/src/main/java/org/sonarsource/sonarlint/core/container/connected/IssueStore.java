@@ -36,7 +36,7 @@ public interface IssueStore {
   /**
    * Load issues stored for specified file.
    *
-   * @param sqFilePath the relative path to the base of project, in SonarQube
+   * @param sqFilePath the relative path to the base of project, in CodeScan
    * @return issues, possibly empty
    */
   List<ServerIssue> load(String sqFilePath);
@@ -44,7 +44,7 @@ public interface IssueStore {
   /**
    * Deletes issues stored for specified file, if they exist.
    *
-   * @param sqFilePath the relative path to the base of project, in SonarQube
+   * @param sqFilePath the relative path to the base of project, in CodeScan
    */
   void delete(String sqFilePath);
 }

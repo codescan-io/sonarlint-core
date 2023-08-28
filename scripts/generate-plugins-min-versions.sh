@@ -38,7 +38,7 @@ get_min_plugin_version() {
 }
 
 print_plugins_min_versions() {
-    echo "# Minimum supported analyzer versions: the first versions supported by SonarQube $version,"
+    echo "# Minimum supported analyzer versions: the first versions supported by CodeScan $version,"
     echo "# as defined in $update_center_repo"
     for plugin in "${plugins[@]}"; do
         echo "$plugin=${minVersions[$plugin]}"

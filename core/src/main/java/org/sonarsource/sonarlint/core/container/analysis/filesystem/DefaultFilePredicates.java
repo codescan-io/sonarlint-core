@@ -104,7 +104,8 @@ public class DefaultFilePredicates implements FilePredicates {
 
   @Override
   public FilePredicate hasPath(String s) {
-    throw new UnsupportedOperationException("hasPath");
+    File file = new File(s);
+    return file.isAbsolute() ? this.hasAbsolutePath(s) : this.hasRelativePath(s);
   }
 
   @Override
