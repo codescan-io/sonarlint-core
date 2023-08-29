@@ -442,7 +442,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       }
       var sqPath = IssueStorePaths.idePathToServerPath(projectBinding, idePath);
       if (sqPath == null) {
-        // we can't map it to a SonarQube path, so just apply exclusions to the original ide path
+        // we can't map it to a Codescan path, so just apply exclusions to the original ide path
         sqPath = idePath;
       }
       var type = testFilePredicate.test(file) ? Type.TEST : Type.MAIN;
