@@ -25,7 +25,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.annotation.CheckForNull;
 
 /**
  * Store the state of tracking of issues.
@@ -88,11 +87,6 @@ public class Tracking<R extends Trackable, B extends Trackable> {
 
   boolean isComplete() {
     return rawToBase.size() == raws.size();
-  }
-
-  @CheckForNull
-  public B getMatch(R trackable) {
-    return rawToBase.get(trackable);
   }
 
 }

@@ -29,6 +29,7 @@ import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 @Named
 @Singleton
 public class ConnectionAwareHttpClientProvider {
+
   private final SonarLintLogger logger = SonarLintLogger.get();
   private final SonarLintClient client;
   private final HttpClientProvider httpClientProvider;

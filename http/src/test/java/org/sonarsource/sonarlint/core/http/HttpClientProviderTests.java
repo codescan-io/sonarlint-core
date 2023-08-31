@@ -20,6 +20,7 @@
 package org.sonarsource.sonarlint.core.http;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.apache.hc.core5.http.HttpStatus;

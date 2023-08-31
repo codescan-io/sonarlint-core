@@ -34,7 +34,6 @@ import org.jetbrains.annotations.NotNull;
 import org.sonarsource.sonarlint.core.commons.HotspotReviewStatus;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.serverapi.hotspot.ServerHotspot;
-import org.sonarsource.sonarlint.core.serverconnection.issues.ServerFinding;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerTaintIssue;
 import org.sonarsource.sonarlint.core.serverconnection.storage.ProjectServerIssueStore;
@@ -246,11 +245,11 @@ public class InMemoryIssueStore implements ProjectServerIssueStore {
   }
 
   @Override
-  public Optional<ServerFinding> updateIssueResolutionStatus(String issueKey, boolean isTaintIssue, boolean isResolved) {
+  public void markIssueAsResolved(String issueKey, boolean isTaintIssue) {
     if (isTaintIssue) {
-      return Optional.ofNullable(taintIssuesByKey.computeIfPresent(issueKey, (s, serverIssue) ->  serverIssue.setResolved(isResolved)));
+      taintIssuesByKey.computeIfPresent(issueKey, (s, serverIssue) ->  serverIssue.setResolved(true));
     } else {
-      return Optional.ofNullable(issuesByKey.computeIfPresent(issueKey, (s, serverIssue) ->  serverIssue.setResolved(isResolved)));
+      issuesByKey.computeIfPresent(issueKey, (s, serverIssue) ->  serverIssue.setResolved(true));
     }
   }
 
@@ -306,10 +305,5 @@ public class InMemoryIssueStore implements ProjectServerIssueStore {
           hotspotUpdater.accept(hotspot);
         }
       })));
-  }
-
-  @Override
-  public boolean containsIssue(String issueKey, boolean taintIssue) {
-    return false;
   }
 }

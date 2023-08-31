@@ -22,9 +22,7 @@ package org.sonarsource.sonarlint.core.analysis.sonarapi;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
@@ -37,7 +35,6 @@ import org.sonar.api.batch.sensor.issue.IssueLocation;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.batch.sensor.issue.fix.QuickFix;
-import org.sonar.api.issue.impact.SoftwareQuality;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.PathUtils;
 import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.SonarLintInputProject;
@@ -57,14 +54,12 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
   private Severity overriddenSeverity;
   private final List<QuickFix> quickFixes;
   private Optional<String> ruleDescriptionContextKey = Optional.empty();
-  private final Map<SoftwareQuality, org.sonar.api.issue.impact.Severity> overriddenImpacts;
 
   public DefaultSonarLintIssue(SonarLintInputProject project, Path baseDir, @Nullable SensorStorage storage) {
     super(storage);
     this.project = project;
     this.baseDir = baseDir;
     this.quickFixes = new ArrayList<>();
-    this.overriddenImpacts = new EnumMap<>(SoftwareQuality.class);
   }
 
   @Override
@@ -110,17 +105,6 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
   @Override
   public Severity overriddenSeverity() {
     return this.overriddenSeverity;
-  }
-
-  @Override
-  public DefaultSonarLintIssue overrideImpact(SoftwareQuality softwareQuality, org.sonar.api.issue.impact.Severity severity) {
-    overriddenImpacts.put(softwareQuality, severity);
-    return this;
-  }
-
-  @Override
-  public Map<SoftwareQuality, org.sonar.api.issue.impact.Severity> overridenImpacts() {
-    return overriddenImpacts;
   }
 
   @Override

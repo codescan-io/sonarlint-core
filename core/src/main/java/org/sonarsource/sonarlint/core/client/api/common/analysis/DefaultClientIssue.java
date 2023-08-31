@@ -19,28 +19,20 @@
  */
 package org.sonarsource.sonarlint.core.client.api.common.analysis;
 
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
 import org.sonarsource.sonarlint.core.analysis.api.ClientInputFile;
 import org.sonarsource.sonarlint.core.analysis.api.Flow;
 import org.sonarsource.sonarlint.core.analysis.api.QuickFix;
-import org.sonarsource.sonarlint.core.commons.CleanCodeAttribute;
-import org.sonarsource.sonarlint.core.commons.ImpactSeverity;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.RuleType;
-import org.sonarsource.sonarlint.core.commons.SoftwareQuality;
 import org.sonarsource.sonarlint.core.rule.extractor.SonarLintRuleDefinition;
 import org.sonarsource.sonarlint.core.commons.VulnerabilityProbability;
 
 public final class DefaultClientIssue implements Issue {
   private final IssueSeverity severity;
   private final RuleType type;
-  private final CleanCodeAttribute cleanCodeAttribute;
-  private final Map<SoftwareQuality, ImpactSeverity> impacts;
   private final String ruleKey;
   private final String primaryMessage;
   private final ClientInputFile clientInputFile;
@@ -59,17 +51,12 @@ public final class DefaultClientIssue implements Issue {
     this.ruleDescriptionContextKey = i.getRuleDescriptionContextKey();
     this.severity = sonarLintRuleDefinition.getDefaultSeverity();
     this.type = sonarLintRuleDefinition.getType();
-    this.cleanCodeAttribute = sonarLintRuleDefinition.getCleanCodeAttribute().orElse(CleanCodeAttribute.defaultCleanCodeAttribute());
-    this.impacts = new EnumMap<>(SoftwareQuality.class);
-    this.impacts.putAll(sonarLintRuleDefinition.getDefaultImpacts());
-    this.impacts.putAll(i.getOverriddenImpacts());
     this.ruleKey = sonarLintRuleDefinition.getKey();
     this.vulnerabilityProbability = sonarLintRuleDefinition.getVulnerabilityProbability();
   }
 
   public DefaultClientIssue(org.sonarsource.sonarlint.core.analysis.api.Issue i, IssueSeverity severity,
-    RuleType type, @Nullable CleanCodeAttribute cleanCodeAttribute, Map<SoftwareQuality, ImpactSeverity> defaultImpacts,
-    Optional<VulnerabilityProbability> vulnerabilityProbability) {
+    RuleType type, Optional<VulnerabilityProbability> vulnerabilityProbability) {
     this.textRange = i.getTextRange() != null ? i.getTextRange() : null;
     this.primaryMessage = i.getMessage();
     this.clientInputFile = i.getInputFile();
@@ -77,12 +64,6 @@ public final class DefaultClientIssue implements Issue {
     this.quickFixes = i.quickFixes();
     this.severity = severity;
     this.type = type;
-    this.cleanCodeAttribute = cleanCodeAttribute;
-    this.impacts = new EnumMap<>(SoftwareQuality.class);
-    if (!defaultImpacts.isEmpty()) {
-      this.impacts.putAll(defaultImpacts);
-      this.impacts.putAll(i.getOverriddenImpacts());
-    }
     this.ruleKey = i.getRuleKey();
     this.ruleDescriptionContextKey = i.getRuleDescriptionContextKey();
     this.vulnerabilityProbability = vulnerabilityProbability;
@@ -96,16 +77,6 @@ public final class DefaultClientIssue implements Issue {
   @Override
   public RuleType getType() {
     return type;
-  }
-
-  @Override
-  public Optional<CleanCodeAttribute> getCleanCodeAttribute() {
-    return Optional.ofNullable(cleanCodeAttribute);
-  }
-
-  @Override
-  public Map<SoftwareQuality, ImpactSeverity> getImpacts() {
-    return impacts;
   }
 
   @Override

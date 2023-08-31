@@ -31,7 +31,6 @@ public interface Trackable<G> {
 
   String getRuleKey();
 
-  @CheckForNull
   IssueSeverity getSeverity();
 
   String getMessage();

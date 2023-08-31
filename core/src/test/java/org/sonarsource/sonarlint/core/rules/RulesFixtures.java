@@ -19,7 +19,6 @@
  */
 package org.sonarsource.sonarlint.core.rules;
 
-import org.sonar.api.rules.CleanCodeAttribute;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RuleParamType;
 import org.sonar.api.server.rule.RulesDefinition;
@@ -33,7 +32,6 @@ public class RulesFixtures {
     repository.createRule("ruleKey")
       .setName("ruleName")
       .setType(RuleType.BUG)
-      .setCleanCodeAttribute(CleanCodeAttribute.TRUSTWORTHY)
       .setHtmlDescription("Hello, world!")
         .createParam("paramKey")
           .setName("paramName")

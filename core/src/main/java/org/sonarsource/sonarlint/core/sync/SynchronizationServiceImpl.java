@@ -32,13 +32,11 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import org.jetbrains.annotations.NotNull;
 import org.sonarsource.sonarlint.core.ServerApiProvider;
 import org.sonarsource.sonarlint.core.branch.SonarProjectBranchServiceImpl;
 import org.sonarsource.sonarlint.core.clientapi.SonarLintClient;
 import org.sonarsource.sonarlint.core.clientapi.backend.initialize.InitializeParams;
 import org.sonarsource.sonarlint.core.clientapi.client.sync.DidSynchronizeConfigurationScopeParams;
-import org.sonarsource.sonarlint.core.commons.Binding;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.event.ActiveSonarProjectBranchChanged;
 import org.sonarsource.sonarlint.core.languages.LanguageSupportRepository;
@@ -67,7 +65,7 @@ public class SynchronizationServiceImpl {
   private final TaskManager taskManager;
   private final StorageService storageService;
   private final Set<String> connectedModeEmbeddedPluginKeys;
-  private final boolean synchronizationEnabled;
+  private final InitializeParams params;
   private ScheduledExecutorService scheduledSynchronizer;
 
   public SynchronizationServiceImpl(SonarLintClient client, ConfigurationRepository configurationRepository, LanguageSupportRepository languageSupportRepository,
@@ -80,12 +78,12 @@ public class SynchronizationServiceImpl {
     this.taskManager = new TaskManager(client);
     this.storageService = storageService;
     this.connectedModeEmbeddedPluginKeys = params.getConnectedModeEmbeddedPluginPathsByKey().keySet();
-    this.synchronizationEnabled = params.getFeatureFlags().shouldSynchronizeProjects();
+    this.params = params;
   }
 
   @PostConstruct
   public void startScheduledSync() {
-    if (!synchronizationEnabled) {
+    if (!params.getFeatureFlags().shouldSynchronizeProjects()) {
       return;
     }
     scheduledSynchronizer = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "SonarLint Local Storage Synchronizer"));
@@ -136,7 +134,8 @@ public class SynchronizationServiceImpl {
       return;
     }
     serverApiProvider.getServerApi(connectionId).ifPresent(serverApi -> {
-      var serverConnection = getServerConnection(connectionId, serverApi);
+      var serverConnection = new ServerConnection(storageService.getStorageFacade(), connectionId, serverApi.isSonarCloud(),
+        languageSupportRepository.getEnabledLanguagesInConnectedMode(), connectedModeEmbeddedPluginKeys);
       var subProgressGap = progressGap / boundConfigurationScopes.size();
       var subProgress = progress;
       for (BoundConfigurationScope scope : boundConfigurationScopes) {
@@ -145,12 +144,6 @@ public class SynchronizationServiceImpl {
         subProgress += subProgressGap;
       }
     });
-  }
-
-  @NotNull
-  public ServerConnection getServerConnection(String connectionId, ServerApi serverApi) {
-    return new ServerConnection(storageService.getStorageFacade(), connectionId, serverApi.isSonarCloud(),
-      languageSupportRepository.getEnabledLanguagesInConnectedMode(), connectedModeEmbeddedPluginKeys);
   }
 
   private void autoSyncBoundConfigurationScope(BoundConfigurationScope boundScope, ServerApi serverApi,
@@ -167,26 +160,9 @@ public class SynchronizationServiceImpl {
 
   @Subscribe
   public void onSonarProjectBranchChanged(ActiveSonarProjectBranchChanged changedEvent) {
-    if (!synchronizationEnabled) {
-      return;
-    }
     var configurationScopeId = changedEvent.getConfigurationScopeId();
     configurationRepository.getEffectiveBinding(configurationScopeId).ifPresent(binding -> autoSync(Map.of(requireNonNull(binding.getConnectionId()),
       List.of(new BoundConfigurationScope(configurationScopeId, binding.getSonarProjectKey())))));
-  }
-
-  public void fetchProjectIssues(Binding binding, String activeBranch) {
-    serverApiProvider.getServerApi(binding.getConnectionId()).ifPresent(serverApi -> {
-      var serverConnection = getServerConnection(binding.getConnectionId(), serverApi);
-      serverConnection.downloadServerIssuesForProject(serverApi, binding.getSonarProjectKey(), activeBranch);
-    });
-  }
-
-  public void fetchFileIssues(Binding binding, String serverFileRelativePath, String activeBranch) {
-    serverApiProvider.getServerApi(binding.getConnectionId()).ifPresent(serverApi -> {
-      var serverConnection = getServerConnection(binding.getConnectionId(), serverApi);
-      serverConnection.downloadServerIssuesForFile(serverApi, binding.getSonarProjectKey(), serverFileRelativePath, activeBranch);
-    });
   }
 
   @PreDestroy

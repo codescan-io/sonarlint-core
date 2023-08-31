@@ -26,9 +26,9 @@ import javax.annotation.Nullable;
 public class CheckStatusChangePermittedResponse {
   private final boolean permitted;
   private final String notPermittedReason;
-  private final List<ResolutionStatus> allowedStatuses;
+  private final List<IssueStatus> allowedStatuses;
 
-  public CheckStatusChangePermittedResponse(boolean permitted, @Nullable String notPermittedReason, List<ResolutionStatus> allowedStatuses) {
+  public CheckStatusChangePermittedResponse(boolean permitted, @Nullable String notPermittedReason, List<IssueStatus> allowedStatuses) {
     this.permitted = permitted;
     this.notPermittedReason = notPermittedReason;
     this.allowedStatuses = allowedStatuses;
@@ -43,7 +43,7 @@ public class CheckStatusChangePermittedResponse {
     return notPermittedReason;
   }
 
-  public List<ResolutionStatus> getAllowedStatuses() {
+  public List<IssueStatus> getAllowedStatuses() {
     return allowedStatuses;
   }
 }

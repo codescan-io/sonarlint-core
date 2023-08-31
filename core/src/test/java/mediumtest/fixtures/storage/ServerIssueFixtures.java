@@ -35,15 +35,9 @@ public class ServerIssueFixtures {
 
   public static class ServerIssueBuilder extends AbstractServerIssueBuilder<ServerIssueBuilder> {
     private TextRangeWithHash textRangeWithHash = new TextRangeWithHash(1, 2, 3, 4, "rangeHash");
-    private String ruleKey = "ruleKey";
 
     public ServerIssueBuilder(String key) {
       super(key);
-    }
-
-    public ServerIssueBuilder withRuleKey(String ruleKey) {
-      this.ruleKey = ruleKey;
-      return this;
     }
 
     public ServerIssueBuilder withTextRange(TextRangeWithHash textRange) {
@@ -52,7 +46,7 @@ public class ServerIssueFixtures {
     }
 
     public ServerIssueFixtures.ServerIssue build() {
-      return new ServerIssueFixtures.ServerIssue(key, resolved, ruleKey, "message", "file/path", introductionDate, null, ruleType, textRangeWithHash);
+      return new ServerIssueFixtures.ServerIssue(key, resolved, "ruleKey", "message", "file/path", introductionDate, null, ruleType, textRangeWithHash);
     }
   }
 

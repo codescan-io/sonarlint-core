@@ -23,8 +23,4 @@ public class IssueStatusChangeException extends RuntimeException {
   public IssueStatusChangeException(Throwable cause) {
     super("Cannot change status on the issue", cause);
   }
-
-  public IssueStatusChangeException(String cause) {
-    super("Cannot change status on the issue: " + cause);
-  }
 }

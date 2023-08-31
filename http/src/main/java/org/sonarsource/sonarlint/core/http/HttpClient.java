@@ -21,7 +21,6 @@ package org.sonarsource.sonarlint.core.http;
 
 import java.io.Closeable;
 import java.io.InputStream;
-import java.net.http.WebSocket;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -74,7 +73,5 @@ public interface HttpClient {
   interface AsyncRequest {
     void cancel();
   }
-
-  WebSocket createWebSocketConnection(String url, Consumer<String> messageConsumer, Runnable onClosedRunnable);
 
 }

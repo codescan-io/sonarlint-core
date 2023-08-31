@@ -19,16 +19,12 @@
  */
 package org.sonarsource.sonarlint.core.http;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.WebSocket;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
@@ -251,63 +247,5 @@ class ApacheHttpClientAdapter implements HttpClient {
     }
 
   }
-
-  public WebSocket createWebSocketConnection(String url, Consumer<String> messageConsumer, Runnable onClosedRunnable) {
-    // TODO handle handshake or other errors
-    return java.net.http.HttpClient
-        .newHttpClient()
-        .newWebSocketBuilder()
-        .header("Authorization", "Bearer " + usernameOrToken)
-        .buildAsync(URI.create(url), new WebSocketClient(messageConsumer, onClosedRunnable))
-        .join();
-  }
-
-  private static class WebSocketClient implements WebSocket.Listener {
-    private final Consumer<String> messageConsumer;
-    private final Runnable onClosedRunnable;
-
-    public WebSocketClient(Consumer<String> messageConsumer, Runnable onClosedRunnable) {
-      this.messageConsumer = messageConsumer;
-      this.onClosedRunnable = onClosedRunnable;
-    }
-
-    @Override
-    public void onOpen(WebSocket webSocket) {
-      SonarLintLogger.get().debug("WebSocket opened");
-      WebSocket.Listener.super.onOpen(webSocket);
-    }
-
-    @Override
-    public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
-      messageConsumer.accept(data.toString());
-      return WebSocket.Listener.super.onText(webSocket, data, last);
-    }
-
-    @Override
-    public void onError(WebSocket webSocket, Throwable error) {
-      SonarLintLogger.get().error("Error occurred on the WebSocket", error);
-      onClosedRunnable.run();
-      WebSocket.Listener.super.onError(webSocket, error);
-    }
-
-    @Override
-    public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
-      SonarLintLogger.get().debug("WebSocket closed, status=" + statusCode + ", reason=" + reason);
-      // ack the close
-      try {
-        webSocket.sendClose(WebSocket.NORMAL_CLOSURE, "").get();
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        // uncompleted future means the closing has been handled already (default is null)
-        return new CompletableFuture<>();
-      } catch (ExecutionException e) {
-        SonarLintLogger.get().debug("Cannot ack WebSocket close");
-      }
-      onClosedRunnable.run();
-      // uncompleted future means the closing has been handled already (default is null)
-      return new CompletableFuture<>();
-    }
-  }
-
 
 }

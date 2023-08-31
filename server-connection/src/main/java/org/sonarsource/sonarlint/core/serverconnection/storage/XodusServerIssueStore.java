@@ -31,7 +31,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -50,13 +49,10 @@ import jetbrains.exodus.util.CompressBackupUtil;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.sonarsource.sonarlint.core.commons.CleanCodeAttribute;
 import org.sonarsource.sonarlint.core.commons.HotspotReviewStatus;
-import org.sonarsource.sonarlint.core.commons.ImpactSeverity;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.RuleType;
-import org.sonarsource.sonarlint.core.commons.SoftwareQuality;
 import org.sonarsource.sonarlint.core.commons.TextRangeWithHash;
 import org.sonarsource.sonarlint.core.commons.VulnerabilityProbability;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
@@ -65,7 +61,6 @@ import org.sonarsource.sonarlint.core.serverapi.util.ProtobufUtil;
 import org.sonarsource.sonarlint.core.serverconnection.issues.FileLevelServerIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.LineLevelServerIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.RangeLevelServerIssue;
-import org.sonarsource.sonarlint.core.serverconnection.issues.ServerFinding;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerTaintIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerTaintIssue.Flow;
@@ -133,8 +128,6 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
   private static final String MESSAGE_BLOB_NAME = "message";
   private static final String FLOWS_BLOB_NAME = "flows";
   private static final String RULE_DESCRIPTION_CONTEXT_KEY_PROPERTY_NAME = "ruleDescriptionContextKey";
-  private static final String CLEAN_CODE_ATTRIBUTE_PROPERTY_NAME = "cleanCodeAttribute";
-  private static final String IMPACTS_BLOB_NAME = "impacts";
   private static final String ASSIGNEE_PROPERTY_NAME = "assignee";
   private final PersistentEntityStore entityStore;
 
@@ -235,7 +228,6 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
       var hash = storedIssue.getBlobString(RANGE_HASH_PROPERTY_NAME);
       textRange = new TextRangeWithHash(startLine, startLineOffset, endLine, endLineOffset, hash);
     }
-    var cleanCodeAttribute = (String) storedIssue.getProperty(CLEAN_CODE_ATTRIBUTE_PROPERTY_NAME);
     return new ServerTaintIssue(
       (String) requireNonNull(storedIssue.getProperty(KEY_PROPERTY_NAME)),
       Boolean.TRUE.equals(storedIssue.getProperty(RESOLVED_PROPERTY_NAME)),
@@ -245,9 +237,7 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
       (Instant) requireNonNull(storedIssue.getProperty(CREATION_DATE_PROPERTY_NAME)),
       (IssueSeverity) requireNonNull(storedIssue.getProperty(SEVERITY_PROPERTY_NAME)),
       (RuleType) requireNonNull(storedIssue.getProperty(TYPE_PROPERTY_NAME)),
-      textRange, (String) storedIssue.getProperty(RULE_DESCRIPTION_CONTEXT_KEY_PROPERTY_NAME),
-      Optional.ofNullable(cleanCodeAttribute).map(CleanCodeAttribute::valueOf).orElse(null),
-      readImpacts(storedIssue.getBlob(IMPACTS_BLOB_NAME)))
+      textRange, (String) storedIssue.getProperty(RULE_DESCRIPTION_CONTEXT_KEY_PROPERTY_NAME))
         .setFlows(readFlows(storedIssue.getBlob(FLOWS_BLOB_NAME)));
   }
 
@@ -259,7 +249,7 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     var endLineOffset = (Integer) storedHotspot.getProperty(END_LINE_OFFSET_PROPERTY_NAME);
     var hash = (String) storedHotspot.getProperty(RANGE_HASH_PROPERTY_NAME);
     org.sonarsource.sonarlint.core.commons.TextRange textRange;
-    if (hash != null && !hash.isEmpty()) {
+    if(hash != null && !hash.isEmpty()) {
       textRange = new TextRangeWithHash(startLine, startLineOffset, endLine, endLineOffset, hash);
     } else {
       textRange = new org.sonarsource.sonarlint.core.commons.TextRange(startLine, startLineOffset, endLine, endLineOffset);
@@ -289,16 +279,6 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
       return List.of();
     }
     return ProtobufUtil.readMessages(blob, Sonarlint.Flow.parser()).stream().map(XodusServerIssueStore::toJavaFlow).collect(Collectors.toList());
-  }
-
-  private static Map<SoftwareQuality, ImpactSeverity> readImpacts(@Nullable InputStream blob) {
-    if (blob == null) {
-      return Map.of();
-    }
-    return ProtobufUtil.readMessages(blob, Sonarlint.Impact.parser())
-      .stream()
-      .map(XodusServerIssueStore::toJavaImpact)
-      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   @Override
@@ -538,7 +518,7 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     issueEntity.setProperty(CREATION_DATE_PROPERTY_NAME, hotspot.getCreationDate());
     issueEntity.setProperty(REVIEW_STATUS_PROPERTY_NAME, hotspot.getStatus());
     issueEntity.setProperty(VULNERABILITY_PROBABILITY_PROPERTY_NAME, hotspot.getVulnerabilityProbability().toString());
-    if (hotspot.getAssignee() != null) {
+    if(hotspot.getAssignee() != null) {
       issueEntity.setProperty(ASSIGNEE_PROPERTY_NAME, hotspot.getAssignee());
     }
   }
@@ -654,19 +634,11 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     if (ruleDescriptionContextKey != null) {
       issueEntity.setProperty(RULE_DESCRIPTION_CONTEXT_KEY_PROPERTY_NAME, ruleDescriptionContextKey);
     }
-    issue.getCleanCodeAttribute().ifPresent(attribute -> issueEntity.setProperty(CLEAN_CODE_ATTRIBUTE_PROPERTY_NAME, attribute.name()));
-    issueEntity.setBlob(IMPACTS_BLOB_NAME, toProtoImpact(issue.getImpacts()));
   }
 
   private static InputStream toProtoFlow(List<Flow> flows) {
     var buffer = new ByteArrayOutputStream();
     ProtobufUtil.writeMessages(buffer, flows.stream().map(XodusServerIssueStore::toProtoFlow).collect(Collectors.toList()));
-    return new ByteArrayInputStream(buffer.toByteArray());
-  }
-
-  private static InputStream toProtoImpact(Map<SoftwareQuality, ImpactSeverity> impacts) {
-    var buffer = new ByteArrayOutputStream();
-    ProtobufUtil.writeMessages(buffer, impacts.entrySet().stream().map(XodusServerIssueStore::toProtoImpact).collect(Collectors.toList()));
     return new ByteArrayInputStream(buffer.toByteArray());
   }
 
@@ -753,25 +725,16 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
   }
 
   @Override
-  public Optional<ServerFinding> updateIssueResolutionStatus(String issueKey, boolean isTaintIssue, boolean isResolved) {
+  public void markIssueAsResolved(String issueKey, boolean isTaintIssue) {
     var entityIssueType = isTaintIssue ? TAINT_ISSUE_ENTITY_TYPE : ISSUE_ENTITY_TYPE;
-    return entityStore.computeInTransaction(txn -> {
+    entityStore.computeInTransaction(txn -> {
       var optionalEntity = findUnique(txn, entityIssueType, KEY_PROPERTY_NAME, issueKey);
       if (optionalEntity.isPresent()) {
         var issueEntity = optionalEntity.get();
-        issueEntity.setProperty(RESOLVED_PROPERTY_NAME, isResolved);
-        return Optional.of(isTaintIssue ? adaptTaint(issueEntity) : adapt(issueEntity));
+        issueEntity.setProperty(RESOLVED_PROPERTY_NAME, true);
+        return true;
       }
-      return Optional.empty();
-    });
-  }
-
-  @Override
-  public boolean containsIssue(String issueKey, boolean isTaintIssue) {
-    var entityIssueType = isTaintIssue ? TAINT_ISSUE_ENTITY_TYPE : ISSUE_ENTITY_TYPE;
-    return entityStore.computeInTransaction(txn -> {
-      var optionalEntity = findUnique(txn, entityIssueType, KEY_PROPERTY_NAME, issueKey);
-      return optionalEntity.isPresent();
+      return false;
     });
   }
 
@@ -854,10 +817,6 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     return new Flow(flowProto.getLocationList().stream().map(XodusServerIssueStore::toJavaLocation).collect(Collectors.toList()));
   }
 
-  private static Map.Entry<SoftwareQuality, ImpactSeverity> toJavaImpact(Sonarlint.Impact impactProto) {
-    return Map.entry(SoftwareQuality.valueOf(impactProto.getSoftwareQuality()), ImpactSeverity.valueOf(impactProto.getSeverity()));
-  }
-
   private static ServerIssueLocation toJavaLocation(Location locationProto) {
     return new ServerIssueLocation(locationProto.hasFilePath() ? locationProto.getFilePath() : null,
       locationProto.hasTextRange() ? toTextRangeJava(locationProto.getTextRange()) : null, locationProto.getMessage());
@@ -871,13 +830,6 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     var flowBuilder = Sonarlint.Flow.newBuilder();
     javaFlow.locations().forEach(l -> flowBuilder.addLocation(toProtoLocation(l)));
     return flowBuilder.build();
-  }
-
-  private static Sonarlint.Impact toProtoImpact(Map.Entry<SoftwareQuality, ImpactSeverity> impact) {
-    return Sonarlint.Impact.newBuilder()
-      .setSoftwareQuality(impact.getKey().name())
-      .setSeverity(impact.getValue().name())
-      .build();
   }
 
   private static Location toProtoLocation(ServerIssueLocation l) {

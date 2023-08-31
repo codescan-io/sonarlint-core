@@ -78,8 +78,7 @@ class BindingSuggestionProviderTests {
   private final BindingClueProvider bindingClueProvider = mock(BindingClueProvider.class);
   private final SonarProjectsCache sonarProjectsCache = mock(SonarProjectsCache.class);
 
-  private final BindingSuggestionProviderImpl underTest = new BindingSuggestionProviderImpl(configRepository, connectionRepository, client, bindingClueProvider, sonarProjectsCache,
-    MoreExecutors.newDirectExecutorService());
+  private final BindingSuggestionProviderImpl underTest = new BindingSuggestionProviderImpl(configRepository, connectionRepository, client, bindingClueProvider, sonarProjectsCache, MoreExecutors.newDirectExecutorService());
 
   @BeforeEach
   public void setup() {
@@ -91,8 +90,8 @@ class BindingSuggestionProviderTests {
     when(connectionRepository.getConnectionsById()).thenReturn(Map.of(SQ_1_ID, SQ_1));
 
     underTest.bindingConfigChanged(new BindingConfigChangedEvent(
-      CONFIG_SCOPE_ID_1, new BindingConfigChangedEvent.BindingConfig(null, null, true),
-      new BindingConfigChangedEvent.BindingConfig(null, null, false)));
+      new BindingConfigChangedEvent.BindingConfig(CONFIG_SCOPE_ID_1, null, null, true),
+      new BindingConfigChangedEvent.BindingConfig(CONFIG_SCOPE_ID_1, null, null, false)));
 
     assertThat(logTester.logs(ClientLogOutput.Level.DEBUG)).contains("Binding suggestion computation queued for config scopes '" + CONFIG_SCOPE_ID_1 + "'...");
   }
@@ -102,8 +101,8 @@ class BindingSuggestionProviderTests {
     when(connectionRepository.getConnectionsById()).thenReturn(Map.of(SQ_1_ID, SQ_1));
 
     underTest.bindingConfigChanged(new BindingConfigChangedEvent(
-      CONFIG_SCOPE_ID_1, new BindingConfigChangedEvent.BindingConfig(null, null, false),
-      new BindingConfigChangedEvent.BindingConfig(null, null, true)));
+      new BindingConfigChangedEvent.BindingConfig(CONFIG_SCOPE_ID_1, null, null, false),
+      new BindingConfigChangedEvent.BindingConfig(CONFIG_SCOPE_ID_1, null, null, true)));
 
     assertThat(logTester.logs()).isEmpty();
   }
@@ -376,6 +375,7 @@ class BindingSuggestionProviderTests {
         tuple(SQ_1_ID, PROJECT_KEY_1, "Project 1"),
         tuple(SQ_1_ID, "key2", "Project 2"));
   }
+
 
   @Test
   void text_search_should_retain_only_top_scores() throws InterruptedException {

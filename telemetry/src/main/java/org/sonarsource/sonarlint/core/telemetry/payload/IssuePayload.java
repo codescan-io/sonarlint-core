@@ -20,17 +20,16 @@
 package org.sonarsource.sonarlint.core.telemetry.payload;
 
 import com.google.gson.annotations.SerializedName;
-import java.util.Set;
 
 public class IssuePayload {
-  @SerializedName("status_changed_rule_keys")
-  public final Set<String> statusChangedRuleKeys;
+  @SerializedName("status_changed_count")
+  public final int statusChangedCount;
 
-  public IssuePayload(Set<String> statusChangedRuleKeys) {
-    this.statusChangedRuleKeys = statusChangedRuleKeys;
+  public IssuePayload(int statusChangedCount) {
+    this.statusChangedCount = statusChangedCount;
   }
 
-  public Set<String> getStatusChangedRuleKeys() {
-    return statusChangedRuleKeys;
+  public int getStatusChangedCount() {
+    return statusChangedCount;
   }
 }

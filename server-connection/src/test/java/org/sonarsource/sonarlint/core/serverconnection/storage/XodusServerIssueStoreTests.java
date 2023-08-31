@@ -642,7 +642,7 @@ class XodusServerIssueStoreTests {
   void should_update_taint_issue_status() {
     store.replaceAllTaintOfFile("branch", "file/path", List.of(aServerTaintIssue()));
 
-    store.updateIssueResolutionStatus("key", true, true);
+    store.markIssueAsResolved("key", true);
 
     var taintIssues = store.loadTaint("branch", "file/path");
     var issues = store.load("branch", "file/path");
@@ -656,7 +656,7 @@ class XodusServerIssueStoreTests {
   void should_update_non_taint_issue_status() {
     store.replaceAllIssuesOfFile("branch", "file/path", List.of(aServerIssue()));
 
-    store.updateIssueResolutionStatus("key", false, true);
+    store.markIssueAsResolved("key", false);
 
     var taintIssues = store.loadTaint("branch", "file/path");
     var issues = store.load("branch", "file/path");
@@ -668,7 +668,7 @@ class XodusServerIssueStoreTests {
 
   @Test
   void should_not_update_issue_status_if_issue_is_not_in_storage() {
-    store.updateIssueResolutionStatus("key", false, true);
+    store.markIssueAsResolved("key", false);
 
     var taintIssues = store.loadTaint("branch", "file/path");
     var issues = store.load("branch", "file/path");
@@ -837,35 +837,5 @@ class XodusServerIssueStoreTests {
     assertThat(savedIssues2).isNotEmpty();
 
     store2.close();
-  }
-
-  @Test
-  void should_find_when_the_issue_exists() {
-    var creationDate = Instant.now();
-
-    store
-      .replaceAllIssuesOfBranch("branch", List.of(aServerIssue().setFilePath("file/path").setCreationDate(creationDate)));
-
-    assertThat(store.containsIssue("key", false)).isTrue();
-  }
-
-  @Test
-  void should_find_when_the_taint_exists() {
-    var creationDate = Instant.now();
-
-    store
-      .replaceAllTaintOfFile("branch", "file/path", List.of(aServerTaintIssue().setFilePath("file/path").setCreationDate(creationDate)));
-
-    assertThat(store.containsIssue("key", true)).isTrue();
-  }
-
-  @Test
-  void should_not_find_the_issue_when_it_does_not_exist() {
-    var creationDate = Instant.now();
-
-    store
-      .replaceAllIssuesOfBranch("branch", List.of(aServerIssue().setFilePath("file/path").setCreationDate(creationDate)));
-
-    assertThat(store.containsIssue("key_not_found", false)).isFalse();
   }
 }

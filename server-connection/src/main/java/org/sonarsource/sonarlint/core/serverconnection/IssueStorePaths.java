@@ -42,11 +42,7 @@ public class IssueStorePaths {
   }
 
   public static String componentKey(ProjectBinding projectBinding, String serverFilePath) {
-    return componentKey(projectBinding.projectKey(),serverFilePath);
-  }
-
-  public static String componentKey(String projectKey, String serverFilePath) {
-    return projectKey + ":" + serverFilePath;
+    return projectBinding.projectKey() + ":" + serverFilePath;
   }
 
   @CheckForNull
