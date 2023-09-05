@@ -1,7 +1,7 @@
 /*
- * CodeScan Core - Server Connection
+ * SonarLint Core - Server Connection
  * Copyright (C) 2016-2023 SonarSource SA
- * mailto:info AT CodeScan DOT com
+ * mailto:info AT sonarsource DOT com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

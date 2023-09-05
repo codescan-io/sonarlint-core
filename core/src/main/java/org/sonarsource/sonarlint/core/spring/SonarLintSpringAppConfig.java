@@ -42,6 +42,7 @@ import org.sonarsource.sonarlint.core.ServerApiProvider;
 import org.sonarsource.sonarlint.core.SonarProjectsCache;
 import org.sonarsource.sonarlint.core.TokenGeneratorHelper;
 import org.sonarsource.sonarlint.core.analysis.AnalysisServiceImpl;
+import org.sonarsource.sonarlint.core.local.only.LocalOnlyIssueStorageService;
 import org.sonarsource.sonarlint.core.branch.SonarProjectBranchServiceImpl;
 import org.sonarsource.sonarlint.core.clientapi.backend.initialize.InitializeParams;
 import org.sonarsource.sonarlint.core.commons.SonarLintUserHome;
@@ -67,9 +68,12 @@ import org.sonarsource.sonarlint.core.repository.vcs.ActiveSonarProjectBranchRep
 import org.sonarsource.sonarlint.core.rules.RulesExtractionHelper;
 import org.sonarsource.sonarlint.core.rules.RulesServiceImpl;
 import org.sonarsource.sonarlint.core.serverconnection.StorageService;
+import org.sonarsource.sonarlint.core.websocket.WebSocketService;
 import org.sonarsource.sonarlint.core.smartnotifications.SmartNotifications;
 import org.sonarsource.sonarlint.core.sync.SynchronizationServiceImpl;
 import org.sonarsource.sonarlint.core.telemetry.TelemetryServiceImpl;
+import org.sonarsource.sonarlint.core.tracking.IssueTrackingServiceImpl;
+import org.sonarsource.sonarlint.core.tracking.LocalOnlyIssueRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -109,7 +113,10 @@ import org.springframework.context.annotation.Import;
   HotspotServiceImpl.class,
   IssueServiceImpl.class,
   AnalysisServiceImpl.class,
-  SmartNotifications.class
+  SmartNotifications.class,
+  IssueTrackingServiceImpl.class,
+  LocalOnlyIssueRepository.class,
+  WebSocketService.class
 })
 public class SonarLintSpringAppConfig {
 
@@ -128,6 +135,11 @@ public class SonarLintSpringAppConfig {
   @Bean(destroyMethod = "close")
   StorageService provideStorageService(InitializeParams params, @Named("workDir") Path workDir) {
     return new StorageService(params.getStorageRoot(), workDir);
+  }
+
+  @Bean(destroyMethod = "close")
+  LocalOnlyIssueStorageService provideLocalOnlyIssueStorageService(InitializeParams params, @Named("workDir") Path workDir) {
+    return new LocalOnlyIssueStorageService(params.getStorageRoot(), workDir);
   }
 
   @Bean

@@ -37,7 +37,7 @@ import org.sonarsource.sonarlint.core.clientapi.backend.issue.ChangeIssueStatusP
 import org.sonarsource.sonarlint.core.clientapi.backend.issue.CheckStatusChangePermittedParams;
 import org.sonarsource.sonarlint.core.clientapi.backend.issue.CheckStatusChangePermittedResponse;
 import org.sonarsource.sonarlint.core.clientapi.backend.issue.IssueService;
-import org.sonarsource.sonarlint.core.clientapi.backend.issue.IssueStatus;
+import org.sonarsource.sonarlint.core.clientapi.backend.issue.ResolutionStatus;
 import org.sonarsource.sonarlint.core.clientapi.backend.issue.ReopenAllIssuesForFileParams;
 import org.sonarsource.sonarlint.core.clientapi.backend.issue.ReopenIssueParams;
 import org.sonarsource.sonarlint.core.clientapi.backend.issue.ReopenIssueResponse;
@@ -61,9 +61,9 @@ public class IssueServiceImpl implements IssueService {
   private static final String STATUS_CHANGE_PERMISSION_MISSING_REASON = "Marking an issue as resolved requires the 'Administer Issues' permission";
   private static final String UNSUPPORTED_SQ_VERSION_REASON = "Marking a local-only issue as resolved requires SonarQube 10.2+";
   private static final Version SQ_ANTICIPATED_TRANSITIONS_MIN_VERSION = Version.create("10.2");
-  private static final Map<IssueStatus, Transition> transitionByResolutionStatus = Map.of(
-          IssueStatus.WONT_FIX, Transition.WONT_FIX,
-          IssueStatus.FALSE_POSITIVE, Transition.FALSE_POSITIVE
+  private static final Map<ResolutionStatus, Transition> transitionByResolutionStatus = Map.of(
+    ResolutionStatus.WONT_FIX, Transition.WONT_FIX,
+    ResolutionStatus.FALSE_POSITIVE, Transition.FALSE_POSITIVE
   );
   private static final Set<String> requiredTransitions = transitionByResolutionStatus.values().stream().map(Transition::getStatus).collect(Collectors.toSet());
 
@@ -157,7 +157,7 @@ public class IssueServiceImpl implements IssueService {
     return new CheckStatusChangePermittedResponse(permitted,
       permitted ? null : reason,
       // even if not permitted, return the possible statuses, if clients still want to show users what's supported
-      Arrays.asList(IssueStatus.values()));
+      Arrays.asList(ResolutionStatus.values()));
   }
 
   private static boolean hasAdministerIssuePermission(Issues.Issue issue) {

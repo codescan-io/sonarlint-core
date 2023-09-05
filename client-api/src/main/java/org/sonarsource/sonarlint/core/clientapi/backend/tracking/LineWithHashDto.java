@@ -17,26 +17,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.sonarlint.core.clientapi.backend.issue;
+package org.sonarsource.sonarlint.core.clientapi.backend.tracking;
 
-public enum IssueStatus {
-  // order is important here, it will be applied in the UI
-  WONT_FIX("Won't Fix", "The issue is valid but does not need fixing. It represents accepted technical debt."),
-  FALSE_POSITIVE("False Positive", "The issue is raised unexpectedly on code that should not trigger an issue.");
+public class LineWithHashDto {
+  private final int number;
+  private final String hash;
 
-  private final String title;
-  private final String description;
-
-  IssueStatus(String title, String description) {
-    this.title = title;
-    this.description = description;
+  public LineWithHashDto(int number, String hash) {
+    this.number = number;
+    this.hash = hash;
   }
 
-  public String getTitle() {
-    return title;
+  public int getNumber() {
+    return number;
   }
 
-  public String getDescription() {
-    return description;
+
+  public String getHash() {
+    return hash;
   }
 }

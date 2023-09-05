@@ -37,6 +37,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import javax.annotation.CheckForNull;
+import mediumtest.fixtures.storage.ConfigurationScopeStorageFixture;
 import mediumtest.fixtures.storage.StorageFixture;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.jetbrains.annotations.Nullable;
@@ -99,6 +100,7 @@ public class SonarLintBackendFixture {
     private final List<SonarQubeConnectionConfigurationDto> sonarQubeConnections = new ArrayList<>();
     private final List<SonarCloudConnectionConfigurationDto> sonarCloudConnections = new ArrayList<>();
     private final List<ConfigurationScopeDto> configurationScopes = new ArrayList<>();
+    private final List<ConfigurationScopeStorageFixture.ConfigurationScopeStorageBuilder> configurationScopeStorages = new ArrayList<>();
     private final Map<String, String> activeBranchPerScopeId = new HashMap<>();
     private final Set<Path> embeddedPluginPaths = new HashSet<>();
     private final Map<String, Path> connectedModeEmbeddedPluginPathsByKey = new HashMap<>();
@@ -147,6 +149,10 @@ public class SonarLintBackendFixture {
       return withSonarQubeConnection(connectionId, serverUrl, false, storageBuilder);
     }
 
+    public SonarLintBackendBuilder withSonarCloudConnectionAndNotifications(String connectionId, String organisationKey, Consumer<StorageFixture.StorageBuilder> storageBuilder) {
+      return withSonarCloudConnection(connectionId, organisationKey, false, storageBuilder);
+    }
+
     private SonarLintBackendBuilder withSonarQubeConnection(String connectionId, String serverUrl, boolean disableNotifications,
       Consumer<StorageFixture.StorageBuilder> storageBuilder) {
       if (storageBuilder != null) {
@@ -163,6 +169,16 @@ public class SonarLintBackendFixture {
       var storage = newStorage(connectionId);
       storageBuilder.accept(storage);
       storages.add(storage);
+      return this;
+    }
+
+    public SonarLintBackendBuilder withSonarCloudConnection(String connectionId, String organizationKey, boolean disableNotifications, Consumer<StorageFixture.StorageBuilder> storageBuilder) {
+      if (storageBuilder != null) {
+        var storage = newStorage(connectionId);
+        storageBuilder.accept(storage);
+        storages.add(storage);
+      }
+      sonarCloudConnections.add(new SonarCloudConnectionConfigurationDto(connectionId, organizationKey, disableNotifications));
       return this;
     }
 
@@ -183,6 +199,11 @@ public class SonarLintBackendFixture {
       return withConfigScope(configurationScopeId, configurationScopeId, null, new BindingConfigurationDto(connectionId, projectKey, false));
     }
 
+    public SonarLintBackendBuilder withBoundConfigScope(String configurationScopeId, String connectionId, String projectKey,
+      Consumer<ConfigurationScopeStorageFixture.ConfigurationScopeStorageBuilder> storageBuilder) {
+      return withConfigScope(configurationScopeId, configurationScopeId, null, new BindingConfigurationDto(connectionId, projectKey, false), storageBuilder);
+    }
+
     public SonarLintBackendBuilder withBoundConfigScope(String configurationScopeId, String connectionId, String projectKey, String activeBranchName) {
       withConfigScope(configurationScopeId, configurationScopeId, null, new BindingConfigurationDto(connectionId, projectKey, false));
       return withActiveBranch(configurationScopeId, activeBranchName);
@@ -198,6 +219,16 @@ public class SonarLintBackendFixture {
     }
 
     public SonarLintBackendBuilder withConfigScope(String configurationScopeId, String name, String parentScopeId, BindingConfigurationDto bindingConfiguration) {
+      return withConfigScope(configurationScopeId, name, parentScopeId, bindingConfiguration, null);
+    }
+
+    public SonarLintBackendBuilder withConfigScope(String configurationScopeId, String name, String parentScopeId, BindingConfigurationDto bindingConfiguration,
+      @Nullable Consumer<ConfigurationScopeStorageFixture.ConfigurationScopeStorageBuilder> storageBuilder) {
+      if (storageBuilder != null) {
+        var builder = ConfigurationScopeStorageFixture.newBuilder(configurationScopeId);
+        storageBuilder.accept(builder);
+        configurationScopeStorages.add(builder);
+      }
       configurationScopes.add(new ConfigurationScopeDto(configurationScopeId, parentScopeId, true, name, bindingConfiguration));
       return this;
     }
@@ -273,6 +304,10 @@ public class SonarLintBackendFixture {
       var workDir = tempDirectory("work");
       var storageParentPath = tempDirectory("storage");
       storages.forEach(storage -> storage.create(storageParentPath));
+      var storageRoot = storageParentPath.resolve("storage");
+      if (!configurationScopeStorages.isEmpty()) {
+        configurationScopeStorages.forEach(storage -> storage.create(storageRoot));
+      }
       var sonarLintBackend = new SonarLintTestBackend(client);
       client.setBackend(sonarLintBackend);
       var clientInfo = new ClientInfoDto(clientName, "mediumTests", userAgent);
@@ -280,7 +315,7 @@ public class SonarLintBackendFixture {
       try {
         sonarLintBackend
           .initialize(new InitializeParams(clientInfo, featureFlags,
-            storageParentPath.resolve("storage"), workDir, embeddedPluginPaths, connectedModeEmbeddedPluginPathsByKey,
+            storageRoot, workDir, embeddedPluginPaths, connectedModeEmbeddedPluginPathsByKey,
             enabledLanguages, extraEnabledLanguagesInConnectedMode, sonarQubeConnections, sonarCloudConnections, sonarlintUserHome.toString(),
             standaloneConfigByKey))
           .get();
@@ -304,7 +339,6 @@ public class SonarLintBackendFixture {
     public SonarLintTestBackend build() {
       return build(newFakeClient().build());
     }
-
   }
 
   public static class SonarLintClientBuilder {
@@ -316,7 +350,7 @@ public class SonarLintBackendFixture {
 
     private ProxyDto proxy;
     private GetProxyPasswordAuthenticationResponse proxyAuth;
-    private Map<String, Either<TokenDto, UsernamePasswordDto>> creds = new HashMap<>();
+    private Map<String, Either<TokenDto, UsernamePasswordDto>> credentialsByConnectionId = new HashMap<>();
 
     public SonarLintClientBuilder withFoundFile(String name, String path, String content) {
       foundFiles.add(new FoundFileDto(name, path, content));
@@ -334,12 +368,12 @@ public class SonarLintBackendFixture {
     }
 
     public SonarLintClientBuilder withCredentials(String connectionId, String user, String password) {
-      creds.put(connectionId, Either.forRight(new UsernamePasswordDto(user, password)));
+      credentialsByConnectionId.put(connectionId, Either.forRight(new UsernamePasswordDto(user, password)));
       return this;
     }
 
     public SonarLintClientBuilder withToken(String connectionId, String token) {
-      creds.put(connectionId, Either.forLeft(new TokenDto(token)));
+      credentialsByConnectionId.put(connectionId, Either.forLeft(new TokenDto(token)));
       return this;
     }
 
@@ -367,7 +401,7 @@ public class SonarLintBackendFixture {
     public FakeSonarLintClient build() {
       return new FakeSonarLintClient(foundFiles, clientDescription, cannedAssistCreatingSonarQubeConnectionByBaseUrl,
         cannedBindingAssistByProjectKey,
-        rejectingProgress, proxy, proxyAuth, creds);
+        rejectingProgress, proxy, proxyAuth, credentialsByConnectionId);
     }
   }
 
@@ -387,13 +421,13 @@ public class SonarLintBackendFixture {
     private final Set<String> synchronizedConfigScopeIds = new HashSet<>();
     private final ProxyDto proxy;
     private final GetProxyPasswordAuthenticationResponse proxyAuth;
-    private final Map<String, Either<TokenDto, UsernamePasswordDto>> creds;
+    private final Map<String, Either<TokenDto, UsernamePasswordDto>> credentialsByConnectionId;
     private SonarLintBackendImpl backend;
 
     public FakeSonarLintClient(List<FoundFileDto> foundFiles, String clientDescription,
       LinkedHashMap<String, SonarQubeConnectionConfigurationDto> cannedAssistCreatingSonarQubeConnectionByBaseUrl,
       LinkedHashMap<String, ConfigurationScopeDto> bindingAssistResponseByProjectKey, boolean rejectingProgress, @Nullable ProxyDto proxy,
-      @Nullable GetProxyPasswordAuthenticationResponse proxyAuth, Map<String, Either<TokenDto, UsernamePasswordDto>> creds) {
+      @Nullable GetProxyPasswordAuthenticationResponse proxyAuth, Map<String, Either<TokenDto, UsernamePasswordDto>> credentialsByConnectionId) {
       this.foundFiles = foundFiles;
       this.clientDescription = clientDescription;
       this.cannedAssistCreatingSonarQubeConnectionByBaseUrl = cannedAssistCreatingSonarQubeConnectionByBaseUrl;
@@ -401,7 +435,7 @@ public class SonarLintBackendFixture {
       this.rejectingProgress = rejectingProgress;
       this.proxy = proxy;
       this.proxyAuth = proxyAuth;
-      this.creds = creds;
+      this.credentialsByConnectionId = credentialsByConnectionId;
     }
 
     public void setBackend(SonarLintBackendImpl backend) {
@@ -502,8 +536,12 @@ public class SonarLintBackendFixture {
     }
 
     public CompletableFuture<GetCredentialsResponse> getCredentials(GetCredentialsParams params) {
-      var response = new GetCredentialsResponse(creds.get(params.getConnectionId()));
+      var response = new GetCredentialsResponse(credentialsByConnectionId.get(params.getConnectionId()));
       return CompletableFuture.completedFuture(response);
+    }
+
+    public void setToken(String connectionId, String secondToken) {
+      credentialsByConnectionId.put(connectionId, Either.forLeft(new TokenDto(secondToken)));
     }
 
     @Override

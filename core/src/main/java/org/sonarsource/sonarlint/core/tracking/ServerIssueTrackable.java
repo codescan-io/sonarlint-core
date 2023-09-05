@@ -36,6 +36,10 @@ public class ServerIssueTrackable implements Trackable {
     this.serverIssue = serverIssue;
   }
 
+  public ServerIssue getServerIssue() {
+    return serverIssue;
+  }
+
   @Override
   public Object getClientObject() {
     throw new UnsupportedOperationException();
@@ -48,8 +52,7 @@ public class ServerIssueTrackable implements Trackable {
 
   @Override
   public IssueSeverity getSeverity() {
-    var userSeverity = serverIssue.getUserSeverity();
-    return userSeverity != null ? userSeverity : null;
+    return serverIssue.getUserSeverity();
   }
 
   @Override

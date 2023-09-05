@@ -1,5 +1,5 @@
 /*
- * SonarLint Core - Implementation
+ * SonarLint Core - Client API
  * Copyright (C) 2016-2023 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
@@ -17,10 +17,16 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.sonarlint.core.client.api.exceptions;
+package org.sonarsource.sonarlint.core.clientapi.backend.connection.config;
 
-import org.sonarsource.sonarlint.core.commons.SonarLintException;
+public class DidChangeCredentialsParams {
+  private final String connectionId;
 
-public class CanceledException extends SonarLintException {
+  public DidChangeCredentialsParams(String connectionId) {
+    this.connectionId = connectionId;
+  }
 
+  public String getConnectionId() {
+    return connectionId;
+  }
 }
