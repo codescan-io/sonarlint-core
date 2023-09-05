@@ -1,7 +1,7 @@
 /*
- * SonarLint Core - Server Connection
+ * CodeScan Core - Server Connection
  * Copyright (C) 2016-2023 SonarSource SA
- * mailto:info AT sonarsource DOT com
+ * mailto:info AT CodeScan DOT com
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.sonarsource.sonarlint.core.commons.HotspotReviewStatus;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.serverapi.hotspot.ServerHotspot;
+import org.sonarsource.sonarlint.core.serverconnection.issues.ServerFinding;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerTaintIssue;
 import org.sonarsource.sonarlint.core.serverconnection.storage.ProjectServerIssueStore;
@@ -245,11 +246,11 @@ public class InMemoryIssueStore implements ProjectServerIssueStore {
   }
 
   @Override
-  public void markIssueAsResolved(String issueKey, boolean isTaintIssue) {
+  public Optional<ServerFinding> updateIssueResolutionStatus(String issueKey, boolean isTaintIssue, boolean isResolved) {
     if (isTaintIssue) {
-      taintIssuesByKey.computeIfPresent(issueKey, (s, serverIssue) ->  serverIssue.setResolved(true));
+      return Optional.ofNullable(taintIssuesByKey.computeIfPresent(issueKey, (s, serverIssue) ->  serverIssue.setResolved(isResolved)));
     } else {
-      issuesByKey.computeIfPresent(issueKey, (s, serverIssue) ->  serverIssue.setResolved(true));
+      return Optional.ofNullable(issuesByKey.computeIfPresent(issueKey, (s, serverIssue) ->  serverIssue.setResolved(isResolved)));
     }
   }
 
@@ -305,5 +306,10 @@ public class InMemoryIssueStore implements ProjectServerIssueStore {
           hotspotUpdater.accept(hotspot);
         }
       })));
+  }
+
+  @Override
+  public boolean containsIssue(String issueKey, boolean taintIssue) {
+    return false;
   }
 }

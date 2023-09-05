@@ -22,13 +22,18 @@ package org.sonarsource.sonarlint.core.serverconnection.issues;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
+import org.sonarsource.sonarlint.core.commons.CleanCodeAttribute;
+import org.sonarsource.sonarlint.core.commons.ImpactSeverity;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.RuleType;
+import org.sonarsource.sonarlint.core.commons.SoftwareQuality;
 import org.sonarsource.sonarlint.core.commons.TextRangeWithHash;
 
-public class ServerTaintIssue {
+public class ServerTaintIssue implements ServerFinding {
   private String key;
   private boolean resolved;
   private String ruleKey;
@@ -41,9 +46,13 @@ public class ServerTaintIssue {
   private TextRangeWithHash textRange;
   @Nullable
   private final String ruleDescriptionContextKey;
+  @Nullable
+  private final CleanCodeAttribute cleanCodeAttribute;
+  private final Map<SoftwareQuality, ImpactSeverity> impacts;
 
   public ServerTaintIssue(String key, boolean resolved, String ruleKey, String message, String filePath, Instant creationDate, IssueSeverity severity, RuleType type,
-    @Nullable TextRangeWithHash textRange, @Nullable String ruleDescriptionContextKey) {
+    @Nullable TextRangeWithHash textRange, @Nullable String ruleDescriptionContextKey, @Nullable CleanCodeAttribute cleanCodeAttribute,
+    Map<SoftwareQuality, ImpactSeverity> impacts) {
     this.key = key;
     this.resolved = resolved;
     this.ruleKey = ruleKey;
@@ -54,6 +63,8 @@ public class ServerTaintIssue {
     this.type = type;
     this.textRange = textRange;
     this.ruleDescriptionContextKey = ruleDescriptionContextKey;
+    this.cleanCodeAttribute = cleanCodeAttribute;
+    this.impacts = impacts;
   }
 
   public String getKey() {
@@ -64,6 +75,7 @@ public class ServerTaintIssue {
     return resolved;
   }
 
+  @Override
   public String getRuleKey() {
     return ruleKey;
   }
@@ -100,6 +112,14 @@ public class ServerTaintIssue {
 
   public List<Flow> getFlows() {
     return flows;
+  }
+
+  public Optional<CleanCodeAttribute> getCleanCodeAttribute() {
+    return Optional.ofNullable(cleanCodeAttribute);
+  }
+
+  public Map<SoftwareQuality, ImpactSeverity> getImpacts() {
+    return impacts;
   }
 
   public ServerTaintIssue setKey(String key) {

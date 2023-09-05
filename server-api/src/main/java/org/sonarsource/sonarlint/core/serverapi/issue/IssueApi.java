@@ -19,6 +19,7 @@
  */
 package org.sonarsource.sonarlint.core.serverapi.issue;
 
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +31,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.sonar.scanner.protocol.input.ScannerInput;
+import org.sonarsource.sonarlint.core.commons.IssueStatus;
 import org.sonarsource.sonarlint.core.commons.Language;
+import org.sonarsource.sonarlint.core.commons.LocalOnlyIssue;
+import org.sonarsource.sonarlint.core.commons.Transition;
 import org.sonarsource.sonarlint.core.commons.Version;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.commons.progress.ProgressMonitor;
@@ -41,13 +45,20 @@ import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues;
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues.Component;
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues.Issue;
 
+import static java.util.Objects.requireNonNull;
 import static org.sonarsource.sonarlint.core.http.HttpClient.FORM_URL_ENCODED_CONTENT_TYPE;
+import static org.sonarsource.sonarlint.core.http.HttpClient.JSON_CONTENT_TYPE;
 import static org.sonarsource.sonarlint.core.serverapi.UrlUtils.urlEncode;
 import static org.sonarsource.sonarlint.core.serverapi.util.ProtobufUtil.readMessages;
 
 public class IssueApi {
 
   public static final Version MIN_SQ_VERSION_SUPPORTING_PULL = Version.create("9.6");
+
+  private static final Map<IssueStatus, Transition> transitionByStatus = Map.of(
+    IssueStatus.WONT_FIX, Transition.WONT_FIX,
+    IssueStatus.FALSE_POSITIVE, Transition.FALSE_POSITIVE
+  );
 
   private static final SonarLintLogger LOG = SonarLintLogger.get();
 
@@ -213,8 +224,8 @@ public class IssueApi {
       duration -> LOG.debug("Pulled taint issues in {}ms", duration));
   }
 
-  public CompletableFuture<Void> changeStatusAsync(String issueKey, String status) {
-    var body = "issue=" + urlEncode(issueKey) + "&transition=" + urlEncode(status);
+  public CompletableFuture<Void> changeStatusAsync(String issueKey, Transition transition) {
+    var body = "issue=" + urlEncode(issueKey) + "&transition=" + urlEncode(transition.getStatus());
     return serverApiHelper.postAsync("/api/issues/do_transition", FORM_URL_ENCODED_CONTENT_TYPE, body)
       .thenAccept(response -> {
         // no data, return void
@@ -250,6 +261,30 @@ public class IssueApi {
       });
   }
 
+  public CompletableFuture<Void> anticipatedTransitions(String projectKey, List<LocalOnlyIssue> resolvedLocalOnlyIssues) {
+    return serverApiHelper.postAsync("/api/issues/anticipated_transitions?projectKey=" + projectKey, JSON_CONTENT_TYPE, new Gson().toJson(adapt(resolvedLocalOnlyIssues)))
+      .thenAccept(response -> {
+        // no data, return void
+      });
+  }
+
+  private static List<IssueAnticipatedTransition> adapt(List<LocalOnlyIssue> resolvedLocalOnlyIssues) {
+    return resolvedLocalOnlyIssues.stream().map(IssueApi::adapt).collect(Collectors.toList());
+  }
+
+  private static IssueAnticipatedTransition adapt(LocalOnlyIssue issue) {
+    Integer lineNumber = null;
+    String lineHash = null;
+    var lineWithHash = issue.getLineWithHash();
+    if (lineWithHash != null) {
+      lineNumber = lineWithHash.getNumber();
+      lineHash = lineWithHash.getHash();
+    }
+    var resolution = requireNonNull(issue.getResolution());
+    return new IssueAnticipatedTransition(issue.getServerRelativePath(), lineNumber, lineHash, issue.getRuleKey(), issue.getMessage(),
+      transitionByStatus.get(resolution.getStatus()).getStatus(), resolution.getComment());
+  }
+
   public static class TaintIssuesPullResult {
     private final Issues.TaintVulnerabilityPullQueryTimestamp timestamp;
     private final List<Issues.TaintVulnerabilityLite> issues;
@@ -268,4 +303,26 @@ public class IssueApi {
     }
   }
 
+
+
+  private static class IssueAnticipatedTransition {
+    public final String filePath;
+    public final Integer line;
+    public final String hash;
+    public final String ruleKey;
+    public final String issueMessage;
+    public final String transition;
+    public final String comment;
+
+    private IssueAnticipatedTransition(String filePath, @Nullable Integer line, @Nullable String hash, String ruleKey, String issueMessage, String transition,
+      @Nullable String comment) {
+      this.filePath = filePath;
+      this.line = line;
+      this.hash = hash;
+      this.ruleKey = ruleKey;
+      this.issueMessage = issueMessage;
+      this.transition = transition;
+      this.comment = comment;
+    }
+  }
 }
