@@ -30,7 +30,7 @@ public class SonarCloudConnectionConfigurationDto {
   private final String organization;
   private final boolean disableNotifications;
 
-  public SonarCloudConnectionConfigurationDto(@NonNull String connectionId, @NonNull String organization, boolean disableNotifications) {
+  public SonarCloudConnectionConfigurationDto(@NonNull String connectionId, String organization, boolean disableNotifications) {
     this.connectionId = connectionId;
     this.organization = organization;
     this.disableNotifications = disableNotifications;
