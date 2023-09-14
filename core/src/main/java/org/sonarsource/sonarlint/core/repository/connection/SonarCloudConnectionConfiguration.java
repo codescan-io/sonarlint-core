@@ -27,7 +27,7 @@ import org.sonarsource.sonarlint.core.serverapi.EndpointParams;
 public class SonarCloudConnectionConfiguration extends AbstractConnectionConfiguration {
 
   public static String getSonarCloudUrl() {
-    return System.getProperty("sonarlint.internal.sonarcloud.url", "https://sonarcloud.io");
+    return System.getProperty("sonarlint.internal.sonarcloud.url", "https://app.codescan.io");
   }
 
   private final String organization;
