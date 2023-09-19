@@ -130,7 +130,7 @@ class SslMediumTests {
       var fakeClient = newFakeClient().build();
       backend = newBackend().build(fakeClient);
 
-      var future = backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"));
+      var future = backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"), "url");
       var thrown = assertThrows(CompletionException.class, future::join);
       assertThat(thrown).hasRootCauseInstanceOf(java.security.cert.CertificateException.class).hasRootCauseMessage("None of the TrustManagers trust this certificate chain");
       assertThat(future).isCompletedExceptionally();
@@ -148,8 +148,8 @@ class SslMediumTests {
         .thenReturn(CompletableFuture.completedFuture(new CheckServerTrustedResponse(true)));
 
       // Two concurrent requests should only trigger checkServerTrusted once
-      var future = backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"));
-      var future2 = backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"));
+      var future = backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"), "ur");
+      var future2 = backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"), "url");
 
       future.get();
       future2.get();
@@ -225,7 +225,7 @@ class SslMediumTests {
       when(fakeClient.checkServerTrusted(any()))
         .thenReturn(CompletableFuture.completedFuture(new CheckServerTrustedResponse(true)));
 
-      var future = backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"));
+      var future = backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"), "url");
 
       var thrown = assertThrows(CompletionException.class, future::join);
       assertThat(thrown).hasRootCauseInstanceOf(SSLHandshakeException.class).hasRootCauseMessage("Received fatal alert: bad_certificate");
@@ -246,7 +246,7 @@ class SslMediumTests {
       when(fakeClient.checkServerTrusted(any()))
         .thenReturn(CompletableFuture.completedFuture(new CheckServerTrustedResponse(true)));
 
-      var future = backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"));
+      var future = backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"), "url");
 
       future.get();
     }

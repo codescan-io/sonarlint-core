@@ -178,12 +178,12 @@ public class SonarLintBackendFixture {
         storageBuilder.accept(storage);
         storages.add(storage);
       }
-      sonarCloudConnections.add(new SonarCloudConnectionConfigurationDto(connectionId, organizationKey, disableNotifications));
+      sonarCloudConnections.add(new SonarCloudConnectionConfigurationDto(connectionId, "https://app.codescan.io", organizationKey, disableNotifications));
       return this;
     }
 
     public SonarLintBackendBuilder withSonarCloudConnection(String connectionId, String organizationKey) {
-      sonarCloudConnections.add(new SonarCloudConnectionConfigurationDto(connectionId, organizationKey, true));
+      sonarCloudConnections.add(new SonarCloudConnectionConfigurationDto(connectionId, "https://app.codescan.io", organizationKey, true));
       return this;
     }
 

@@ -87,7 +87,7 @@ class TimeoutMediumTests {
             .build())
           .build()))));
 
-    var future = this.backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"));
+    var future = this.backend.getConnectionService().getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto("token")), "myOrg"), "url");
 
     assertThat(future)
       .failsWithin(2, TimeUnit.SECONDS)

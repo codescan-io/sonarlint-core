@@ -105,7 +105,7 @@ public class ConnectionServiceImpl implements ConnectionService {
   }
 
   private static AbstractConnectionConfiguration adapt(SonarCloudConnectionConfigurationDto scDto) {
-    return new SonarCloudConnectionConfiguration(scDto.getConnectionId(), scDto.getOrganization(), scDto.getDisableNotifications());
+    return new SonarCloudConnectionConfiguration(scDto.getConnectionId(), scDto.getOrganization(), scDto.getDisableNotifications(), scDto.getHostUrl());
   }
 
   private static void putAndLogIfDuplicateId(Map<String, AbstractConnectionConfiguration> map, AbstractConnectionConfiguration config) {
@@ -182,8 +182,8 @@ public class ConnectionServiceImpl implements ConnectionService {
   }
 
   @Override
-  public CompletableFuture<ListUserOrganizationsResponse> listUserOrganizations(ListUserOrganizationsParams params) {
-    var helper = buildSonarCloudNoOrgApiHelper(params.getCredentials());
+  public CompletableFuture<ListUserOrganizationsResponse> listUserOrganizations(ListUserOrganizationsParams params, String hostUrl) {
+    var helper = buildSonarCloudNoOrgApiHelper(params.getCredentials(), hostUrl);
     return CompletableFuture.supplyAsync(() -> {
       var serverOrganizations = new OrganizationApi(helper).listUserOrganizations(new ProgressMonitor(null));
       return new ListUserOrganizationsResponse(
@@ -192,8 +192,8 @@ public class ConnectionServiceImpl implements ConnectionService {
   }
 
   @Override
-  public CompletableFuture<GetOrganizationResponse> getOrganization(GetOrganizationParams params) {
-    var helper = buildSonarCloudNoOrgApiHelper(params.getCredentials());
+  public CompletableFuture<GetOrganizationResponse> getOrganization(GetOrganizationParams params, String hostUrl) {
+    var helper = buildSonarCloudNoOrgApiHelper(params.getCredentials(), hostUrl);
     return CompletableFuture.supplyAsync(() -> {
       var serverOrganization = new OrganizationApi(helper).getOrganization(params.getOrganizationKey(), new ProgressMonitor(null));
       return new GetOrganizationResponse(serverOrganization.map(o -> new OrganizationDto(o.getKey(), o.getName(), o.getDescription())).orElse(null));
@@ -204,15 +204,15 @@ public class ConnectionServiceImpl implements ConnectionService {
   ServerApiHelper buildServerApiHelper(Either<TransientSonarQubeConnectionDto, TransientSonarCloudConnectionDto> transientConnection) {
     var endpointParams = transientConnection.map(
       sq -> new EndpointParams(sq.getServerUrl(), false, null),
-      sc -> new EndpointParams(SonarCloudConnectionConfiguration.getSonarCloudUrl(), true, sc.getOrganization()));
+      sc -> new EndpointParams(sc.getServerUrl(), true, sc.getOrganization()));
     var httpClient = getClientFor(transientConnection
       .map(TransientSonarQubeConnectionDto::getCredentials, TransientSonarCloudConnectionDto::getCredentials));
     return new ServerApiHelper(endpointParams, httpClient);
   }
 
   @NotNull
-  ServerApiHelper buildSonarCloudNoOrgApiHelper(Either<TokenDto, UsernamePasswordDto> credentials) {
-    var endpointParams = new EndpointParams(SonarCloudConnectionConfiguration.getSonarCloudUrl(), true, null);
+  ServerApiHelper buildSonarCloudNoOrgApiHelper(Either<TokenDto, UsernamePasswordDto> credentials, String hostUrl) {
+    var endpointParams = new EndpointParams(hostUrl, true, null);
     var httpClient = getClientFor(credentials);
     return new ServerApiHelper(endpointParams, httpClient);
   }
