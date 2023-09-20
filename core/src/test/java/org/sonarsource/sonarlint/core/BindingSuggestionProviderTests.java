@@ -388,7 +388,7 @@ class BindingSuggestionProviderTests {
     when(bindingClueProvider.collectBindingCluesWithConnections(CONFIG_SCOPE_ID_1, Set.of(SQ_1_ID)))
       .thenReturn(List.of(
         new BindingClueProvider.BindingClueWithConnections(new BindingClueProvider.UnknownBindingClue(PROJECT_KEY_1), Set.of(SQ_1_ID, SC_1_ID)),
-        new BindingClueProvider.BindingClueWithConnections(new BindingClueProvider.SonarCloudBindingClue(null, null), Set.of(SC_1_ID))));
+        new BindingClueProvider.BindingClueWithConnections(new BindingClueProvider.SonarCloudBindingClue(null, null, null), Set.of(SC_1_ID))));
 
     when(sonarProjectsCache.getSonarProject(SQ_1_ID, PROJECT_KEY_1)).thenReturn(Optional.empty());
     when(sonarProjectsCache.getSonarProject(SC_1_ID, PROJECT_KEY_1)).thenReturn(Optional.empty());
