@@ -37,7 +37,6 @@ import org.sonar.api.batch.sensor.issue.IssueLocation;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.batch.sensor.issue.fix.QuickFix;
-import org.sonar.api.issue.impact.SoftwareQuality;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.PathUtils;
 import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.SonarLintInputProject;
@@ -57,14 +56,12 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
   private Severity overriddenSeverity;
   private final List<QuickFix> quickFixes;
   private Optional<String> ruleDescriptionContextKey = Optional.empty();
-  private final Map<SoftwareQuality, org.sonar.api.issue.impact.Severity> overriddenImpacts;
 
   public DefaultSonarLintIssue(SonarLintInputProject project, Path baseDir, @Nullable SensorStorage storage) {
     super(storage);
     this.project = project;
     this.baseDir = baseDir;
     this.quickFixes = new ArrayList<>();
-    this.overriddenImpacts = new EnumMap<>(SoftwareQuality.class);
   }
 
   @Override
@@ -78,7 +75,6 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
     return this;
   }
 
-  @Override
   public NewIssue setCodeVariants(@Nullable Iterable<String> iterable) {
     // not implemented
     return this;
@@ -112,16 +108,7 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
     return this.overriddenSeverity;
   }
 
-  @Override
-  public DefaultSonarLintIssue overrideImpact(SoftwareQuality softwareQuality, org.sonar.api.issue.impact.Severity severity) {
-    overriddenImpacts.put(softwareQuality, severity);
-    return this;
-  }
 
-  @Override
-  public Map<SoftwareQuality, org.sonar.api.issue.impact.Severity> overridenImpacts() {
-    return overriddenImpacts;
-  }
 
   @Override
   public Double gap() {
@@ -219,7 +206,6 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
   }
 
   @CheckForNull
-  @Override
   public List<String> codeVariants() {
     return Collections.emptyList();
   }

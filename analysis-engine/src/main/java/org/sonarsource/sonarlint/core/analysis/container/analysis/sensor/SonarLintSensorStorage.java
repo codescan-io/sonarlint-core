@@ -39,7 +39,7 @@ import org.sonar.api.batch.sensor.issue.fix.QuickFix;
 import org.sonar.api.batch.sensor.measure.Measure;
 import org.sonar.api.batch.sensor.rule.AdHocRule;
 import org.sonar.api.batch.sensor.symbol.NewSymbolTable;
-import org.sonar.api.issue.impact.Severity;
+
 import org.sonarsource.sonarlint.core.analysis.api.AnalysisResults;
 import org.sonarsource.sonarlint.core.analysis.api.ClientInputFileEdit;
 import org.sonarsource.sonarlint.core.analysis.api.TextEdit;
@@ -89,9 +89,9 @@ public class SonarLintSensorStorage implements SensorStorage {
     var primaryMessage = sonarLintIssue.primaryLocation().message();
     var flows = mapFlows(sonarLintIssue.flows());
     var quickFixes = transform(sonarLintIssue.quickFixes());
-    var overriddenImpacts = transform(sonarLintIssue.overridenImpacts());
+    //var overriddenImpacts = transform(sonarLintIssue.overridenImpacts());
 
-    var newIssue = new org.sonarsource.sonarlint.core.analysis.api.Issue(activeRule, primaryMessage, overriddenImpacts,
+    var newIssue = new org.sonarsource.sonarlint.core.analysis.api.Issue(activeRule, primaryMessage, null,
       issue.primaryLocation().textRange(),
       inputComponent.isFile() ? ((SonarLintInputFile) inputComponent).getClientInputFile() : null, flows, quickFixes, sonarLintIssue.ruleDescriptionContextKey());
     if (filters.accept(inputComponent, newIssue)) {
@@ -103,11 +103,11 @@ public class SonarLintSensorStorage implements SensorStorage {
     return quickFixes.stream().map(SonarLintSensorStorage::transform).collect(toList());
   }
 
-  private static Map<SoftwareQuality, ImpactSeverity> transform(Map<org.sonar.api.issue.impact.SoftwareQuality, Severity> overriddenImpacts) {
-    return overriddenImpacts.entrySet().stream()
-      .map(e -> Map.entry(SoftwareQuality.valueOf(e.getKey().name()), ImpactSeverity.valueOf(e.getValue().name())))
-      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-  }
+//  private static Map<SoftwareQuality, ImpactSeverity> transform(Map<org.sonar.api.issue.impact.SoftwareQuality, Severity> overriddenImpacts) {
+//    return overriddenImpacts.entrySet().stream()
+//      .map(e -> Map.entry(SoftwareQuality.valueOf(e.getKey().name()), ImpactSeverity.valueOf(e.getValue().name())))
+//      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+//  }
 
   private static org.sonarsource.sonarlint.core.analysis.api.QuickFix transform(QuickFix qf) {
     return new org.sonarsource.sonarlint.core.analysis.api.QuickFix(

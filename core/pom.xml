@@ -191,12 +191,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.sonarsource.sonarqube</groupId>
-      <artifactId>sonar-plugin-api-impl</artifactId>
-      <version>${sonar-markdown.version}</version>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -379,6 +373,7 @@
                 </filter>
                 <filter>
                   <artifact>org.sonarsource.api.plugin:sonar-plugin-api</artifact>
+                  <version>${sonar-plugin-api.version}</version>
                   <includes>
                     <include>**</include>
                   </includes>
