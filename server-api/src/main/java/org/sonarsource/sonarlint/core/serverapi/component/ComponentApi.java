@@ -27,7 +27,7 @@ import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.commons.progress.ProgressMonitor;
 import org.sonarsource.sonarlint.core.serverapi.ServerApiHelper;
 import org.sonarsource.sonarlint.core.serverapi.UrlUtils;
-import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Components;
+import org.sonarqube.ws.Components;
 
 public class ComponentApi {
   private static final SonarLintLogger LOG = SonarLintLogger.get();
@@ -76,7 +76,7 @@ public class ComponentApi {
 
   private String getAllProjectsUrl() {
     var searchUrl = new StringBuilder();
-    searchUrl.append("api/components/search.protobuf?qualifiers=TRK");
+    searchUrl.append("api/components/search_projects.protobuf?qualifiers=TRK");
     helper.getOrganizationKey()
       .ifPresent(org -> searchUrl.append("&organization=").append(UrlUtils.urlEncode(org)));
     return searchUrl.toString();

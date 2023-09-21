@@ -26,7 +26,7 @@ option java_package = "org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.
 option java_outer_classname = "Components";
 option optimize_for = SPEED;
 
-// WS api/components/search
+// WS api/components/search_projects
 message SearchWsResponse {
   optional sonarqube.ws.commons.Paging paging = 1;
   repeated Component components = 2;

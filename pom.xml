@@ -43,8 +43,9 @@
   </modules>
 
   <properties>
-    <sonar-plugin-api.version>10.1.0.809</sonar-plugin-api.version>
-    <sonar-markdown.version>9.4.0.54424</sonar-markdown.version>
+    <sonar-plugin-api.version>9.14-CODESCAN</sonar-plugin-api.version>
+    <sonar-ws.version>9.9</sonar-ws.version>
+    <sonar-markdown.version>9.9.0.65466</sonar-markdown.version>
     <sonar-scanner-protocol.version>7.9</sonar-scanner-protocol.version>
     <protobuf.version>3.21.9</protobuf.version>
     <gitRepositoryName>sonarlint-core</gitRepositoryName>
