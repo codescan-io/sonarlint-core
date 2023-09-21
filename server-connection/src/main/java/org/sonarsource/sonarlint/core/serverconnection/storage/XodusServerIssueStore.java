@@ -31,7 +31,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -50,13 +49,10 @@ import jetbrains.exodus.util.CompressBackupUtil;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.sonarsource.sonarlint.core.commons.CleanCodeAttribute;
 import org.sonarsource.sonarlint.core.commons.HotspotReviewStatus;
-import org.sonarsource.sonarlint.core.commons.ImpactSeverity;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.RuleType;
-import org.sonarsource.sonarlint.core.commons.SoftwareQuality;
 import org.sonarsource.sonarlint.core.commons.TextRangeWithHash;
 import org.sonarsource.sonarlint.core.commons.VulnerabilityProbability;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
@@ -133,8 +129,6 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
   private static final String MESSAGE_BLOB_NAME = "message";
   private static final String FLOWS_BLOB_NAME = "flows";
   private static final String RULE_DESCRIPTION_CONTEXT_KEY_PROPERTY_NAME = "ruleDescriptionContextKey";
-  private static final String CLEAN_CODE_ATTRIBUTE_PROPERTY_NAME = "cleanCodeAttribute";
-  private static final String IMPACTS_BLOB_NAME = "impacts";
   private static final String ASSIGNEE_PROPERTY_NAME = "assignee";
   private final PersistentEntityStore entityStore;
 
@@ -171,9 +165,9 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
 
   private PersistentEntityStore buildEntityStore() {
     var environment = Environments.newInstance(xodusDbDir.toAbsolutePath().toFile(), new EnvironmentConfig()
-      .setLogAllowRemote(true)
-      .setLogAllowRemovable(true)
-      .setLogAllowRamDisk(true));
+            .setLogAllowRemote(true)
+            .setLogAllowRemovable(true)
+            .setLogAllowRamDisk(true));
     var entityStoreImpl = PersistentEntityStores.newInstance(environment);
     entityStoreImpl.setCloseEnvironment(true);
     return entityStoreImpl;
@@ -199,27 +193,27 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
         var endLineOffset = (Integer) storedIssue.getProperty(END_LINE_OFFSET_PROPERTY_NAME);
         var textRange = new TextRangeWithHash((int) startLine, startLineOffset, endLine, endLineOffset, rangeHash);
         return new RangeLevelServerIssue(
-          key,
-          resolved,
-          ruleKey,
-          msg,
-          filePath,
-          creationDate,
-          userSeverity,
-          type,
-          textRange);
+                key,
+                resolved,
+                ruleKey,
+                msg,
+                filePath,
+                creationDate,
+                userSeverity,
+                type,
+                textRange);
       } else {
         return new LineLevelServerIssue(
-          key,
-          resolved,
-          ruleKey,
-          msg,
-          storedIssue.getBlobString(LINE_HASH_PROPERTY_NAME),
-          filePath,
-          creationDate,
-          userSeverity,
-          type,
-          (Integer) storedIssue.getProperty(START_LINE_PROPERTY_NAME));
+                key,
+                resolved,
+                ruleKey,
+                msg,
+                storedIssue.getBlobString(LINE_HASH_PROPERTY_NAME),
+                filePath,
+                creationDate,
+                userSeverity,
+                type,
+                (Integer) storedIssue.getProperty(START_LINE_PROPERTY_NAME));
       }
     }
   }
@@ -235,20 +229,17 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
       var hash = storedIssue.getBlobString(RANGE_HASH_PROPERTY_NAME);
       textRange = new TextRangeWithHash(startLine, startLineOffset, endLine, endLineOffset, hash);
     }
-    var cleanCodeAttribute = (String) storedIssue.getProperty(CLEAN_CODE_ATTRIBUTE_PROPERTY_NAME);
     return new ServerTaintIssue(
-      (String) requireNonNull(storedIssue.getProperty(KEY_PROPERTY_NAME)),
-      Boolean.TRUE.equals(storedIssue.getProperty(RESOLVED_PROPERTY_NAME)),
-      (String) requireNonNull(storedIssue.getProperty(RULE_KEY_PROPERTY_NAME)),
-      requireNonNull(storedIssue.getBlobString(MESSAGE_BLOB_NAME)),
-      filePath,
-      (Instant) requireNonNull(storedIssue.getProperty(CREATION_DATE_PROPERTY_NAME)),
-      (IssueSeverity) requireNonNull(storedIssue.getProperty(SEVERITY_PROPERTY_NAME)),
-      (RuleType) requireNonNull(storedIssue.getProperty(TYPE_PROPERTY_NAME)),
-      textRange, (String) storedIssue.getProperty(RULE_DESCRIPTION_CONTEXT_KEY_PROPERTY_NAME),
-      Optional.ofNullable(cleanCodeAttribute).map(CleanCodeAttribute::valueOf).orElse(null),
-      readImpacts(storedIssue.getBlob(IMPACTS_BLOB_NAME)))
-        .setFlows(readFlows(storedIssue.getBlob(FLOWS_BLOB_NAME)));
+            (String) requireNonNull(storedIssue.getProperty(KEY_PROPERTY_NAME)),
+            Boolean.TRUE.equals(storedIssue.getProperty(RESOLVED_PROPERTY_NAME)),
+            (String) requireNonNull(storedIssue.getProperty(RULE_KEY_PROPERTY_NAME)),
+            requireNonNull(storedIssue.getBlobString(MESSAGE_BLOB_NAME)),
+            filePath,
+            (Instant) requireNonNull(storedIssue.getProperty(CREATION_DATE_PROPERTY_NAME)),
+            (IssueSeverity) requireNonNull(storedIssue.getProperty(SEVERITY_PROPERTY_NAME)),
+            (RuleType) requireNonNull(storedIssue.getProperty(TYPE_PROPERTY_NAME)),
+            textRange, (String) storedIssue.getProperty(RULE_DESCRIPTION_CONTEXT_KEY_PROPERTY_NAME))
+            .setFlows(readFlows(storedIssue.getBlob(FLOWS_BLOB_NAME)));
   }
 
   private static ServerHotspot adaptHotspot(Entity storedHotspot) {
@@ -259,7 +250,7 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     var endLineOffset = (Integer) storedHotspot.getProperty(END_LINE_OFFSET_PROPERTY_NAME);
     var hash = (String) storedHotspot.getProperty(RANGE_HASH_PROPERTY_NAME);
     org.sonarsource.sonarlint.core.commons.TextRange textRange;
-    if (hash != null && !hash.isEmpty()) {
+    if(hash != null && !hash.isEmpty()) {
       textRange = new TextRangeWithHash(startLine, startLineOffset, endLine, endLineOffset, hash);
     } else {
       textRange = new org.sonarsource.sonarlint.core.commons.TextRange(startLine, startLineOffset, endLine, endLineOffset);
@@ -273,15 +264,15 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
       status = resolved ? HotspotReviewStatus.SAFE : HotspotReviewStatus.TO_REVIEW;
     }
     return new ServerHotspot(
-      (String) requireNonNull(storedHotspot.getProperty(KEY_PROPERTY_NAME)),
-      (String) requireNonNull(storedHotspot.getProperty(RULE_KEY_PROPERTY_NAME)),
-      requireNonNull(storedHotspot.getBlobString(MESSAGE_BLOB_NAME)),
-      filePath,
-      textRange,
-      (Instant) requireNonNull(storedHotspot.getProperty(CREATION_DATE_PROPERTY_NAME)),
-      status,
-      vulnerabilityProbability,
-      assignee);
+            (String) requireNonNull(storedHotspot.getProperty(KEY_PROPERTY_NAME)),
+            (String) requireNonNull(storedHotspot.getProperty(RULE_KEY_PROPERTY_NAME)),
+            requireNonNull(storedHotspot.getBlobString(MESSAGE_BLOB_NAME)),
+            filePath,
+            textRange,
+            (Instant) requireNonNull(storedHotspot.getProperty(CREATION_DATE_PROPERTY_NAME)),
+            status,
+            vulnerabilityProbability,
+            assignee);
   }
 
   private static List<Flow> readFlows(@Nullable InputStream blob) {
@@ -289,16 +280,6 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
       return List.of();
     }
     return ProtobufUtil.readMessages(blob, Sonarlint.Flow.parser()).stream().map(XodusServerIssueStore::toJavaFlow).collect(Collectors.toList());
-  }
-
-  private static Map<SoftwareQuality, ImpactSeverity> readImpacts(@Nullable InputStream blob) {
-    if (blob == null) {
-      return Map.of();
-    }
-    return ProtobufUtil.readMessages(blob, Sonarlint.Impact.parser())
-      .stream()
-      .map(XodusServerIssueStore::toJavaImpact)
-      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   @Override
@@ -318,22 +299,22 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
 
   private <G> List<G> loadIssue(String branchName, String filePath, String linkName, Function<Entity, G> adapter) {
     return entityStore.computeInReadonlyTransaction(txn -> findUnique(txn, BRANCH_ENTITY_TYPE, NAME_PROPERTY_NAME, branchName)
-      .map(branch -> branch.getLinks(BRANCH_TO_FILES_LINK_NAME))
-      .flatMap(files -> findUniqueAmong(files, PATH_PROPERTY_NAME, filePath))
-      .map(fileToLoad -> fileToLoad.getLinks(linkName))
-      .map(issueEntities -> StreamSupport.stream(issueEntities.spliterator(), false)
-        .map(adapter)
-        .collect(Collectors.toList()))
-      .orElseGet(Collections::emptyList));
+            .map(branch -> branch.getLinks(BRANCH_TO_FILES_LINK_NAME))
+            .flatMap(files -> findUniqueAmong(files, PATH_PROPERTY_NAME, filePath))
+            .map(fileToLoad -> fileToLoad.getLinks(linkName))
+            .map(issueEntities -> StreamSupport.stream(issueEntities.spliterator(), false)
+                    .map(adapter)
+                    .collect(Collectors.toList()))
+            .orElseGet(Collections::emptyList));
   }
 
   @Override
   public List<ServerTaintIssue> loadTaint(String branchName) {
     return entityStore.computeInReadonlyTransaction(txn -> findUnique(txn, BRANCH_ENTITY_TYPE, NAME_PROPERTY_NAME, branchName)
-      .map(branch -> StreamSupport.stream(branch.getLinks(BRANCH_TO_TAINT_ISSUES_LINK_NAME).spliterator(), false)
-        .map(XodusServerIssueStore::adaptTaint)
-        .collect(Collectors.toList()))
-      .orElseGet(Collections::emptyList));
+            .map(branch -> StreamSupport.stream(branch.getLinks(BRANCH_TO_TAINT_ISSUES_LINK_NAME).spliterator(), false)
+                    .map(XodusServerIssueStore::adaptTaint)
+                    .collect(Collectors.toList()))
+            .orElseGet(Collections::emptyList));
   }
 
   @Override
@@ -365,7 +346,7 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
 
   @Override
   public void mergeTaintIssues(String branchName, List<ServerTaintIssue> issuesToMerge, Set<String> closedIssueKeysToDelete,
-    Instant syncTimestamp, Set<Language> enabledLanguages) {
+          Instant syncTimestamp, Set<Language> enabledLanguages) {
     var issuesByFilePath = issuesToMerge.stream().collect(Collectors.groupingBy(ServerTaintIssue::getFilePath));
     timed(mergedMessage(issuesToMerge.size(), closedIssueKeysToDelete.size(), "taint issues"), () -> entityStore.executeInTransaction(txn -> {
       var branch = getOrCreateBranch(branchName, txn);
@@ -411,13 +392,13 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
   @Override
   public Optional<Instant> getLastIssueSyncTimestamp(String branchName) {
     return entityStore.computeInReadonlyTransaction(txn -> findUnique(txn, BRANCH_ENTITY_TYPE, NAME_PROPERTY_NAME, branchName)
-      .map(branch -> (Instant) branch.getProperty(LAST_ISSUE_SYNC_PROPERTY_NAME)));
+            .map(branch -> (Instant) branch.getProperty(LAST_ISSUE_SYNC_PROPERTY_NAME)));
   }
 
   @Override
   public Set<Language> getLastIssueEnabledLanguages(String branchName) {
     var lastEnabledLanguages = entityStore.computeInReadonlyTransaction(txn -> findUnique(txn, BRANCH_ENTITY_TYPE, NAME_PROPERTY_NAME, branchName)
-      .map(branch -> (String) branch.getProperty(LAST_ISSUE_ENABLED_LANGUAGES)));
+            .map(branch -> (String) branch.getProperty(LAST_ISSUE_ENABLED_LANGUAGES)));
 
     return deserializeLanguages(lastEnabledLanguages);
   }
@@ -425,7 +406,7 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
   @Override
   public Set<Language> getLastTaintEnabledLanguages(String branchName) {
     var lastEnabledLanguages = entityStore.computeInReadonlyTransaction(txn -> findUnique(txn, BRANCH_ENTITY_TYPE, NAME_PROPERTY_NAME, branchName)
-      .map(branch -> (String) branch.getProperty(LAST_TAINT_ENABLED_LANGUAGES)));
+            .map(branch -> (String) branch.getProperty(LAST_TAINT_ENABLED_LANGUAGES)));
 
     return deserializeLanguages(lastEnabledLanguages);
   }
@@ -433,20 +414,20 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
   @Override
   public Set<Language> getLastHotspotEnabledLanguages(String branchName) {
     var lastEnabledLanguages = entityStore.computeInReadonlyTransaction(txn -> findUnique(txn, BRANCH_ENTITY_TYPE, NAME_PROPERTY_NAME, branchName)
-      .map(branch -> (String) branch.getProperty(LAST_HOTSPOT_ENABLED_LANGUAGES)));
+            .map(branch -> (String) branch.getProperty(LAST_HOTSPOT_ENABLED_LANGUAGES)));
     return deserializeLanguages(lastEnabledLanguages);
   }
 
   @Override
   public Optional<Instant> getLastTaintSyncTimestamp(String branchName) {
     return entityStore.computeInReadonlyTransaction(txn -> findUnique(txn, BRANCH_ENTITY_TYPE, NAME_PROPERTY_NAME, branchName)
-      .map(branch -> (Instant) branch.getProperty(LAST_TAINT_SYNC_PROPERTY_NAME)));
+            .map(branch -> (Instant) branch.getProperty(LAST_TAINT_SYNC_PROPERTY_NAME)));
   }
 
   @Override
   public Optional<Instant> getLastHotspotSyncTimestamp(String branchName) {
     return entityStore.computeInReadonlyTransaction(txn -> findUnique(txn, BRANCH_ENTITY_TYPE, NAME_PROPERTY_NAME, branchName)
-      .map(branch -> (Instant) branch.getProperty(LAST_HOTSPOT_SYNC_PROPERTY_NAME)));
+            .map(branch -> (Instant) branch.getProperty(LAST_HOTSPOT_SYNC_PROPERTY_NAME)));
   }
 
   @Override
@@ -538,7 +519,7 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     issueEntity.setProperty(CREATION_DATE_PROPERTY_NAME, hotspot.getCreationDate());
     issueEntity.setProperty(REVIEW_STATUS_PROPERTY_NAME, hotspot.getStatus());
     issueEntity.setProperty(VULNERABILITY_PROBABILITY_PROPERTY_NAME, hotspot.getVulnerabilityProbability().toString());
-    if (hotspot.getAssignee() != null) {
+    if(hotspot.getAssignee() != null) {
       issueEntity.setProperty(ASSIGNEE_PROPERTY_NAME, hotspot.getAssignee());
     }
   }
@@ -580,21 +561,21 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
 
   private static Entity getOrCreateBranch(String branchName, StoreTransaction txn) {
     return findUnique(txn, BRANCH_ENTITY_TYPE, NAME_PROPERTY_NAME, branchName)
-      .orElseGet(() -> {
-        var branch = txn.newEntity(BRANCH_ENTITY_TYPE);
-        branch.setProperty(NAME_PROPERTY_NAME, branchName);
-        return branch;
-      });
+            .orElseGet(() -> {
+              var branch = txn.newEntity(BRANCH_ENTITY_TYPE);
+              branch.setProperty(NAME_PROPERTY_NAME, branchName);
+              return branch;
+            });
   }
 
   private static Entity getOrCreateFile(Entity branchEntity, String filePath, StoreTransaction txn) {
     return findUniqueAmong(branchEntity.getLinks(BRANCH_TO_FILES_LINK_NAME), PATH_PROPERTY_NAME, filePath)
-      .orElseGet(() -> {
-        var file = txn.newEntity(FILE_ENTITY_TYPE);
-        file.setProperty(PATH_PROPERTY_NAME, filePath);
-        branchEntity.addLink(BRANCH_TO_FILES_LINK_NAME, file);
-        return file;
-      });
+            .orElseGet(() -> {
+              var file = txn.newEntity(FILE_ENTITY_TYPE);
+              file.setProperty(PATH_PROPERTY_NAME, filePath);
+              branchEntity.addLink(BRANCH_TO_FILES_LINK_NAME, file);
+              return file;
+            });
   }
 
   private static void updateOrCreateIssue(Entity fileEntity, ServerIssue issue, StoreTransaction transaction) {
@@ -654,8 +635,6 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     if (ruleDescriptionContextKey != null) {
       issueEntity.setProperty(RULE_DESCRIPTION_CONTEXT_KEY_PROPERTY_NAME, ruleDescriptionContextKey);
     }
-    issue.getCleanCodeAttribute().ifPresent(attribute -> issueEntity.setProperty(CLEAN_CODE_ATTRIBUTE_PROPERTY_NAME, attribute.name()));
-    issueEntity.setBlob(IMPACTS_BLOB_NAME, toProtoImpact(issue.getImpacts()));
   }
 
   private static InputStream toProtoFlow(List<Flow> flows) {
@@ -664,15 +643,9 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     return new ByteArrayInputStream(buffer.toByteArray());
   }
 
-  private static InputStream toProtoImpact(Map<SoftwareQuality, ImpactSeverity> impacts) {
-    var buffer = new ByteArrayOutputStream();
-    ProtobufUtil.writeMessages(buffer, impacts.entrySet().stream().map(XodusServerIssueStore::toProtoImpact).collect(Collectors.toList()));
-    return new ByteArrayInputStream(buffer.toByteArray());
-  }
-
   private static Entity updateOrCreateIssueCommon(Entity fileEntity, String issueKey, StoreTransaction transaction, String entityType, String fileToIssueLink) {
     var issueEntity = findUnique(transaction, entityType, KEY_PROPERTY_NAME, issueKey)
-      .orElseGet(() -> transaction.newEntity(entityType));
+            .orElseGet(() -> transaction.newEntity(entityType));
     var oldFileEntity = issueEntity.getLink(ISSUE_TO_FILE_LINK_NAME);
     if (oldFileEntity != null && !fileEntity.equals(oldFileEntity)) {
       // issue might have moved file
@@ -692,49 +665,49 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
 
   private static Optional<Entity> findUniqueAmong(EntityIterable iterable, String propertyName, String caseSensitivePropertyValue) {
     return StreamSupport.stream(iterable.spliterator(), false)
-      .filter(e -> caseSensitivePropertyValue.equals(e.getProperty(propertyName)))
-      .findFirst();
+            .filter(e -> caseSensitivePropertyValue.equals(e.getProperty(propertyName)))
+            .findFirst();
   }
 
   private static void remove(String issueKey, @NotNull StoreTransaction txn) {
     findUnique(txn, ISSUE_ENTITY_TYPE, KEY_PROPERTY_NAME, issueKey)
-      .ifPresent(issueEntity -> {
-        var fileEntity = issueEntity.getLink(ISSUE_TO_FILE_LINK_NAME);
-        if (fileEntity != null) {
-          fileEntity.deleteLink(FILE_TO_ISSUES_LINK_NAME, issueEntity);
-        }
-        issueEntity.deleteLinks(ISSUE_TO_FILE_LINK_NAME);
-        issueEntity.delete();
-      });
+            .ifPresent(issueEntity -> {
+              var fileEntity = issueEntity.getLink(ISSUE_TO_FILE_LINK_NAME);
+              if (fileEntity != null) {
+                fileEntity.deleteLink(FILE_TO_ISSUES_LINK_NAME, issueEntity);
+              }
+              issueEntity.deleteLinks(ISSUE_TO_FILE_LINK_NAME);
+              issueEntity.delete();
+            });
   }
 
   private static void removeTaint(String issueKey, @NotNull StoreTransaction txn) {
     findUnique(txn, TAINT_ISSUE_ENTITY_TYPE, KEY_PROPERTY_NAME, issueKey)
-      .ifPresent(issueEntity -> {
-        var fileEntity = issueEntity.getLink(ISSUE_TO_FILE_LINK_NAME);
-        if (fileEntity != null) {
-          fileEntity.deleteLink(FILE_TO_TAINT_ISSUES_LINK_NAME, issueEntity);
-        }
-        issueEntity.deleteLinks(ISSUE_TO_FILE_LINK_NAME);
-        var branchEntity = issueEntity.getLink(TAINT_ISSUE_TO_BRANCH_LINK_NAME);
-        if (branchEntity != null) {
-          branchEntity.deleteLink(BRANCH_TO_TAINT_ISSUES_LINK_NAME, issueEntity);
-        }
-        issueEntity.deleteLinks(TAINT_ISSUE_TO_BRANCH_LINK_NAME);
-        issueEntity.delete();
-      });
+            .ifPresent(issueEntity -> {
+              var fileEntity = issueEntity.getLink(ISSUE_TO_FILE_LINK_NAME);
+              if (fileEntity != null) {
+                fileEntity.deleteLink(FILE_TO_TAINT_ISSUES_LINK_NAME, issueEntity);
+              }
+              issueEntity.deleteLinks(ISSUE_TO_FILE_LINK_NAME);
+              var branchEntity = issueEntity.getLink(TAINT_ISSUE_TO_BRANCH_LINK_NAME);
+              if (branchEntity != null) {
+                branchEntity.deleteLink(BRANCH_TO_TAINT_ISSUES_LINK_NAME, issueEntity);
+              }
+              issueEntity.deleteLinks(TAINT_ISSUE_TO_BRANCH_LINK_NAME);
+              issueEntity.delete();
+            });
   }
 
   private static void removeHotspot(String hotspotKey, @NotNull StoreTransaction txn) {
     findUnique(txn, HOTSPOT_ENTITY_TYPE, KEY_PROPERTY_NAME, hotspotKey)
-      .ifPresent(hotspotEntity -> {
-        var fileEntity = hotspotEntity.getLink(ISSUE_TO_FILE_LINK_NAME);
-        if (fileEntity != null) {
-          fileEntity.deleteLink(FILE_TO_HOTSPOTS_LINK_NAME, hotspotEntity);
-        }
-        hotspotEntity.deleteLinks(ISSUE_TO_FILE_LINK_NAME);
-        hotspotEntity.delete();
-      });
+            .ifPresent(hotspotEntity -> {
+              var fileEntity = hotspotEntity.getLink(ISSUE_TO_FILE_LINK_NAME);
+              if (fileEntity != null) {
+                fileEntity.deleteLink(FILE_TO_HOTSPOTS_LINK_NAME, hotspotEntity);
+              }
+              hotspotEntity.deleteLinks(ISSUE_TO_FILE_LINK_NAME);
+              hotspotEntity.delete();
+            });
   }
 
   @Override
@@ -753,13 +726,13 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
   }
 
   @Override
-  public Optional<ServerFinding> updateIssueResolutionStatus(String issueKey, boolean isTaintIssue, boolean isResolved) {
+  public Optional<ServerFinding> markIssueAsResolved(String issueKey, boolean isTaintIssue) {
     var entityIssueType = isTaintIssue ? TAINT_ISSUE_ENTITY_TYPE : ISSUE_ENTITY_TYPE;
     return entityStore.computeInTransaction(txn -> {
       var optionalEntity = findUnique(txn, entityIssueType, KEY_PROPERTY_NAME, issueKey);
       if (optionalEntity.isPresent()) {
         var issueEntity = optionalEntity.get();
-        issueEntity.setProperty(RESOLVED_PROPERTY_NAME, isResolved);
+        issueEntity.setProperty(RESOLVED_PROPERTY_NAME, true);
         return Optional.of(isTaintIssue ? adaptTaint(issueEntity) : adapt(issueEntity));
       }
       return Optional.empty();
@@ -778,31 +751,31 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
   @Override
   public void updateTaintIssue(String issueKey, Consumer<ServerTaintIssue> taintIssueUpdater) {
     entityStore.executeInTransaction(txn -> findUnique(txn, TAINT_ISSUE_ENTITY_TYPE, KEY_PROPERTY_NAME, issueKey)
-      .ifPresent(issueEntity -> {
-        var currentIssue = adaptTaint(issueEntity);
-        taintIssueUpdater.accept(currentIssue);
-        updateTaintIssueEntity(currentIssue, issueEntity);
-      }));
+            .ifPresent(issueEntity -> {
+              var currentIssue = adaptTaint(issueEntity);
+              taintIssueUpdater.accept(currentIssue);
+              updateTaintIssueEntity(currentIssue, issueEntity);
+            }));
   }
 
   @Override
   public void insert(String branchName, ServerTaintIssue taintIssue) {
     entityStore.executeInTransaction(txn -> findUnique(txn, TAINT_ISSUE_ENTITY_TYPE, KEY_PROPERTY_NAME, taintIssue.getKey())
-      .ifPresentOrElse(issueEntity -> LOG.error("Trying to store a taint vulnerability that already exists"), () -> {
-        var branch = getOrCreateBranch(branchName, txn);
-        var fileEntity = getOrCreateFile(branch, taintIssue.getFilePath(), txn);
-        updateOrCreateTaintIssue(branch, fileEntity, taintIssue, txn);
-      }));
+            .ifPresentOrElse(issueEntity -> LOG.error("Trying to store a taint vulnerability that already exists"), () -> {
+              var branch = getOrCreateBranch(branchName, txn);
+              var fileEntity = getOrCreateFile(branch, taintIssue.getFilePath(), txn);
+              updateOrCreateTaintIssue(branch, fileEntity, taintIssue, txn);
+            }));
   }
 
   @Override
   public void insert(String branchName, ServerHotspot hotspot) {
     entityStore.executeInTransaction(txn -> findUnique(txn, HOTSPOT_ENTITY_TYPE, KEY_PROPERTY_NAME, hotspot.getKey())
-      .ifPresentOrElse(hotspotEntity -> LOG.error("Trying to store a hotspot that already exists"), () -> {
-        var branch = getOrCreateBranch(branchName, txn);
-        var fileEntity = getOrCreateFile(branch, hotspot.getFilePath(), txn);
-        updateOrCreateHotspot(fileEntity, hotspot, txn);
-      }));
+            .ifPresentOrElse(hotspotEntity -> LOG.error("Trying to store a hotspot that already exists"), () -> {
+              var branch = getOrCreateBranch(branchName, txn);
+              var fileEntity = getOrCreateFile(branch, hotspot.getFilePath(), txn);
+              updateOrCreateHotspot(fileEntity, hotspot, txn);
+            }));
   }
 
   @Override
@@ -813,14 +786,14 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
   @Override
   public void deleteHotspot(String hotspotKey) {
     entityStore.executeInTransaction(txn -> findUnique(txn, HOTSPOT_ENTITY_TYPE, KEY_PROPERTY_NAME, hotspotKey)
-      .ifPresent(hotspotEntity -> {
-        var fileEntity = hotspotEntity.getLink(ISSUE_TO_FILE_LINK_NAME);
-        if (fileEntity != null) {
-          fileEntity.deleteLink(FILE_TO_HOTSPOTS_LINK_NAME, hotspotEntity);
-        }
-        hotspotEntity.deleteLinks(ISSUE_TO_FILE_LINK_NAME);
-        hotspotEntity.delete();
-      }));
+            .ifPresent(hotspotEntity -> {
+              var fileEntity = hotspotEntity.getLink(ISSUE_TO_FILE_LINK_NAME);
+              if (fileEntity != null) {
+                fileEntity.deleteLink(FILE_TO_HOTSPOTS_LINK_NAME, hotspotEntity);
+              }
+              hotspotEntity.deleteLinks(ISSUE_TO_FILE_LINK_NAME);
+              hotspotEntity.delete();
+            }));
   }
 
   @Override
@@ -833,11 +806,11 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
   @Override
   public void updateHotspot(String hotspotKey, Consumer<ServerHotspot> hotspotUpdater) {
     entityStore.executeInTransaction(txn -> findUnique(txn, HOTSPOT_ENTITY_TYPE, KEY_PROPERTY_NAME, hotspotKey)
-      .ifPresent(hotspotEntity -> {
-        var currentHotspot = adaptHotspot(hotspotEntity);
-        hotspotUpdater.accept(currentHotspot);
-        updateHotspotEntity(hotspotEntity, currentHotspot);
-      }));
+            .ifPresent(hotspotEntity -> {
+              var currentHotspot = adaptHotspot(hotspotEntity);
+              hotspotUpdater.accept(currentHotspot);
+              updateHotspotEntity(hotspotEntity, currentHotspot);
+            }));
   }
 
   public void backup() {
@@ -854,13 +827,9 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     return new Flow(flowProto.getLocationList().stream().map(XodusServerIssueStore::toJavaLocation).collect(Collectors.toList()));
   }
 
-  private static Map.Entry<SoftwareQuality, ImpactSeverity> toJavaImpact(Sonarlint.Impact impactProto) {
-    return Map.entry(SoftwareQuality.valueOf(impactProto.getSoftwareQuality()), ImpactSeverity.valueOf(impactProto.getSeverity()));
-  }
-
   private static ServerIssueLocation toJavaLocation(Location locationProto) {
     return new ServerIssueLocation(locationProto.hasFilePath() ? locationProto.getFilePath() : null,
-      locationProto.hasTextRange() ? toTextRangeJava(locationProto.getTextRange()) : null, locationProto.getMessage());
+            locationProto.hasTextRange() ? toTextRangeJava(locationProto.getTextRange()) : null, locationProto.getMessage());
   }
 
   private static TextRangeWithHash toTextRangeJava(TextRange textRange) {
@@ -873,13 +842,6 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     return flowBuilder.build();
   }
 
-  private static Sonarlint.Impact toProtoImpact(Map.Entry<SoftwareQuality, ImpactSeverity> impact) {
-    return Sonarlint.Impact.newBuilder()
-      .setSoftwareQuality(impact.getKey().name())
-      .setSeverity(impact.getValue().name())
-      .build();
-  }
-
   private static Location toProtoLocation(ServerIssueLocation l) {
     var location = Location.newBuilder();
     String filePath = l.getFilePath();
@@ -890,11 +852,11 @@ public class XodusServerIssueStore implements ProjectServerIssueStore {
     var textRange = l.getTextRange();
     if (textRange != null) {
       location.setTextRange(TextRange.newBuilder()
-        .setStartLine(textRange.getStartLine())
-        .setStartLineOffset(textRange.getStartLineOffset())
-        .setEndLine(textRange.getEndLine())
-        .setEndLineOffset(textRange.getEndLineOffset())
-        .setHash(textRange.getHash()));
+              .setStartLine(textRange.getStartLine())
+              .setStartLineOffset(textRange.getStartLineOffset())
+              .setEndLine(textRange.getEndLine())
+              .setEndLineOffset(textRange.getEndLineOffset())
+              .setHash(textRange.getHash()));
     }
     return location.build();
   }

@@ -21,12 +21,8 @@ package org.sonarsource.sonarlint.core.serverconnection.storage;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
-import org.sonarsource.sonarlint.core.commons.CleanCodeAttribute;
-import org.sonarsource.sonarlint.core.commons.ImpactSeverity;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.RuleType;
-import org.sonarsource.sonarlint.core.commons.SoftwareQuality;
 import org.sonarsource.sonarlint.core.commons.TextRangeWithHash;
 import org.sonarsource.sonarlint.core.serverconnection.issues.FileLevelServerIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.LineLevelServerIssue;
@@ -36,56 +32,55 @@ import org.sonarsource.sonarlint.core.serverconnection.issues.ServerTaintIssue;
 public class ServerIssueFixtures {
   public static LineLevelServerIssue aBatchServerIssue() {
     return new LineLevelServerIssue(
-      "key",
-      true,
-      "repo:key",
-      "message",
-      "hash",
-      "file/path",
-      Instant.now(),
-      IssueSeverity.MINOR,
-      RuleType.BUG,
-      1);
+            "key",
+            true,
+            "repo:key",
+            "message",
+            "hash",
+            "file/path",
+            Instant.now(),
+            IssueSeverity.MINOR,
+            RuleType.BUG,
+            1);
   }
 
   public static FileLevelServerIssue aFileLevelServerIssue() {
     return new FileLevelServerIssue(
-      "key",
-      true,
-      "repo:key",
-      "message",
-      "file/path",
-      Instant.now(),
-      IssueSeverity.MINOR,
-      RuleType.BUG);
+            "key",
+            true,
+            "repo:key",
+            "message",
+            "file/path",
+            Instant.now(),
+            IssueSeverity.MINOR,
+            RuleType.BUG);
   }
 
   public static RangeLevelServerIssue aServerIssue() {
     return new RangeLevelServerIssue(
-      "key",
-      true,
-      "repo:key",
-      "message",
-      "file/path",
-      Instant.now(),
-      IssueSeverity.MINOR,
-      RuleType.BUG,
-      new TextRangeWithHash(1, 2, 3, 4, "ab12"));
+            "key",
+            true,
+            "repo:key",
+            "message",
+            "file/path",
+            Instant.now(),
+            IssueSeverity.MINOR,
+            RuleType.BUG,
+            new TextRangeWithHash(1, 2, 3, 4, "ab12"));
   }
 
   public static ServerTaintIssue aServerTaintIssue() {
     return new ServerTaintIssue(
-      "key",
-      false,
-      "repo:key",
-      "message",
-      "file/path",
-      Instant.now(),
-      IssueSeverity.MINOR,
-      RuleType.VULNERABILITY,
-      new TextRangeWithHash(1, 2, 3, 4, "ab12"), "context",
-      CleanCodeAttribute.TRUSTWORTHY, Map.of(SoftwareQuality.SECURITY, ImpactSeverity.HIGH))
-        .setFlows(List.of(aServerTaintIssueFlow()));
+            "key",
+            false,
+            "repo:key",
+            "message",
+            "file/path",
+            Instant.now(),
+            IssueSeverity.MINOR,
+            RuleType.VULNERABILITY,
+            new TextRangeWithHash(1, 2, 3, 4, "ab12"), "context")
+            .setFlows(List.of(aServerTaintIssueFlow()));
   }
 
   private static ServerTaintIssue.Flow aServerTaintIssueFlow() {
@@ -94,8 +89,8 @@ public class ServerIssueFixtures {
 
   private static ServerTaintIssue.ServerIssueLocation aServerTaintIssueFlowLocation() {
     return new ServerTaintIssue.ServerIssueLocation(
-      "file/path",
-      new TextRangeWithHash(5, 6, 7, 8, "rangeHash"),
-      "message");
+            "file/path",
+            new TextRangeWithHash(5, 6, 7, 8, "rangeHash"),
+            "message");
   }
 }

@@ -49,19 +49,17 @@ class RuleDetailsAdapter {
   private static final String DEFAULT_CONTEXT_KEY = "others";
   private static final String DEFAULT_CONTEXT_DISPLAY_NAME = "Others";
   private static final List<String> SECTION_KEYS_ORDERED = List.of(ROOT_CAUSE_SECTION_KEY, ASSESS_THE_PROBLEM_SECTION_KEY,
-    HOW_TO_FIX_SECTION_KEY, RESOURCES_SECTION_KEY);
+          HOW_TO_FIX_SECTION_KEY, RESOURCES_SECTION_KEY);
 
   public static EffectiveRuleDetailsDto transform(RuleDetails ruleDetails, @Nullable String contextKey) {
     return new EffectiveRuleDetailsDto(
-      ruleDetails.getKey(),
-      ruleDetails.getName(),
-      ruleDetails.getDefaultSeverity(),
-      ruleDetails.getType(),
-      ruleDetails.getCleanCodeAttribute().orElse(null),
-      ruleDetails.getDefaultImpacts(),
-      transformDescriptions(ruleDetails, contextKey),
-      transform(ruleDetails.getParams()),
-      ruleDetails.getLanguage());
+            ruleDetails.getKey(),
+            ruleDetails.getName(),
+            ruleDetails.getDefaultSeverity(),
+            ruleDetails.getType(),
+            transformDescriptions(ruleDetails, contextKey),
+            transform(ruleDetails.getParams()),
+            ruleDetails.getLanguage());
   }
 
   static Either<RuleMonolithicDescriptionDto, RuleSplitDescriptionDto> transformDescriptions(RuleDetails ruleDetails, @Nullable String contextKey) {
@@ -111,7 +109,7 @@ class RuleDetailsAdapter {
       var content = concat(htmlSnippets);
       if (StringUtils.isNotBlank(content)) {
         tabbedSections
-          .add(new RuleDescriptionTabDto(getTabTitle(ruleDetails, RESOURCES_SECTION_KEY), Either.forLeft(new RuleNonContextualSectionDto(content))));
+                .add(new RuleDescriptionTabDto(getTabTitle(ruleDetails, RESOURCES_SECTION_KEY), Either.forLeft(new RuleNonContextualSectionDto(content))));
       }
     }
   }
@@ -129,15 +127,15 @@ class RuleDetailsAdapter {
         } else {
           // if there is more than one section, they should all have a context (verified in sonar-plugin-api)
           var contextualSectionContents = tabContents.stream().map(s -> {
-            var context = s.getContext().get();
-            return new RuleContextualSectionDto(getTabContent(s, ruleDetails.getExtendedDescription(), ruleDetails.getCleanCodePrincipleKeys()), context.getKey(),
-              context.getDisplayName());
-          })
-            .sorted(Comparator.comparing(RuleContextualSectionDto::getDisplayName))
-            .collect(Collectors.toList());
+                    var context = s.getContext().get();
+                    return new RuleContextualSectionDto(getTabContent(s, ruleDetails.getExtendedDescription(), ruleDetails.getCleanCodePrincipleKeys()), context.getKey(),
+                            context.getDisplayName());
+                  })
+                  .sorted(Comparator.comparing(RuleContextualSectionDto::getDisplayName))
+                  .collect(Collectors.toList());
           contextualSectionContents.add(
-            new RuleContextualSectionDto(OthersSectionHtmlContent.getHtmlContent(),
-              DEFAULT_CONTEXT_KEY, DEFAULT_CONTEXT_DISPLAY_NAME));
+                  new RuleContextualSectionDto(OthersSectionHtmlContent.getHtmlContent(),
+                          DEFAULT_CONTEXT_KEY, DEFAULT_CONTEXT_DISPLAY_NAME));
           content = Either.forRight(new RuleContextualSectionWithDefaultContextKeyDto(foundMatchingContext ? contextKey : DEFAULT_CONTEXT_KEY, contextualSectionContents));
         }
         tabbedSections.add(new RuleDescriptionTabDto(getTabTitle(ruleDetails, sectionKey), content));
@@ -161,8 +159,8 @@ class RuleDetailsAdapter {
 
   private static String concat(Collection<String> htmlSnippets) {
     return htmlSnippets.stream()
-      .filter(StringUtils::isNotBlank)
-      .collect(Collectors.joining());
+            .filter(StringUtils::isNotBlank)
+            .collect(Collectors.joining());
   }
 
   private static String getTabContent(RuleDetails.DescriptionSection section, @Nullable String extendedDescription, Set<String> educationPrincipleKeys) {
@@ -179,10 +177,10 @@ class RuleDetailsAdapter {
     var builder = new ArrayList<EffectiveRuleParamDto>();
     for (var param : params) {
       builder.add(new EffectiveRuleParamDto(
-        param.getName(),
-        param.getDescription(),
-        param.getValue(),
-        param.getDefaultValue()));
+              param.getName(),
+              param.getDescription(),
+              param.getValue(),
+              param.getDefaultValue()));
     }
     return builder;
   }
@@ -193,7 +191,7 @@ class RuleDetailsAdapter {
 
   @NotNull
   private static Either<RuleNonContextualSectionDto, RuleContextualSectionWithDefaultContextKeyDto> buildNonContextualSectionDto(RuleDetails ruleDetails,
-    RuleDetails.DescriptionSection matchingContext) {
+          RuleDetails.DescriptionSection matchingContext) {
     return Either.forLeft(new RuleNonContextualSectionDto(getTabContent(matchingContext, ruleDetails.getExtendedDescription(), ruleDetails.getCleanCodePrincipleKeys())));
   }
 

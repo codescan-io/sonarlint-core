@@ -31,16 +31,12 @@ import org.sonarsource.sonarlint.core.clientapi.backend.rules.ListAllStandaloneR
 import org.sonarsource.sonarlint.core.clientapi.backend.rules.RuleDefinitionDto;
 import org.sonarsource.sonarlint.core.clientapi.backend.rules.RuleParamDefinitionDto;
 import org.sonarsource.sonarlint.core.clientapi.backend.rules.RuleParamType;
-import org.sonarsource.sonarlint.core.commons.CleanCodeAttribute;
-import org.sonarsource.sonarlint.core.commons.ImpactSeverity;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.RuleType;
-import org.sonarsource.sonarlint.core.commons.SoftwareQuality;
 
 import static mediumtest.fixtures.SonarLintBackendFixture.newBackend;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
 
 class StandaloneRulesMediumTests {
 
@@ -52,9 +48,9 @@ class StandaloneRulesMediumTests {
   @Test
   void it_should_return_only_embedded_rules_of_enabled_languages() {
     backend = newBackend()
-      .withStandaloneEmbeddedPluginAndEnabledLanguage(TestPlugin.PYTHON)
-      .withStandaloneEmbeddedPlugin(TestPlugin.PHP)
-      .build();
+            .withStandaloneEmbeddedPluginAndEnabledLanguage(TestPlugin.PYTHON)
+            .withStandaloneEmbeddedPlugin(TestPlugin.PHP)
+            .build();
 
     var allRules = listAllStandaloneRulesDefinitions().getRulesByKey().values();
 
@@ -64,36 +60,34 @@ class StandaloneRulesMediumTests {
   @Test
   void it_should_return_param_definition() {
     backend = newBackend()
-      .withStandaloneEmbeddedPluginAndEnabledLanguage(TestPlugin.JAVA)
-      .build();
+            .withStandaloneEmbeddedPluginAndEnabledLanguage(TestPlugin.JAVA)
+            .build();
 
     var javaS1176 = listAllStandaloneRulesDefinitions().getRulesByKey().get("java:S1176");
 
     assertThat(javaS1176.getParamsByKey()).containsOnlyKeys("exclusion", "forClasses");
     assertThat(javaS1176.getParamsByKey().get("forClasses"))
-      .extracting(RuleParamDefinitionDto::getKey, RuleParamDefinitionDto::getName, RuleParamDefinitionDto::getDescription,
-        RuleParamDefinitionDto::getType, RuleParamDefinitionDto::isMultiple, RuleParamDefinitionDto::getPossibleValues, RuleParamDefinitionDto::getDefaultValue)
-      .containsExactly("forClasses",
-        "forClasses",
-        "Pattern of classes which should adhere to this constraint. Ex : **.api.**",
-        RuleParamType.STRING,
-        false,
-        List.of(),
-        "**.api.**");
+            .extracting(RuleParamDefinitionDto::getKey, RuleParamDefinitionDto::getName, RuleParamDefinitionDto::getDescription,
+                    RuleParamDefinitionDto::getType, RuleParamDefinitionDto::isMultiple, RuleParamDefinitionDto::getPossibleValues, RuleParamDefinitionDto::getDefaultValue)
+            .containsExactly("forClasses",
+                    "forClasses",
+                    "Pattern of classes which should adhere to this constraint. Ex : **.api.**",
+                    RuleParamType.STRING,
+                    false,
+                    List.of(),
+                    "**.api.**");
   }
 
   @Test
   void it_should_return_rule_details_with_definition_and_description() throws ExecutionException, InterruptedException {
     backend = newBackend()
-      .withStandaloneEmbeddedPluginAndEnabledLanguage(TestPlugin.JAVA)
-      .build();
+            .withStandaloneEmbeddedPluginAndEnabledLanguage(TestPlugin.JAVA)
+            .build();
 
     var ruleDetails = backend.getRulesService().getStandaloneRuleDetails(new GetStandaloneRuleDescriptionParams("java:S1176")).get();
 
-    assertThat(ruleDetails.getRuleDefinition().getCleanCodeAttribute()).hasValue(CleanCodeAttribute.defaultCleanCodeAttribute());
-    assertThat(ruleDetails.getRuleDefinition().getDefaultImpacts()).containsExactly(entry(SoftwareQuality.MAINTAINABILITY, ImpactSeverity.MEDIUM));
     assertThat(ruleDetails.getRuleDefinition().getName()).isEqualTo("Public types, methods and fields (API) should be documented with Javadoc");
-    assertThat(ruleDetails.getRuleDefinition().getSeverity()).isEqualTo(IssueSeverity.MAJOR);
+    assertThat(ruleDetails.getRuleDefinition().getDefaultSeverity()).isEqualTo(IssueSeverity.MAJOR);
     assertThat(ruleDetails.getRuleDefinition().getType()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(ruleDetails.getDescription().isLeft()).isTrue();
     assertThat(ruleDetails.getDescription().getLeft().getHtmlContent()).startsWith("<p>Try to imagine using the standard Java API (Collections, JDBC, IO, …\u200B) without Javadoc.");
@@ -102,8 +96,8 @@ class StandaloneRulesMediumTests {
   @Test
   void it_should_not_contain_rule_templates() {
     backend = newBackend()
-      .withStandaloneEmbeddedPluginAndEnabledLanguage(TestPlugin.PYTHON)
-      .build();
+            .withStandaloneEmbeddedPluginAndEnabledLanguage(TestPlugin.PYTHON)
+            .build();
 
     var allRules = listAllStandaloneRulesDefinitions().getRulesByKey().values();
 
@@ -114,8 +108,8 @@ class StandaloneRulesMediumTests {
   @Test
   void it_should_not_contain_hotspots_by_default() {
     backend = newBackend()
-      .withStandaloneEmbeddedPluginAndEnabledLanguage(TestPlugin.JAVA)
-      .build();
+            .withStandaloneEmbeddedPluginAndEnabledLanguage(TestPlugin.JAVA)
+            .build();
 
     var allRules = listAllStandaloneRulesDefinitions().getRulesByKey().values();
 

@@ -32,7 +32,6 @@ import org.sonar.api.batch.sensor.issue.MessageFormatting;
 import org.sonar.api.batch.sensor.issue.fix.NewInputFileEdit;
 import org.sonar.api.batch.sensor.issue.fix.NewQuickFix;
 import org.sonar.api.batch.sensor.issue.fix.NewTextEdit;
-import org.sonar.api.issue.impact.SoftwareQuality;
 import org.sonar.api.rule.RuleKey;
 import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.SonarLintInputDir;
 import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.SonarLintInputProject;
@@ -41,7 +40,6 @@ import testutils.TestInputFileBuilder;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -50,8 +48,8 @@ class DefaultSonarLintIssueTests {
   private SonarLintInputProject project;
 
   private final InputFile inputFile = new TestInputFileBuilder("src/Foo.php")
-    .initMetadata("Foo\nBar\n")
-    .build();
+          .initMetadata("Foo\nBar\n")
+          .build();
 
   @TempDir
   private Path baseDir;
@@ -66,23 +64,21 @@ class DefaultSonarLintIssueTests {
     var storage = mock(SensorStorage.class);
     var range = inputFile.selectLine(1);
     var issue = new DefaultSonarLintIssue(project, baseDir, storage)
-      .at(new DefaultSonarLintIssueLocation()
-        .on(inputFile)
-        .at(range)
-        .message("Wrong way!"))
-      .forRule(RuleKey.of("repo", "rule"))
-      .gap(10.0)
-      .overrideImpact(SoftwareQuality.SECURITY, org.sonar.api.issue.impact.Severity.HIGH);
+            .at(new DefaultSonarLintIssueLocation()
+                    .on(inputFile)
+                    .at(range)
+                    .message("Wrong way!"))
+            .forRule(RuleKey.of("repo", "rule"))
+            .gap(10.0);
 
     assertThat(issue.primaryLocation().inputComponent()).isEqualTo(inputFile);
     assertThat(issue.ruleKey()).isEqualTo(RuleKey.of("repo", "rule"));
     assertThat(issue.primaryLocation().textRange().start().line()).isEqualTo(1);
     assertThat(issue.primaryLocation().message()).isEqualTo("Wrong way!");
-    assertThat(issue.overridenImpacts()).containsExactly(entry(SoftwareQuality.SECURITY, org.sonar.api.issue.impact.Severity.HIGH));
 
     assertThatExceptionOfType(UnsupportedOperationException.class)
-      .isThrownBy(issue::gap)
-      .withMessage("No gap in SonarLint");
+            .isThrownBy(issue::gap)
+            .withMessage("No gap in SonarLint");
 
     var newQuickFix = issue.newQuickFix().message("Fix this issue");
     var newInputFileEdit = newQuickFix.newInputFileEdit().on(inputFile);
@@ -115,10 +111,10 @@ class DefaultSonarLintIssueTests {
   void replace_null_characters() {
     var storage = mock(SensorStorage.class);
     var issue = new DefaultSonarLintIssue(project, baseDir, storage)
-      .at(new DefaultSonarLintIssueLocation()
-        .on(inputFile)
-        .message("Wrong \u0000 use of NULL\u0000"))
-      .forRule(RuleKey.of("repo", "rule"));
+            .at(new DefaultSonarLintIssueLocation()
+                    .on(inputFile)
+                    .message("Wrong \u0000 use of NULL\u0000"))
+            .forRule(RuleKey.of("repo", "rule"));
 
     assertThat(issue.primaryLocation().message()).isEqualTo("Wrong [NULL] use of NULL[NULL]");
 
@@ -132,10 +128,10 @@ class DefaultSonarLintIssueTests {
     var storage = mock(SensorStorage.class);
     var prefix = "prefix: ";
     var issue = new DefaultSonarLintIssue(project, baseDir, storage)
-      .at(new DefaultSonarLintIssueLocation()
-        .on(inputFile)
-        .message("   " + prefix + repeat("a", 4000)))
-      .forRule(RuleKey.of("repo", "rule"));
+            .at(new DefaultSonarLintIssueLocation()
+                    .on(inputFile)
+                    .message("   " + prefix + repeat("a", 4000)))
+            .forRule(RuleKey.of("repo", "rule"));
 
     var ellipse = "...";
     assertThat(issue.primaryLocation().message()).isEqualTo(prefix + repeat("a", 4000 - prefix.length() - ellipse.length()) + ellipse);
@@ -150,13 +146,13 @@ class DefaultSonarLintIssueTests {
     var storage = mock(SensorStorage.class);
     var location = new DefaultSonarLintIssueLocation();
     var issue = new DefaultSonarLintIssue(project, baseDir, storage)
-      .at(location
-        .on(inputFile)
-        .message("formattedMessage", List.of(location.newMessageFormatting()
-          .start(1)
-          .end(2)
-          .type(MessageFormatting.Type.CODE))))
-      .forRule(RuleKey.of("repo", "rule"));
+            .at(location
+                    .on(inputFile)
+                    .message("formattedMessage", List.of(location.newMessageFormatting()
+                            .start(1)
+                            .end(2)
+                            .type(MessageFormatting.Type.CODE))))
+            .forRule(RuleKey.of("repo", "rule"));
 
     assertThat(issue.primaryLocation().message()).isEqualTo("formattedMessage");
     assertThat(issue.primaryLocation().messageFormattings()).isEmpty();
@@ -166,11 +162,11 @@ class DefaultSonarLintIssueTests {
   void move_directory_issue_to_project_root() {
     var storage = mock(SensorStorage.class);
     var issue = new DefaultSonarLintIssue(project, baseDir, storage)
-      .at(new DefaultSonarLintIssueLocation()
-        .on(new SonarLintInputDir(baseDir.resolve("src/main")))
-        .message("Wrong way!"))
-      .forRule(RuleKey.of("repo", "rule"))
-      .overrideSeverity(Severity.BLOCKER);
+            .at(new DefaultSonarLintIssueLocation()
+                    .on(new SonarLintInputDir(baseDir.resolve("src/main")))
+                    .message("Wrong way!"))
+            .forRule(RuleKey.of("repo", "rule"))
+            .overrideSeverity(Severity.BLOCKER);
 
     assertThat(issue.primaryLocation().inputComponent()).isEqualTo(project);
     assertThat(issue.ruleKey()).isEqualTo(RuleKey.of("repo", "rule"));
@@ -187,11 +183,11 @@ class DefaultSonarLintIssueTests {
   void build_project_issue() {
     var storage = mock(SensorStorage.class);
     var issue = new DefaultSonarLintIssue(project, baseDir, storage)
-      .at(new DefaultSonarLintIssueLocation()
-        .on(project)
-        .message("Wrong way!"))
-      .forRule(RuleKey.of("repo", "rule"))
-      .gap(10.0);
+            .at(new DefaultSonarLintIssueLocation()
+                    .on(project)
+                    .message("Wrong way!"))
+            .forRule(RuleKey.of("repo", "rule"))
+            .gap(10.0);
 
     assertThat(issue.primaryLocation().inputComponent()).isEqualTo(project);
     assertThat(issue.ruleKey()).isEqualTo(RuleKey.of("repo", "rule"));
@@ -207,12 +203,12 @@ class DefaultSonarLintIssueTests {
   void does_not_support_variants() {
     var storage = mock(SensorStorage.class);
     var issue = (DefaultSonarLintIssue) new DefaultSonarLintIssue(project, baseDir, storage)
-      .at(new DefaultSonarLintIssueLocation()
-        .on(project)
-        .message("Wrong way!"))
-      .forRule(RuleKey.of("repo", "rule"))
-      .setCodeVariants(List.of("variant1", "variant2"))
-      .gap(10.0);
+            .at(new DefaultSonarLintIssueLocation()
+                    .on(project)
+                    .message("Wrong way!"))
+            .forRule(RuleKey.of("repo", "rule"))
+            .setCodeVariants(List.of("variant1", "variant2"))
+            .gap(10.0);
 
     assertThat(issue.codeVariants()).isEmpty();
   }

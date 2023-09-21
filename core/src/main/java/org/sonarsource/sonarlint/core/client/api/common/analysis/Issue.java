@@ -20,7 +20,6 @@
 package org.sonarsource.sonarlint.core.client.api.common.analysis;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.sonarsource.sonarlint.core.analysis.api.Flow;
 import org.sonarsource.sonarlint.core.analysis.api.IssueLocation;
