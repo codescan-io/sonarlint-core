@@ -30,12 +30,9 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.sonarsource.sonarlint.core.clientapi.backend.rules.StandaloneRuleConfigDto;
-import org.sonarsource.sonarlint.core.commons.CleanCodeAttribute;
-import org.sonarsource.sonarlint.core.commons.ImpactSeverity;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.RuleType;
-import org.sonarsource.sonarlint.core.commons.SoftwareQuality;
 import org.sonarsource.sonarlint.core.rule.extractor.SonarLintRuleDefinition;
 import org.sonarsource.sonarlint.core.rule.extractor.SonarLintRuleParamDefinition;
 import org.sonarsource.sonarlint.core.serverapi.rules.ServerActiveRule;
@@ -56,8 +53,7 @@ public class RuleDetails {
         .collect(Collectors.groupingBy(DescriptionSection::getKey)),
       ruleDefinition.getDefaultSeverity(),
       ruleDefinition.getType(),
-      ruleDefinition.getCleanCodeAttribute().orElse(CleanCodeAttribute.defaultCleanCodeAttribute()),
-      ruleDefinition.getDefaultImpacts(),
+
       null,
       transformParams(ruleDefinition.getParams(), ruleConfig != null ? ruleConfig.getParamValueByKey() : Map.of()),
       ruleDefinition.getEducationPrincipleKeys());
@@ -78,8 +74,6 @@ public class RuleDetails {
         .collect(Collectors.groupingBy(DescriptionSection::getKey)),
       Optional.ofNullable(activeRuleFromStorage.getSeverity()).orElse(serverRule.getSeverity()),
       serverRule.getType(),
-      null, // TODO get clean code attribute from storage?
-      Map.of(), // TODO get impacts from storage?
       serverRule.getHtmlNote(), Collections.emptyList(),
       serverRule.getEducationPrincipleKeys());
   }

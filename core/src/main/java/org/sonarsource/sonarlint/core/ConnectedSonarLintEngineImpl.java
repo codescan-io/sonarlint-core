@@ -238,8 +238,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
     var vulnerabilityProbability = analysisContext.get().findRule(newIssue.getRuleKey()).flatMap(SonarLintRuleDefinition::getVulnerabilityProbability);
     var effectiveCleanCodeAttribute = activeRulesContext.shouldSkipCleanCodeTaxonomy ? null : ruleMetadata.cleanCodeAttribute;
     var effectiveImpacts = activeRulesContext.shouldSkipCleanCodeTaxonomy ? Map.<SoftwareQuality, ImpactSeverity>of() : ruleMetadata.defaultImpacts;
-    issueListener.handle(new DefaultClientIssue(newIssue, ruleMetadata.severity, ruleMetadata.type, effectiveCleanCodeAttribute,
-      effectiveImpacts, vulnerabilityProbability));
+    issueListener.handle(new DefaultClientIssue(newIssue, ruleMetadata.severity, ruleMetadata.type, vulnerabilityProbability));
   }
 
   private ActiveRulesContext buildActiveRulesContext(ConnectedAnalysisConfiguration configuration) {
