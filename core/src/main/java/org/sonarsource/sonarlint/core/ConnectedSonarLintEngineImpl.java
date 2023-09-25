@@ -55,13 +55,10 @@ import org.sonarsource.sonarlint.core.client.api.connected.ConnectedRuleDetails;
 import org.sonarsource.sonarlint.core.client.api.connected.ConnectedSonarLintEngine;
 import org.sonarsource.sonarlint.core.client.api.connected.ProjectBranches;
 import org.sonarsource.sonarlint.core.client.api.exceptions.SonarLintWrappedException;
-import org.sonarsource.sonarlint.core.commons.CleanCodeAttribute;
-import org.sonarsource.sonarlint.core.commons.ImpactSeverity;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.RuleKey;
 import org.sonarsource.sonarlint.core.commons.RuleType;
-import org.sonarsource.sonarlint.core.commons.SoftwareQuality;
 import org.sonarsource.sonarlint.core.commons.Version;
 import org.sonarsource.sonarlint.core.commons.log.ClientLogOutput;
 import org.sonarsource.sonarlint.core.commons.progress.ClientProgressMonitor;
@@ -101,7 +98,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
     this.globalConfig = globalConfig;
 
     serverConnection = new ServerConnection(globalConfig.getStorageRoot(), globalConfig.getConnectionId(), globalConfig.isSonarCloud(), globalConfig.getEnabledLanguages(),
-      globalConfig.getEmbeddedPluginPathsByKey().keySet(), globalConfig.getWorkDir());
+            globalConfig.getEmbeddedPluginPathsByKey().keySet(), globalConfig.getWorkDir());
     start();
   }
 
@@ -118,17 +115,17 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
   private AnalysisContext loadAnalysisContext() {
     var loadingResult = loadPlugins();
     var pluginDetails = loadingResult.getPluginCheckResultByKeys().values().stream().map(p -> new PluginDetails(p.getPlugin().getKey(), p.getPlugin().getName(),
-      Optional.ofNullable(p.getPlugin().getVersion()).map(Version::toString).orElse(null), p.getSkipReason().orElse(null))).collect(Collectors.toList());
+            Optional.ofNullable(p.getPlugin().getVersion()).map(Version::toString).orElse(null), p.getSkipReason().orElse(null))).collect(Collectors.toList());
 
     var allRulesDefinitionsByKey = loadPluginMetadata(loadingResult.getLoadedPlugins(), globalConfig.getEnabledLanguages(), true, globalConfig.isHotspotsEnabled());
 
     var analysisGlobalConfig = AnalysisEngineConfiguration.builder()
-      .setClientPid(globalConfig.getClientPid())
-      .setExtraProperties(globalConfig.extraProperties())
-      .setNodeJs(globalConfig.getNodeJsPath())
-      .setWorkDir(globalConfig.getWorkDir())
-      .setModulesProvider(globalConfig.getModulesProvider())
-      .build();
+            .setClientPid(globalConfig.getClientPid())
+            .setExtraProperties(globalConfig.extraProperties())
+            .setNodeJs(globalConfig.getNodeJsPath())
+            .setWorkDir(globalConfig.getWorkDir())
+            .setModulesProvider(globalConfig.getModulesProvider())
+            .build();
     var analysisEngine = new AnalysisEngine(analysisGlobalConfig, loadingResult.getLoadedPlugins(), logOutput);
     return new AnalysisContext(pluginDetails, allRulesDefinitionsByKey, analysisEngine);
   }
@@ -145,22 +142,15 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
   }
 
   private static class ActiveRulesContext {
-    private final boolean shouldSkipCleanCodeTaxonomy;
     private final List<ActiveRule> activeRules = new ArrayList<>();
     private final Map<String, ActiveRuleMetadata> activeRulesMetadata = new HashMap<>();
-
-    private ActiveRulesContext(boolean shouldSkipCleanCodeTaxonomy) {
-      this.shouldSkipCleanCodeTaxonomy = shouldSkipCleanCodeTaxonomy;
-    }
 
     public void includeRule(SonarLintRuleDefinition ruleOrTemplateDefinition, ServerActiveRule activeRule) {
       var activeRuleForAnalysis = new ActiveRule(activeRule.getRuleKey(), ruleOrTemplateDefinition.getLanguage().getLanguageKey());
       activeRuleForAnalysis.setTemplateRuleKey(trimToNull(activeRule.getTemplateKey()));
       activeRuleForAnalysis.setParams(getEffectiveParams(ruleOrTemplateDefinition, activeRule));
       activeRules.add(activeRuleForAnalysis);
-      activeRulesMetadata.put(activeRule.getRuleKey(),
-        new ActiveRuleMetadata(activeRule.getSeverity(), ruleOrTemplateDefinition.getType(),
-          ruleOrTemplateDefinition.getCleanCodeAttribute().orElse(CleanCodeAttribute.defaultCleanCodeAttribute()), ruleOrTemplateDefinition.getDefaultImpacts()));
+      activeRulesMetadata.put(activeRule.getRuleKey(), new ActiveRuleMetadata(activeRule.getSeverity(), ruleOrTemplateDefinition.getType()));
     }
 
     private static Map<String, String> getEffectiveParams(SonarLintRuleDefinition ruleOrTemplateDefinition, ServerActiveRule activeRule) {
@@ -179,8 +169,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       var activeRuleForAnalysis = new ActiveRule(rule.getKey(), rule.getLanguage().getLanguageKey());
       activeRuleForAnalysis.setParams(rule.getDefaultParams());
       activeRules.add(activeRuleForAnalysis);
-      activeRulesMetadata.put(activeRuleForAnalysis.getRuleKey(), new ActiveRuleMetadata(rule.getDefaultSeverity(), rule.getType(),
-        rule.getCleanCodeAttribute().orElse(CleanCodeAttribute.defaultCleanCodeAttribute()), rule.getDefaultImpacts()));
+      activeRulesMetadata.put(activeRuleForAnalysis.getRuleKey(), new ActiveRuleMetadata(rule.getDefaultSeverity(), rule.getType()));
     }
 
     private ActiveRuleMetadata getRuleMetadata(String ruleKey) {
@@ -191,29 +180,23 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       private final IssueSeverity severity;
       private final RuleType type;
 
-      private final CleanCodeAttribute cleanCodeAttribute;
-
-      private final Map<SoftwareQuality, ImpactSeverity> defaultImpacts;
-
-      private ActiveRuleMetadata(IssueSeverity severity, RuleType type, CleanCodeAttribute cleanCodeAttribute, Map<SoftwareQuality, ImpactSeverity> defaultImpacts) {
+      private ActiveRuleMetadata(IssueSeverity severity, RuleType type) {
         this.severity = severity;
         this.type = type;
-        this.cleanCodeAttribute = cleanCodeAttribute;
-        this.defaultImpacts = defaultImpacts;
       }
     }
   }
 
   @Override
   public AnalysisResults analyze(ConnectedAnalysisConfiguration configuration, IssueListener issueListener, @Nullable ClientLogOutput logOutput,
-    @Nullable ClientProgressMonitor monitor) {
+          @Nullable ClientProgressMonitor monitor) {
     requireNonNull(configuration);
     requireNonNull(issueListener);
 
     setLogging(logOutput);
 
     var analysisConfigBuilder = AnalysisConfiguration.builder()
-      .addInputFiles(configuration.inputFiles());
+            .addInputFiles(configuration.inputFiles());
     var projectKey = configuration.getProjectKey();
     analysisConfigBuilder.putAllExtraProperties(serverConnection.getAnalyzerConfiguration(projectKey).getSettings().getAll());
     analysisConfigBuilder.putAllExtraProperties(globalConfig.extraProperties());
@@ -223,9 +206,9 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       return new AnalysisResults();
     }
     analysisConfigBuilder.putAllExtraProperties(configuration.extraProperties())
-      .addActiveRules(activeRulesContext.activeRules)
-      .setBaseDir(configuration.baseDir())
-      .build();
+            .addActiveRules(activeRulesContext.activeRules)
+            .setBaseDir(configuration.baseDir())
+            .build();
 
     var analysisConfiguration = analysisConfigBuilder.build();
 
@@ -236,13 +219,11 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
   private void streamIssue(IssueListener issueListener, Issue newIssue, ActiveRulesContext activeRulesContext) {
     var ruleMetadata = activeRulesContext.getRuleMetadata(newIssue.getRuleKey());
     var vulnerabilityProbability = analysisContext.get().findRule(newIssue.getRuleKey()).flatMap(SonarLintRuleDefinition::getVulnerabilityProbability);
-    var effectiveCleanCodeAttribute = activeRulesContext.shouldSkipCleanCodeTaxonomy ? null : ruleMetadata.cleanCodeAttribute;
-    var effectiveImpacts = activeRulesContext.shouldSkipCleanCodeTaxonomy ? Map.<SoftwareQuality, ImpactSeverity>of() : ruleMetadata.defaultImpacts;
     issueListener.handle(new DefaultClientIssue(newIssue, ruleMetadata.severity, ruleMetadata.type, vulnerabilityProbability));
   }
 
   private ActiveRulesContext buildActiveRulesContext(ConnectedAnalysisConfiguration configuration) {
-    var analysisRulesContext = new ActiveRulesContext(serverConnection.shouldSkipCleanCodeTaxonomy());
+    var analysisRulesContext = new ActiveRulesContext();
     var projectKey = configuration.getProjectKey();
     var ruleSetByLanguageKey = serverConnection.getAnalyzerConfiguration(projectKey).getRuleSetByLanguageKey();
     if (ruleSetByLanguageKey.isEmpty()) {
@@ -250,48 +231,48 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       return analysisRulesContext;
     }
     ruleSetByLanguageKey.entrySet()
-      .stream().filter(e -> Language.forKey(e.getKey()).filter(l -> globalConfig.getEnabledLanguages().contains(l)).isPresent())
-      .forEach(e -> {
-        var languageKey = e.getKey();
-        var ruleSet = e.getValue();
+            .stream().filter(e -> Language.forKey(e.getKey()).filter(l -> globalConfig.getEnabledLanguages().contains(l)).isPresent())
+            .forEach(e -> {
+              var languageKey = e.getKey();
+              var ruleSet = e.getValue();
 
-        LOG.debug("  * {}: {} active rules", languageKey, ruleSet.getRules().size());
-        for (ServerActiveRule possiblyDeprecatedActiveRuleFromStorage : ruleSet.getRules()) {
-          var activeRuleFromStorage = tryConvertDeprecatedKeys(possiblyDeprecatedActiveRuleFromStorage);
-          SonarLintRuleDefinition ruleOrTemplateDefinition;
-          if (StringUtils.isNotBlank(activeRuleFromStorage.getTemplateKey())) {
-            ruleOrTemplateDefinition = analysisContext.get().findRule(activeRuleFromStorage.getTemplateKey()).orElse(null);
-            if (ruleOrTemplateDefinition == null) {
-              LOG.debug("Rule {} is enabled on the server, but its template {} is not available in SonarLint", activeRuleFromStorage.getRuleKey(),
-                activeRuleFromStorage.getTemplateKey());
-              continue;
-            }
-          } else {
-            ruleOrTemplateDefinition = analysisContext.get().findRule(activeRuleFromStorage.getRuleKey()).orElse(null);
-            if (ruleOrTemplateDefinition == null) {
-              LOG.debug("Rule {} is enabled on the server, but not available in SonarLint", activeRuleFromStorage.getRuleKey());
-              continue;
-            }
-          }
-          if (shouldIncludeRuleForAnalysis(ruleOrTemplateDefinition)) {
-            analysisRulesContext.includeRule(ruleOrTemplateDefinition, activeRuleFromStorage);
-          }
-        }
-      });
+              LOG.debug("  * {}: {} active rules", languageKey, ruleSet.getRules().size());
+              for (ServerActiveRule possiblyDeprecatedActiveRuleFromStorage : ruleSet.getRules()) {
+                var activeRuleFromStorage = tryConvertDeprecatedKeys(possiblyDeprecatedActiveRuleFromStorage);
+                SonarLintRuleDefinition ruleOrTemplateDefinition;
+                if (StringUtils.isNotBlank(activeRuleFromStorage.getTemplateKey())) {
+                  ruleOrTemplateDefinition = analysisContext.get().findRule(activeRuleFromStorage.getTemplateKey()).orElse(null);
+                  if (ruleOrTemplateDefinition == null) {
+                    LOG.debug("Rule {} is enabled on the server, but its template {} is not available in SonarLint", activeRuleFromStorage.getRuleKey(),
+                            activeRuleFromStorage.getTemplateKey());
+                    continue;
+                  }
+                } else {
+                  ruleOrTemplateDefinition = analysisContext.get().findRule(activeRuleFromStorage.getRuleKey()).orElse(null);
+                  if (ruleOrTemplateDefinition == null) {
+                    LOG.debug("Rule {} is enabled on the server, but not available in SonarLint", activeRuleFromStorage.getRuleKey());
+                    continue;
+                  }
+                }
+                if (shouldIncludeRuleForAnalysis(ruleOrTemplateDefinition)) {
+                  analysisRulesContext.includeRule(ruleOrTemplateDefinition, activeRuleFromStorage);
+                }
+              }
+            });
 
     var supportSecretAnalysis = serverConnection.supportsSecretAnalysis();
     if (!supportSecretAnalysis) {
       analysisContext.get().allRulesDefinitionsByKey.values().stream()
-        .filter(ruleDefinition -> ruleDefinition.getLanguage() == Language.SECRETS)
-        .filter(this::shouldIncludeRuleForAnalysis)
-        .forEach(analysisRulesContext::includeRule);
+              .filter(ruleDefinition -> ruleDefinition.getLanguage() == Language.SECRETS)
+              .filter(this::shouldIncludeRuleForAnalysis)
+              .forEach(analysisRulesContext::includeRule);
     }
     return analysisRulesContext;
   }
 
   private boolean shouldIncludeRuleForAnalysis(SonarLintRuleDefinition ruleDefinition) {
     return !ruleDefinition.getType().equals(RuleType.SECURITY_HOTSPOT) ||
-      (globalConfig.isHotspotsEnabled() && serverConnection.permitsHotspotTracking());
+            (globalConfig.isHotspotsEnabled() && serverConnection.permitsHotspotTracking());
   }
 
   public boolean isSecurityHotspotsDetectionSupported() {
@@ -310,7 +291,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       var templateRuleKeyWithCorrectRepo = RuleKey.parse(ruleOrTemplateDefinition.getKey());
       var ruleKey = new RuleKey(templateRuleKeyWithCorrectRepo.repository(), ruleKeyPossiblyWithDeprecatedRepo.rule()).toString();
       return new ServerActiveRule(ruleKey, possiblyDeprecatedActiveRuleFromStorage.getSeverity(), possiblyDeprecatedActiveRuleFromStorage.getParams(),
-        ruleOrTemplateDefinition.getKey());
+              ruleOrTemplateDefinition.getKey());
     } else {
       ruleOrTemplateDefinition = analysisContext.get().findRule(possiblyDeprecatedActiveRuleFromStorage.getRuleKey()).orElse(null);
       if (ruleOrTemplateDefinition == null) {
@@ -318,7 +299,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
         return possiblyDeprecatedActiveRuleFromStorage;
       }
       return new ServerActiveRule(ruleOrTemplateDefinition.getKey(), possiblyDeprecatedActiveRuleFromStorage.getSeverity(), possiblyDeprecatedActiveRuleFromStorage.getParams(),
-        null);
+              null);
     }
   }
 
@@ -343,41 +324,41 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       if ((!serverConnection.supportsSecretAnalysis() && ruleDefFromPlugin.getLanguage().equals(Language.SECRETS)) || projectKey == null) {
         // if no project key, or secrets are not supported by server and it's a secret rule
         return CompletableFuture.completedFuture(
-          new ConnectedRuleDetails(ruleKey, ruleDefFromPlugin.getName(), ruleDefFromPlugin.getHtmlDescription(), ruleDefFromPlugin.getDefaultSeverity(),
-            ruleDefFromPlugin.getType(),
-            ruleDefFromPlugin.getLanguage(), ""));
+                new ConnectedRuleDetails(ruleKey, ruleDefFromPlugin.getName(), ruleDefFromPlugin.getHtmlDescription(), ruleDefFromPlugin.getDefaultSeverity(),
+                        ruleDefFromPlugin.getType(),
+                        ruleDefFromPlugin.getLanguage(), ""));
       }
     }
     if (projectKey != null) {
       var analyzerConfiguration = serverConnection.getAnalyzerConfiguration(projectKey);
       var storageActiveRule = analyzerConfiguration.getRuleSetByLanguageKey().values().stream()
-        .flatMap(s -> s.getRules().stream())
-        .filter(r -> tryConvertDeprecatedKeys(r).getRuleKey().equals(ruleKey)).findFirst();
+              .flatMap(s -> s.getRules().stream())
+              .filter(r -> tryConvertDeprecatedKeys(r).getRuleKey().equals(ruleKey)).findFirst();
       if (storageActiveRule.isPresent()) {
         var activeRuleFromStorage = storageActiveRule.get();
         var serverSeverity = activeRuleFromStorage.getSeverity();
         if (StringUtils.isNotBlank(activeRuleFromStorage.getTemplateKey())) {
           var templateRuleDefFromPlugin = analysisContext.get().findRule(activeRuleFromStorage.getTemplateKey())
-            .orElseThrow(() -> new IllegalStateException("Unable to find rule definition for rule template " + activeRuleFromStorage.getTemplateKey()));
+                  .orElseThrow(() -> new IllegalStateException("Unable to find rule definition for rule template " + activeRuleFromStorage.getTemplateKey()));
           return new ServerApi(new ServerApiHelper(endpoint, client)).rules().getRule(activeRuleFromStorage.getRuleKey())
-            .thenApply(
-              serverRule -> new ConnectedRuleDetails(
-                ruleKey,
-                serverRule.getName(),
-                serverRule.getHtmlDesc(),
-                serverSeverity,
-                templateRuleDefFromPlugin.getType(),
-                templateRuleDefFromPlugin.getLanguage(),
-                serverRule.getHtmlNote()));
+                  .thenApply(
+                          serverRule -> new ConnectedRuleDetails(
+                                  ruleKey,
+                                  serverRule.getName(),
+                                  serverRule.getHtmlDesc(),
+                                  serverSeverity,
+                                  templateRuleDefFromPlugin.getType(),
+                                  templateRuleDefFromPlugin.getLanguage(),
+                                  serverRule.getHtmlNote()));
         } else {
           return new ServerApi(new ServerApiHelper(endpoint, client)).rules().getRule(activeRuleFromStorage.getRuleKey())
-            .thenApply(serverRule -> ruleDefFromPluginOpt
-              .map(ruleDefFromPlugin -> new ConnectedRuleDetails(ruleKey, ruleDefFromPlugin.getName(), ruleDefFromPlugin.getHtmlDescription(),
-                Optional.ofNullable(serverSeverity).orElse(ruleDefFromPlugin.getDefaultSeverity()), ruleDefFromPlugin.getType(), ruleDefFromPlugin.getLanguage(),
-                serverRule.getHtmlNote()))
-              .orElse(new ConnectedRuleDetails(ruleKey, serverRule.getName(), serverRule.getHtmlDesc(),
-                Optional.ofNullable(serverSeverity).orElse(serverRule.getSeverity()),
-                serverRule.getType(), serverRule.getLanguage(), serverRule.getHtmlNote())));
+                  .thenApply(serverRule -> ruleDefFromPluginOpt
+                          .map(ruleDefFromPlugin -> new ConnectedRuleDetails(ruleKey, ruleDefFromPlugin.getName(), ruleDefFromPlugin.getHtmlDescription(),
+                                  Optional.ofNullable(serverSeverity).orElse(ruleDefFromPlugin.getDefaultSeverity()), ruleDefFromPlugin.getType(), ruleDefFromPlugin.getLanguage(),
+                                  serverRule.getHtmlNote()))
+                          .orElse(new ConnectedRuleDetails(ruleKey, serverRule.getName(), serverRule.getHtmlDesc(),
+                                  Optional.ofNullable(serverSeverity).orElse(serverRule.getSeverity()),
+                                  serverRule.getType(), serverRule.getLanguage(), serverRule.getHtmlNote())));
         }
       }
     }
@@ -454,7 +435,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
 
   @Override
   public void subscribeForEvents(EndpointParams endpoint, HttpClient client, Set<String> projectKeys,
-    Consumer<ServerEvent> eventConsumer, @Nullable ClientLogOutput clientLogOutput) {
+          Consumer<ServerEvent> eventConsumer, @Nullable ClientLogOutput clientLogOutput) {
     var logOutput = clientLogOutput == null ? this.logOutput : clientLogOutput;
     if (logOutput == null) {
       logOutput = (message, level) -> {
@@ -465,13 +446,13 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
 
   @Override
   public void downloadAllServerIssuesForFile(EndpointParams endpoint, HttpClient client, ProjectBinding projectBinding, String ideFilePath, String branchName,
-    @Nullable ClientProgressMonitor monitor) {
+          @Nullable ClientProgressMonitor monitor) {
     serverConnection.downloadServerIssuesForFile(endpoint, client, projectBinding, ideFilePath, branchName);
   }
 
   @Override
   public void downloadAllServerTaintIssuesForFile(EndpointParams endpoint, HttpClient client, ProjectBinding projectBinding, String ideFilePath, String branchName,
-    @Nullable ClientProgressMonitor monitor) {
+          @Nullable ClientProgressMonitor monitor) {
     serverConnection.downloadServerTaintIssuesForFile(endpoint, client, projectBinding, ideFilePath, branchName, new ProgressMonitor(monitor));
   }
 
@@ -502,7 +483,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
 
   @Override
   public void downloadAllServerHotspotsForFile(EndpointParams endpoint, HttpClient client, ProjectBinding projectBinding, String ideFilePath, String branchName,
-    @Nullable ClientProgressMonitor monitor) {
+          @Nullable ClientProgressMonitor monitor) {
     serverConnection.downloadAllServerHotspotsForFile(endpoint, client, projectBinding, ideFilePath, branchName);
   }
 
@@ -556,8 +537,8 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       this.allRulesDefinitionsByKey = allRulesDefinitionsByKey;
       this.analysisEngine = analysisEngine;
       this.deprecatedRuleKeysMapping = allRulesDefinitionsByKey.values().stream()
-        .flatMap(r -> r.getDeprecatedKeys().stream().map(dk -> Map.entry(dk, r.getKey())))
-        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+              .flatMap(r -> r.getDeprecatedKeys().stream().map(dk -> Map.entry(dk, r.getKey())))
+              .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public void destroy() {

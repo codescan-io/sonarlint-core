@@ -61,12 +61,12 @@
 
     <version.surefire.plugin>3.1.2</version.surefire.plugin>
 
-    <sonar.host.url>https://app.codescan.io</sonar.host.url>
-    <sonar.login>e0b1aba256426ca4d4bf0312062d7e2129eb88df</sonar.login>
-    <sonar.password></sonar.password>
-    <sonar.organization>c0ae17aade58da85a4d275acfcd30a4c</sonar.organization>
-    <sonar.projectKey>sonar-plugin-api</sonar.projectKey>
-    <sonar.moduleKey>${artifactId}</sonar.moduleKey>
+<!--    <sonar.host.url>https://app.codescan.io</sonar.host.url>-->
+<!--    <sonar.login>e0b1aba256426ca4d4bf0312062d7e2129eb88df</sonar.login>-->
+<!--    <sonar.password></sonar.password>-->
+<!--    <sonar.organization>c0ae17aade58da85a4d275acfcd30a4c</sonar.organization>-->
+<!--    <sonar.projectKey>sonar-plugin-api</sonar.projectKey>-->
+<!--    <sonar.moduleKey>${artifactId}</sonar.moduleKey>-->
   </properties>
 
   <dependencyManagement>
@@ -137,11 +137,6 @@
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
         <version>3.23.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.awaitility</groupId>
-        <artifactId>awaitility</artifactId>
-        <version>4.2.0</version>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
@@ -248,11 +243,6 @@
           <groupId>org.xolstice.maven.plugins</groupId>
           <artifactId>protobuf-maven-plugin</artifactId>
           <version>0.6.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-shade-plugin</artifactId>
-          <version>3.4.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

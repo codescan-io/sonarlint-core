@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.sonarsource.sonarlint.core.telemetry.TelemetryHelpAndFeedbackCounter;
 
@@ -52,9 +51,9 @@ class TelemetryPayloadTests {
     var showHotspotPayload = new ShowHotspotPayload(4);
     var hotspotPayload = new HotspotPayload(5, 3);
     var taintVulnerabilitiesPayload = new TaintVulnerabilitiesPayload(6, 7);
-    var issuePayload = new IssuePayload(Set.of("java:S123"));
+    var issuePayload = new IssuePayload(2);
     var rulesPayload = new TelemetryRulesPayload(Arrays.asList("enabledRuleKey1", "enabledRuleKey2"), Arrays.asList("disabledRuleKey1", "disabledRuleKey2"),
-      Arrays.asList("reportedRuleKey1", "reportedRuleKey2"), Arrays.asList("quickFixedRuleKey1", "quickFixedRuleKey2"));
+            Arrays.asList("reportedRuleKey1", "reportedRuleKey2"), Arrays.asList("quickFixedRuleKey1", "quickFixedRuleKey2"));
     Map<String, TelemetryHelpAndFeedbackCounter> helpAndFeedbackCounter = new HashMap<>();
     helpAndFeedbackCounter.put("faq", new TelemetryHelpAndFeedbackCounter(4));
     helpAndFeedbackCounter.put("docs", new TelemetryHelpAndFeedbackCounter(5));
@@ -67,36 +66,36 @@ class TelemetryPayloadTests {
     additionalPropsSub.put("aSubNumber", 2);
     additionalProps.put("sub", additionalPropsSub);
     var m = new TelemetryPayload(4, 15, "SLI", "2.4", "Pycharm 3.2", "platform", "architecture",
-      true, true, systemTime, installTime, "Windows 10", "1.8.0", "10.5.2", perf,
-      notifPayload, showHotspotPayload, taintVulnerabilitiesPayload, rulesPayload, hotspotPayload, issuePayload, helpAndFeedbackPayload, additionalProps);
+            true, true, systemTime, installTime, "Windows 10", "1.8.0", "10.5.2", perf,
+            notifPayload, showHotspotPayload, taintVulnerabilitiesPayload, rulesPayload, hotspotPayload, issuePayload, helpAndFeedbackPayload, additionalProps);
     var s = m.toJson();
 
     assertThat(s).isEqualTo("{\"days_since_installation\":4,"
-      + "\"days_of_use\":15,"
-      + "\"sonarlint_version\":\"2.4\","
-      + "\"sonarlint_product\":\"SLI\","
-      + "\"ide_version\":\"Pycharm 3.2\","
-      + "\"platform\":\"platform\","
-      + "\"architecture\":\"architecture\","
-      + "\"connected_mode_used\":true,"
-      + "\"connected_mode_sonarcloud\":true,"
-      + "\"system_time\":\"2017-11-10T12:02:14.984+02:00\","
-      + "\"install_time\":\"2017-11-10T12:01:14.984+02:00\","
-      + "\"os\":\"Windows 10\","
-      + "\"jre\":\"1.8.0\","
-      + "\"nodejs\":\"10.5.2\","
-      + "\"analyses\":[{\"language\":\"java\",\"rate_per_duration\":{\"0-300\":9.9,\"1000-2000\":90.1}}],"
-      + "\"server_notifications\":{\"disabled\":true,\"count_by_type\":{\"NEW_ISSUES\":{\"received\":10,\"clicked\":1},\"QUALITY_GATE\":{\"received\":5,\"clicked\":3}}},"
-      + "\"show_hotspot\":{\"requests_count\":4},"
-      + "\"taint_vulnerabilities\":{\"investigated_locally_count\":6,\"investigated_remotely_count\":7},"
-      + "\"rules\":{\"non_default_enabled\":[\"enabledRuleKey1\",\"enabledRuleKey2\"],\"default_disabled\":[\"disabledRuleKey1\",\"disabledRuleKey2\"],\"raised_issues\":[\"reportedRuleKey1\",\"reportedRuleKey2\"],\"quick_fix_applied\":[\"quickFixedRuleKey1\",\"quickFixedRuleKey2\"]},"
-      + "\"hotspot\":{\"open_in_browser_count\":5,\"status_changed_count\":3},"
-      + "\"issue\":{\"status_changed_rule_keys\":[\"java:S123\"]},"
-      + "\"help_and_feedback\":{\"count_by_link\":{\"docs\":5,\"faq\":4}},"
-      + "\"aString\":\"stringValue\","
-      + "\"aBool\":false,"
-      + "\"aNumber\":1.5,"
-      + "\"sub\":{\"aSubNumber\":2}}");
+            + "\"days_of_use\":15,"
+            + "\"sonarlint_version\":\"2.4\","
+            + "\"sonarlint_product\":\"SLI\","
+            + "\"ide_version\":\"Pycharm 3.2\","
+            + "\"platform\":\"platform\","
+            + "\"architecture\":\"architecture\","
+            + "\"connected_mode_used\":true,"
+            + "\"connected_mode_sonarcloud\":true,"
+            + "\"system_time\":\"2017-11-10T12:02:14.984+02:00\","
+            + "\"install_time\":\"2017-11-10T12:01:14.984+02:00\","
+            + "\"os\":\"Windows 10\","
+            + "\"jre\":\"1.8.0\","
+            + "\"nodejs\":\"10.5.2\","
+            + "\"analyses\":[{\"language\":\"java\",\"rate_per_duration\":{\"0-300\":9.9,\"1000-2000\":90.1}}],"
+            + "\"server_notifications\":{\"disabled\":true,\"count_by_type\":{\"NEW_ISSUES\":{\"received\":10,\"clicked\":1},\"QUALITY_GATE\":{\"received\":5,\"clicked\":3}}},"
+            + "\"show_hotspot\":{\"requests_count\":4},"
+            + "\"taint_vulnerabilities\":{\"investigated_locally_count\":6,\"investigated_remotely_count\":7},"
+            + "\"rules\":{\"non_default_enabled\":[\"enabledRuleKey1\",\"enabledRuleKey2\"],\"default_disabled\":[\"disabledRuleKey1\",\"disabledRuleKey2\"],\"raised_issues\":[\"reportedRuleKey1\",\"reportedRuleKey2\"],\"quick_fix_applied\":[\"quickFixedRuleKey1\",\"quickFixedRuleKey2\"]},"
+            + "\"hotspot\":{\"open_in_browser_count\":5,\"status_changed_count\":3},"
+            + "\"issue\":{\"status_changed_count\":2},"
+            + "\"help_and_feedback\":{\"count_by_link\":{\"docs\":5,\"faq\":4}},"
+            + "\"aString\":\"stringValue\","
+            + "\"aBool\":false,"
+            + "\"aNumber\":1.5,"
+            + "\"sub\":{\"aSubNumber\":2}}");
 
     assertThat(m.daysOfUse()).isEqualTo(15);
     assertThat(m.daysSinceInstallation()).isEqualTo(4);
@@ -112,7 +111,7 @@ class TelemetryPayloadTests {
     assertThat(m.notifications().disabled()).isTrue();
     assertThat(m.notifications().counters()).containsOnlyKeys("QUALITY_GATE", "NEW_ISSUES");
     assertThat(m.helpAndFeedbackPayload().getCounters()).containsOnlyKeys("docs", "faq");
-    assertThat(m.issuePayload().getStatusChangedRuleKeys()).isEqualTo(Set.of("java:S123"));
+    assertThat(m.issuePayload().getStatusChangedCount()).isEqualTo(2);
     assertThat(m.additionalAttributes()).containsExactlyEntriesOf(additionalProps);
   }
 

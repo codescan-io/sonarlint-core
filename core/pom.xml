@@ -373,7 +373,6 @@
                 </filter>
                 <filter>
                   <artifact>org.sonarsource.api.plugin:sonar-plugin-api</artifact>
-                  <version>${sonar-plugin-api.version}</version>
                   <includes>
                     <include>**</include>
                   </includes>

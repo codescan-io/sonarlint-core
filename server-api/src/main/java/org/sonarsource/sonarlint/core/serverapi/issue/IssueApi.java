@@ -34,7 +34,6 @@ import org.sonar.scanner.protocol.input.ScannerInput;
 import org.sonarsource.sonarlint.core.commons.IssueStatus;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.LocalOnlyIssue;
-import org.sonarsource.sonarlint.core.commons.Transition;
 import org.sonarsource.sonarlint.core.commons.Version;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.commons.progress.ProgressMonitor;
@@ -55,10 +54,7 @@ public class IssueApi {
 
   public static final Version MIN_SQ_VERSION_SUPPORTING_PULL = Version.create("9.6");
 
-  private static final Map<IssueStatus, Transition> transitionByStatus = Map.of(
-    IssueStatus.WONT_FIX, Transition.WONT_FIX,
-    IssueStatus.FALSE_POSITIVE, Transition.FALSE_POSITIVE
-  );
+  private static final Map<IssueStatus, String> transitionByStatus = Map.of(IssueStatus.WONT_FIX, "wontfix", IssueStatus.FALSE_POSITIVE, "falsepositive");
 
   private static final SonarLintLogger LOG = SonarLintLogger.get();
 
@@ -83,21 +79,21 @@ public class IssueApi {
     searchUrl.append(getVulnerabilitiesUrl(key, ruleKeys));
     searchUrl.append(getUrlBranchParameter(branchName));
     serverApiHelper.getOrganizationKey()
-      .ifPresent(org -> searchUrl.append("&organization=").append(UrlUtils.urlEncode(org)));
+            .ifPresent(org -> searchUrl.append("&organization=").append(UrlUtils.urlEncode(org)));
     List<Issue> result = new ArrayList<>();
     Map<String, String> componentsPathByKey = new HashMap<>();
     serverApiHelper.getPaginated(searchUrl.toString(),
-      Issues.SearchWsResponse::parseFrom,
-      r -> r.getPaging().getTotal(),
-      r -> {
-        componentsPathByKey.clear();
-        // Ignore project level issues
-        componentsPathByKey.putAll(r.getComponentsList().stream().filter(Component::hasPath).collect(Collectors.toMap(Component::getKey, Component::getPath)));
-        return r.getIssuesList();
-      },
-      result::add,
-      true,
-      progress);
+            Issues.SearchWsResponse::parseFrom,
+            r -> r.getPaging().getTotal(),
+            r -> {
+              componentsPathByKey.clear();
+              // Ignore project level issues
+              componentsPathByKey.putAll(r.getComponentsList().stream().filter(Component::hasPath).collect(Collectors.toMap(Component::getKey, Component::getPath)));
+              return r.getIssuesList();
+            },
+            result::add,
+            true,
+            progress);
 
     return new DownloadIssuesResult(result, componentsPathByKey);
   }
@@ -123,7 +119,7 @@ public class IssueApi {
 
   private static String getVulnerabilitiesUrl(String key, Set<String> ruleKeys) {
     return "/api/issues/search.protobuf?statuses=OPEN,CONFIRMED,REOPENED&types=VULNERABILITY&componentKeys="
-      + urlEncode(key) + "&rules=" + urlEncode(String.join(",", ruleKeys));
+            + urlEncode(key) + "&rules=" + urlEncode(String.join(",", ruleKeys));
   }
 
   private static String getUrlBranchParameter(@Nullable String branchName) {
@@ -138,18 +134,18 @@ public class IssueApi {
     batchIssueUrl.append(getBatchIssuesUrl(key));
     batchIssueUrl.append(getUrlBranchParameter(branchName));
     return ServerApiHelper.processTimed(
-      () -> serverApiHelper.rawGet(batchIssueUrl.toString()),
-      response -> {
-        if (response.code() == 403 || response.code() == 404) {
-          return Collections.emptyList();
-        } else if (response.code() != 200) {
-          throw ServerApiHelper.handleError(response);
-        }
-        var input = response.bodyAsStream();
-        var parser = ScannerInput.ServerIssue.parser();
-        return readMessages(input, parser);
-      },
-      duration -> LOG.debug("Downloaded issues in {}ms", duration));
+            () -> serverApiHelper.rawGet(batchIssueUrl.toString()),
+            response -> {
+              if (response.code() == 403 || response.code() == 404) {
+                return Collections.emptyList();
+              } else if (response.code() != 200) {
+                throw ServerApiHelper.handleError(response);
+              }
+              var input = response.bodyAsStream();
+              var parser = ScannerInput.ServerIssue.parser();
+              return readMessages(input, parser);
+            },
+            duration -> LOG.debug("Downloaded issues in {}ms", duration));
   }
 
   private static String getBatchIssuesUrl(String key) {
@@ -159,8 +155,8 @@ public class IssueApi {
   private static String getPullIssuesUrl(String projectKey, String branchName, Set<Language> enabledLanguages, @Nullable Long changedSince) {
     var enabledLanguageKeys = enabledLanguages.stream().map(Language::getLanguageKey).collect(Collectors.joining(","));
     var url = new StringBuilder()
-      .append("/api/issues/pull?projectKey=")
-      .append(UrlUtils.urlEncode(projectKey)).append("&branchName=").append(UrlUtils.urlEncode(branchName));
+            .append("/api/issues/pull?projectKey=")
+            .append(UrlUtils.urlEncode(projectKey)).append("&branchName=").append(UrlUtils.urlEncode(branchName));
     if (!enabledLanguageKeys.isEmpty()) {
       url.append("&languages=").append(enabledLanguageKeys);
     }
@@ -172,13 +168,13 @@ public class IssueApi {
 
   public IssuesPullResult pullIssues(String projectKey, String branchName, Set<Language> enabledLanguages, @Nullable Long changedSince) {
     return ServerApiHelper.processTimed(
-      () -> serverApiHelper.get(getPullIssuesUrl(projectKey, branchName, enabledLanguages, changedSince)),
-      response -> {
-        var input = response.bodyAsStream();
-        var timestamp = Issues.IssuesPullQueryTimestamp.parseDelimitedFrom(input);
-        return new IssuesPullResult(timestamp, readMessages(input, Issues.IssueLite.parser()));
-      },
-      duration -> LOG.debug("Pulled issues in {}ms", duration));
+            () -> serverApiHelper.get(getPullIssuesUrl(projectKey, branchName, enabledLanguages, changedSince)),
+            response -> {
+              var input = response.bodyAsStream();
+              var timestamp = Issues.IssuesPullQueryTimestamp.parseDelimitedFrom(input);
+              return new IssuesPullResult(timestamp, readMessages(input, Issues.IssueLite.parser()));
+            },
+            duration -> LOG.debug("Pulled issues in {}ms", duration));
   }
 
   public static class IssuesPullResult {
@@ -202,8 +198,8 @@ public class IssueApi {
   private static String getPullTaintIssuesUrl(String projectKey, String branchName, Set<Language> enabledLanguages, @Nullable Long changedSince) {
     var enabledLanguageKeys = enabledLanguages.stream().map(Language::getLanguageKey).collect(Collectors.joining(","));
     var url = new StringBuilder()
-      .append("/api/issues/pull_taint?projectKey=")
-      .append(UrlUtils.urlEncode(projectKey)).append("&branchName=").append(UrlUtils.urlEncode(branchName));
+            .append("/api/issues/pull_taint?projectKey=")
+            .append(UrlUtils.urlEncode(projectKey)).append("&branchName=").append(UrlUtils.urlEncode(branchName));
     if (!enabledLanguageKeys.isEmpty()) {
       url.append("&languages=").append(enabledLanguageKeys);
     }
@@ -215,57 +211,57 @@ public class IssueApi {
 
   public TaintIssuesPullResult pullTaintIssues(String projectKey, String branchName, Set<Language> enabledLanguages, @Nullable Long changedSince) {
     return ServerApiHelper.processTimed(
-      () -> serverApiHelper.get(getPullTaintIssuesUrl(projectKey, branchName, enabledLanguages, changedSince)),
-      response -> {
-        var input = response.bodyAsStream();
-        var timestamp = Issues.TaintVulnerabilityPullQueryTimestamp.parseDelimitedFrom(input);
-        return new TaintIssuesPullResult(timestamp, readMessages(input, Issues.TaintVulnerabilityLite.parser()));
-      },
-      duration -> LOG.debug("Pulled taint issues in {}ms", duration));
+            () -> serverApiHelper.get(getPullTaintIssuesUrl(projectKey, branchName, enabledLanguages, changedSince)),
+            response -> {
+              var input = response.bodyAsStream();
+              var timestamp = Issues.TaintVulnerabilityPullQueryTimestamp.parseDelimitedFrom(input);
+              return new TaintIssuesPullResult(timestamp, readMessages(input, Issues.TaintVulnerabilityLite.parser()));
+            },
+            duration -> LOG.debug("Pulled taint issues in {}ms", duration));
   }
 
-  public CompletableFuture<Void> changeStatusAsync(String issueKey, Transition transition) {
-    var body = "issue=" + urlEncode(issueKey) + "&transition=" + urlEncode(transition.getStatus());
+  public CompletableFuture<Void> changeStatusAsync(String issueKey, String status) {
+    var body = "issue=" + urlEncode(issueKey) + "&transition=" + urlEncode(status);
     return serverApiHelper.postAsync("/api/issues/do_transition", FORM_URL_ENCODED_CONTENT_TYPE, body)
-      .thenAccept(response -> {
-        // no data, return void
-      });
+            .thenAccept(response -> {
+              // no data, return void
+            });
   }
 
   public CompletableFuture<Void> addComment(String issueKey, String text) {
     var body = "issue=" + urlEncode(issueKey) + "&text=" + urlEncode(text);
     return serverApiHelper.postAsync("/api/issues/add_comment", FORM_URL_ENCODED_CONTENT_TYPE, body)
-      .thenAccept(response -> {
-        // no data, return void
-      });
+            .thenAccept(response -> {
+              // no data, return void
+            });
   }
 
   public CompletableFuture<Issue> searchByKey(String issueKey) {
     var searchUrl = new StringBuilder();
     searchUrl.append("/api/issues/search.protobuf?issues=").append(urlEncode(issueKey)).append("&additionalFields=transitions");
     serverApiHelper.getOrganizationKey()
-      .ifPresent(org -> searchUrl.append("&organization=").append(UrlUtils.urlEncode(org)));
+            .ifPresent(org -> searchUrl.append("&organization=").append(UrlUtils.urlEncode(org)));
     searchUrl.append("&ps=1&p=1");
     return serverApiHelper.getAsync(searchUrl.toString())
-      .thenApply(rawResponse -> {
-        try (var body = rawResponse.bodyAsStream()) {
-          var wsResponse = Issues.SearchWsResponse.parseFrom(body);
-          if (wsResponse.getIssuesList().isEmpty()) {
-            throw new UnexpectedBodyException("No issue found with key '" + issueKey + "'");
-          }
-          return wsResponse.getIssuesList().get(0);
-        } catch (IOException e) {
-          LOG.error("Error when searching issue + '" + issueKey + "'", e);
-          throw new UnexpectedBodyException(e);
-        }
-      });
+            .thenApply(rawResponse -> {
+              try (var body = rawResponse.bodyAsStream()) {
+                var wsResponse = Issues.SearchWsResponse.parseFrom(body);
+                if (wsResponse.getIssuesList().isEmpty()) {
+                  throw new UnexpectedBodyException("No issue found with key '" + issueKey + "'");
+                }
+                return wsResponse.getIssuesList().get(0);
+              } catch (IOException e) {
+                LOG.error("Error when searching issue + '" + issueKey + "'", e);
+                throw new UnexpectedBodyException(e);
+              }
+            });
   }
 
-  public CompletableFuture<Void> anticipatedTransitions(String projectKey, List<LocalOnlyIssue> resolvedLocalOnlyIssues) {
+  public CompletableFuture<Void> anticipateTransitions(String projectKey, List<LocalOnlyIssue> resolvedLocalOnlyIssues) {
     return serverApiHelper.postAsync("/api/issues/anticipated_transitions?projectKey=" + projectKey, JSON_CONTENT_TYPE, new Gson().toJson(adapt(resolvedLocalOnlyIssues)))
-      .thenAccept(response -> {
-        // no data, return void
-      });
+            .thenAccept(response -> {
+              // no data, return void
+            });
   }
 
   private static List<IssueAnticipatedTransition> adapt(List<LocalOnlyIssue> resolvedLocalOnlyIssues) {
@@ -282,7 +278,7 @@ public class IssueApi {
     }
     var resolution = requireNonNull(issue.getResolution());
     return new IssueAnticipatedTransition(issue.getServerRelativePath(), lineNumber, lineHash, issue.getRuleKey(), issue.getMessage(),
-      transitionByStatus.get(resolution.getStatus()).getStatus(), resolution.getComment());
+            transitionByStatus.get(resolution.getStatus()), resolution.getComment());
   }
 
   public static class TaintIssuesPullResult {
@@ -315,7 +311,7 @@ public class IssueApi {
     public final String comment;
 
     private IssueAnticipatedTransition(String filePath, @Nullable Integer line, @Nullable String hash, String ruleKey, String issueMessage, String transition,
-      @Nullable String comment) {
+            @Nullable String comment) {
       this.filePath = filePath;
       this.line = line;
       this.hash = hash;
