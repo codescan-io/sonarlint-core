@@ -17,6 +17,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.sonarsource.sonarqube</groupId>
+      <artifactId>sonar-plugin-api-impl</artifactId>
+      <version>${sonar-ws.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.sonarsource.sonarqube.tests</groupId>
       <artifactId>base-plugin</artifactId>
       <version>0.1-SNAPSHOT</version>
