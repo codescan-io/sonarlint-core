@@ -178,6 +178,10 @@
           <groupId>*</groupId>
           <artifactId>*</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.sonarsource.api.plugin</groupId>
+          <artifactId>sonar-plugin-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -195,6 +199,12 @@
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api-impl</artifactId>
       <version>${sonar-ws.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.sonarsource.api.plugin</groupId>
+          <artifactId>sonar-plugin-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
@@ -248,7 +258,7 @@
                 <artifactItem>
                   <groupId>org.sonarsource.javascript</groupId>
                   <artifactId>sonar-javascript-plugin</artifactId>
-                  <version>9.6.0.18814</version>
+                  <version>9.12.1.20358</version>
                   <type>jar</type>
                 </artifactItem>
                 <artifactItem>

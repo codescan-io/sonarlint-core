@@ -20,6 +20,12 @@
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api-impl</artifactId>
       <version>${sonar-ws.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.sonarsource.api.plugin</groupId>
+          <artifactId>sonar-plugin-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube.tests</groupId>

@@ -112,6 +112,12 @@
       <artifactId>sonar-ws</artifactId>
       <version>${sonar-ws.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.sonarsource.api.plugin</groupId>
+          <artifactId>sonar-plugin-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
