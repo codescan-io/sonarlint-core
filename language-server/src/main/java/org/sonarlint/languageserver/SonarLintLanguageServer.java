@@ -19,6 +19,10 @@
  */
 package org.sonarlint.languageserver;
 
+import static java.util.Collections.singleton;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
@@ -34,6 +38,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +58,10 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 import org.eclipse.lsp4j.CodeAction;
 import org.eclipse.lsp4j.CodeActionParams;
 import org.eclipse.lsp4j.CodeLens;
@@ -108,7 +119,6 @@ import org.eclipse.lsp4j.services.LanguageServer;
 import org.eclipse.lsp4j.services.TextDocumentService;
 import org.eclipse.lsp4j.services.WorkspaceService;
 import org.sonar.api.internal.apachecommons.lang.StringUtils;
-import org.sonar.api.rule.RuleKey;
 import org.sonarsource.sonarlint.core.client.api.common.RuleDetails;
 import org.sonarsource.sonarlint.core.client.api.common.analysis.AnalysisResults;
 import org.sonarsource.sonarlint.core.client.api.common.analysis.ClientInputFile;
@@ -127,10 +137,6 @@ import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneAnalysisCo
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneSonarLintEngine;
 import org.sonarsource.sonarlint.core.client.api.util.FileUtils;
 import org.sonarsource.sonarlint.core.telemetry.TelemetryPathManager;
-
-import static java.util.Collections.singleton;
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class SonarLintLanguageServer implements LanguageServer, WorkspaceService, TextDocumentService {
   private static final String USER_AGENT = "CodeScan Language Server";
@@ -329,13 +335,34 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
   }
 
   private static ServerConfiguration getServerConfiguration(ServerInfo serverInfo) {
+    X509TrustManager trustManager = null;
+    SSLSocketFactory socketFactory = null;
+    HostnameVerifier hostnameVerifier = null;
+
+    if (Boolean.parseBoolean(System.getProperty("http.allowUntrustedSsl"))) {
+      trustManager = new SelfSignedSslTrustManager();
+
+      try {
+        SSLContext sslContext = SSLContext.getInstance("SSL");
+        sslContext.init(null, new X509TrustManager[] {trustManager}, new java.security.SecureRandom());
+        socketFactory = sslContext.getSocketFactory();
+      } catch (KeyManagementException | NoSuchAlgorithmException e) {
+        throw new IllegalStateException(e.getMessage(), e);
+      }
+
+      hostnameVerifier = (hostname, session) -> true;
+    }
+
     return ServerConfiguration.builder()
-      .url(serverInfo.serverUrl)
-      .token(serverInfo.token)
-      .organizationKey(serverInfo.organizationKey)
-      .userAgent(USER_AGENT)
-      .proxyCredentials(System.getProperty("http.proxyUser"), System.getProperty("http.proxyPassword"))
-      .build();
+            .url(serverInfo.serverUrl)
+            .token(serverInfo.token)
+            .organizationKey(serverInfo.organizationKey)
+            .userAgent(USER_AGENT)
+            .proxyCredentials(System.getProperty("http.proxyUser"), System.getProperty("http.proxyPassword"))
+            .trustManager(trustManager)
+            .sslSocketFactory(socketFactory)
+            .hostnameVerifier(hostnameVerifier)
+            .build();
   }
 
   private void updateBinding(@Nullable Map<?, ?> connectedModeProject) {
@@ -981,4 +1008,24 @@ public class SonarLintLanguageServer implements LanguageServer, WorkspaceService
       this.projectKey = projectKey;
     }
   }
+
+  /**
+   * Custom trust manager which helps to accept self-signed untrusted certificates.
+   */
+  private static class SelfSignedSslTrustManager implements X509TrustManager {
+
+    @Override
+    public X509Certificate[] getAcceptedIssuers() {
+      return new X509Certificate[0];
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] chain, String authType) {
+    }
+
+    @Override
+    public void checkClientTrusted(X509Certificate[] chain, String authType) {
+    }
+  }
+
 }

@@ -19,6 +19,9 @@
  */
 package org.sonarsource.sonarlint.core.util.ws;
 
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang.StringUtils.defaultString;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Proxy;
@@ -32,6 +35,7 @@ import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -45,9 +49,6 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang.StringUtils.defaultString;
 
 /**
  * Helper to build an instance of {@link okhttp3.OkHttpClient} that
@@ -69,6 +70,7 @@ public class OkHttpClientBuilder {
   private long readTimeoutMs = -1;
   private SSLSocketFactory sslSocketFactory = null;
   private X509TrustManager sslTrustManager = null;
+  private HostnameVerifier hostnameVerifier = null;
 
   /**
    * Optional User-Agent. If set, then all the requests sent by the
@@ -94,6 +96,14 @@ public class OkHttpClientBuilder {
    */
   public OkHttpClientBuilder setTrustManager(@Nullable X509TrustManager sslTrustManager) {
     this.sslTrustManager = sslTrustManager;
+    return this;
+  }
+
+  /**
+   * Optional Hostname Verifier.
+   */
+  public OkHttpClientBuilder setHostnameVerifier(@Nullable HostnameVerifier hostnameVerifier) {
+    this.hostnameVerifier = hostnameVerifier;
     return this;
   }
 
@@ -189,7 +199,9 @@ public class OkHttpClientBuilder {
     X509TrustManager trustManager = sslTrustManager != null ? sslTrustManager : systemDefaultTrustManager();
     SSLSocketFactory sslFactory = sslSocketFactory != null ? sslSocketFactory : systemDefaultSslSocketFactory(trustManager);
     builder.sslSocketFactory(sslFactory, trustManager);
-
+    if (hostnameVerifier != null) {
+      builder.hostnameVerifier(hostnameVerifier);
+    }
     return builder.build();
   }
 
