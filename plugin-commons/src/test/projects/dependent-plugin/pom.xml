@@ -11,22 +11,23 @@
 
   <dependencies>
     <dependency>
+      <!--      Plugin api version goes here -->
       <groupId>org.sonarsource.api.plugin</groupId>
       <artifactId>sonar-plugin-api</artifactId>
       <version>${sonar-plugin-api.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.sonarsource.sonarqube</groupId>
-      <artifactId>sonar-plugin-api-impl</artifactId>
-      <version>${sonar-ws.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.sonarsource.api.plugin</groupId>
-          <artifactId>sonar-plugin-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.sonarsource.sonarqube</groupId>-->
+<!--      <artifactId>sonar-plugin-api-impl</artifactId>-->
+<!--      <version>${sonar-ws.version}</version>-->
+<!--      <exclusions>-->
+<!--        <exclusion>-->
+<!--          <groupId>org.sonarsource.api.plugin</groupId>-->
+<!--          <artifactId>sonar-plugin-api</artifactId>-->
+<!--        </exclusion>-->
+<!--      </exclusions>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.sonarsource.sonarqube.tests</groupId>
       <artifactId>base-plugin</artifactId>
