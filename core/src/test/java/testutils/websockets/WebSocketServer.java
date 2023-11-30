@@ -17,55 +17,55 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-//package testutils.websockets;
-//
-//import java.io.File;
-//import java.util.List;
-//import org.apache.catalina.LifecycleException;
-//import org.apache.catalina.servlets.DefaultServlet;
-//import org.apache.catalina.startup.Tomcat;
-//
-//public class WebSocketServer {
-//
-//  public static final int DEFAULT_PORT = 54321;
-//  public static final String CONNECTION_REPOSITORY_ATTRIBUTE_KEY = "connectionRepository";
-//  private Tomcat tomcat;
-//  private WebSocketConnectionRepository connectionRepository;
-//
-//  public void start() {
-//    try {
-//      var baseDir = new File("").getAbsoluteFile().getParentFile().getPath();
-//      tomcat = new Tomcat();
-//      tomcat.setBaseDir(baseDir);
-//      tomcat.setPort(DEFAULT_PORT);
-//      var context = tomcat.addContext("", baseDir);
-//      connectionRepository = new WebSocketConnectionRepository();
-//      context.getServletContext().setAttribute(CONNECTION_REPOSITORY_ATTRIBUTE_KEY, connectionRepository);
-//      context.addApplicationListener(ContextListener.class.getName());
-//      Tomcat.addServlet(context, "dummy", new DefaultServlet()).addMapping("/");
-//      // needed to start the endpoint
-//      tomcat.getConnector();
-//      tomcat.start();
-//    } catch (LifecycleException e) {
-//      throw new IllegalStateException(e);
-//    }
-//  }
-//
-//  public void stop() {
-//    try {
-//      tomcat.stop();
-//      tomcat.destroy();
-//    } catch (LifecycleException e) {
-//      throw new IllegalStateException(e);
-//    }
-//  }
-//
-//  public String getUrl() {
-//    return "ws://localhost:" + DEFAULT_PORT + "/endpoint";
-//  }
-//
-//  public List<WebSocketConnection> getConnections() {
-//    return connectionRepository.getConnections();
-//  }
-//
-//}
+package testutils.websockets;
+
+import java.io.File;
+import java.util.List;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.servlets.DefaultServlet;
+import org.apache.catalina.startup.Tomcat;
+
+public class WebSocketServer {
+
+  public static final int DEFAULT_PORT = 54321;
+  public static final String CONNECTION_REPOSITORY_ATTRIBUTE_KEY = "connectionRepository";
+  private Tomcat tomcat;
+  private WebSocketConnectionRepository connectionRepository;
+
+  public void start() {
+    try {
+      var baseDir = new File("").getAbsoluteFile().getParentFile().getPath();
+      tomcat = new Tomcat();
+      tomcat.setBaseDir(baseDir);
+      tomcat.setPort(DEFAULT_PORT);
+      var context = tomcat.addContext("", baseDir);
+      connectionRepository = new WebSocketConnectionRepository();
+      context.getServletContext().setAttribute(CONNECTION_REPOSITORY_ATTRIBUTE_KEY, connectionRepository);
+      context.addApplicationListener(ContextListener.class.getName());
+      Tomcat.addServlet(context, "dummy", new DefaultServlet()).addMapping("/");
+      // needed to start the endpoint
+      tomcat.getConnector();
+      tomcat.start();
+    } catch (LifecycleException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  public void stop() {
+    try {
+      tomcat.stop();
+      tomcat.destroy();
+    } catch (LifecycleException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  public String getUrl() {
+    return "ws://localhost:" + DEFAULT_PORT + "/endpoint";
+  }
+
+  public List<WebSocketConnection> getConnections() {
+    return connectionRepository.getConnections();
+  }
+
+}

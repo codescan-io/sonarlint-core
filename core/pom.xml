@@ -196,7 +196,13 @@
         </exclusion>
       </exclusions>
     </dependency>
-<!--    <dependency>-->
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-websocket</artifactId>
+      <version>10.1.12</version>
+      <scope>test</scope>
+    </dependency>
+    <!--    <dependency>-->
 <!--      <groupId>org.sonarsource.sonarqube</groupId>-->
 <!--      <artifactId>sonar-plugin-api-impl</artifactId>-->
 <!--      <version>${sonar-ws.version}</version>-->
