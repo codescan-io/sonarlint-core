@@ -17,19 +17,19 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package testutils.websockets;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-public class WebSocketConnectionRepository {
-  private final List<WebSocketConnection> connections = new CopyOnWriteArrayList<>();
-
-  public void add(WebSocketConnection webSocketConnection) {
-    connections.add(webSocketConnection);
-  }
-
-  public List<WebSocketConnection> getConnections() {
-    return connections;
-  }
-}
+//package testutils.websockets;
+//
+//import java.util.List;
+//import java.util.concurrent.CopyOnWriteArrayList;
+//
+//public class WebSocketConnectionRepository {
+//  private final List<WebSocketConnection> connections = new CopyOnWriteArrayList<>();
+//
+//  public void add(WebSocketConnection webSocketConnection) {
+//    connections.add(webSocketConnection);
+//  }
+//
+//  public List<WebSocketConnection> getConnections() {
+//    return connections;
+//  }
+//}

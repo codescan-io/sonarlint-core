@@ -17,28 +17,28 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package testutils.websockets;
-
-import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.HandshakeResponse;
-import jakarta.websocket.server.HandshakeRequest;
-import jakarta.websocket.server.ServerEndpointConfig;
-
-import static testutils.websockets.WebSocketEndpoint.WS_CONNECTION_USER_PROPERTY_KEY;
-import static testutils.websockets.WebSocketServer.CONNECTION_REPOSITORY_ATTRIBUTE_KEY;
-
-public class ServletAwareConfig extends ServerEndpointConfig.Configurator {
-  @Override
-  public void modifyHandshake(ServerEndpointConfig config, HandshakeRequest request, HandshakeResponse response) {
-    var webSocketConnection = new WebSocketConnection(request.getHeaders().get("Authorization").get(0));
-    getWebSocketConnectionRepository(request).add(webSocketConnection);
-    config.getUserProperties().put(WS_CONNECTION_USER_PROPERTY_KEY, webSocketConnection);
-    super.modifyHandshake(config, request, response);
-  }
-
-  private static WebSocketConnectionRepository getWebSocketConnectionRepository(HandshakeRequest request) {
-    HttpSession httpSession = (HttpSession) request.getHttpSession();
-    return (WebSocketConnectionRepository) httpSession.getServletContext().getAttribute(CONNECTION_REPOSITORY_ATTRIBUTE_KEY);
-  }
-
-}
+//package testutils.websockets;
+//
+//import jakarta.servlet.http.HttpSession;
+//import jakarta.websocket.HandshakeResponse;
+//import jakarta.websocket.server.HandshakeRequest;
+//import jakarta.websocket.server.ServerEndpointConfig;
+//
+//import static testutils.websockets.WebSocketEndpoint.WS_CONNECTION_USER_PROPERTY_KEY;
+//import static testutils.websockets.WebSocketServer.CONNECTION_REPOSITORY_ATTRIBUTE_KEY;
+//
+//public class ServletAwareConfig extends ServerEndpointConfig.Configurator {
+//  @Override
+//  public void modifyHandshake(ServerEndpointConfig config, HandshakeRequest request, HandshakeResponse response) {
+//    var webSocketConnection = new WebSocketConnection(request.getHeaders().get("Authorization").get(0));
+//    getWebSocketConnectionRepository(request).add(webSocketConnection);
+//    config.getUserProperties().put(WS_CONNECTION_USER_PROPERTY_KEY, webSocketConnection);
+//    super.modifyHandshake(config, request, response);
+//  }
+//
+//  private static WebSocketConnectionRepository getWebSocketConnectionRepository(HandshakeRequest request) {
+//    HttpSession httpSession = (HttpSession) request.getHttpSession();
+//    return (WebSocketConnectionRepository) httpSession.getServletContext().getAttribute(CONNECTION_REPOSITORY_ATTRIBUTE_KEY);
+//  }
+//
+//}

@@ -28,12 +28,21 @@ public class ActiveRule {
 
   private final String ruleKey;
   private final String languageKey;
+  private final String internalKey;
   private Map<String, String> params = Collections.emptyMap();
   private String templateRuleKey = null;
+
 
   public ActiveRule(String ruleKey, String languageKey) {
     this.ruleKey = ruleKey;
     this.languageKey = languageKey;
+    this.internalKey = null;
+  }
+
+  public ActiveRule(String ruleKey, String languageKey, String internalKey) {
+    this.ruleKey = ruleKey;
+    this.languageKey = languageKey;
+    this.internalKey = internalKey;
   }
 
   public String getRuleKey() {
@@ -59,6 +68,10 @@ public class ActiveRule {
 
   public void setTemplateRuleKey(@Nullable String templateRuleKey) {
     this.templateRuleKey = templateRuleKey;
+  }
+
+  public String getInternalKey() {
+    return internalKey;
   }
 
   @Override

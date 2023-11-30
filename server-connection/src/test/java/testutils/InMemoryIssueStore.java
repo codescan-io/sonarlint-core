@@ -246,6 +246,10 @@ public class InMemoryIssueStore implements ProjectServerIssueStore {
   }
 
   @Override
+  public Optional<ServerFinding> markIssueAsResolved(String issueKey, boolean isTaintIssue) {
+    return Optional.empty();
+  }
+
   public Optional<ServerFinding> updateIssueResolutionStatus(String issueKey, boolean isTaintIssue, boolean isResolved) {
     if (isTaintIssue) {
       return Optional.ofNullable(taintIssuesByKey.computeIfPresent(issueKey, (s, serverIssue) ->  serverIssue.setResolved(isResolved)));

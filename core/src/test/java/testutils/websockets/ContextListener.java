@@ -17,25 +17,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package testutils.websockets;
-
-import jakarta.servlet.ServletContextEvent;
-import org.apache.tomcat.websocket.server.WsContextListener;
-import org.apache.tomcat.websocket.server.WsServerContainer;
-
-import static org.apache.tomcat.websocket.server.Constants.SERVER_CONTAINER_SERVLET_CONTEXT_ATTRIBUTE;
-
-public class ContextListener extends WsContextListener {
-  @Override
-  public void contextInitialized(final ServletContextEvent sce) {
-    super.contextInitialized(sce);
-
-    sce.getServletContext().addListener(new RequestListener());
-    var sc = (WsServerContainer) sce.getServletContext().getAttribute(SERVER_CONTAINER_SERVLET_CONTEXT_ATTRIBUTE);
-    try {
-      sc.addEndpoint(WebSocketEndpoint.class);
-    } catch (jakarta.websocket.DeploymentException e) {
-      throw new RuntimeException(e);
-    }
-  }
-}
+//package testutils.websockets;
+//
+//import jakarta.servlet.ServletContextEvent;
+//import org.apache.tomcat.websocket.server.WsContextListener;
+//import org.apache.tomcat.websocket.server.WsServerContainer;
+//
+//import static org.apache.tomcat.websocket.server.Constants.SERVER_CONTAINER_SERVLET_CONTEXT_ATTRIBUTE;
+//
+//public class ContextListener extends WsContextListener {
+//  @Override
+//  public void contextInitialized(final ServletContextEvent sce) {
+//    super.contextInitialized(sce);
+//
+//    sce.getServletContext().addListener(new RequestListener());
+//    var sc = (WsServerContainer) sce.getServletContext().getAttribute(SERVER_CONTAINER_SERVLET_CONTEXT_ATTRIBUTE);
+//    try {
+//      sc.addEndpoint(WebSocketEndpoint.class);
+//    } catch (jakarta.websocket.DeploymentException e) {
+//      throw new RuntimeException(e);
+//    }
+//  }
+//}

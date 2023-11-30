@@ -17,17 +17,17 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package testutils.websockets;
-
-import jakarta.servlet.ServletRequestEvent;
-import jakarta.servlet.ServletRequestListener;
-import jakarta.servlet.http.HttpServletRequest;
-
-public class RequestListener implements ServletRequestListener {
-  @Override
-  public void requestInitialized(ServletRequestEvent sre) {
-    // needed to force creation of the WebSocket session for handshake
-    ((HttpServletRequest) sre.getServletRequest()).getSession();
-  }
-
-}
+//package testutils.websockets;
+//
+//import jakarta.servlet.ServletRequestEvent;
+//import jakarta.servlet.ServletRequestListener;
+//import jakarta.servlet.http.HttpServletRequest;
+//
+//public class RequestListener implements ServletRequestListener {
+//  @Override
+//  public void requestInitialized(ServletRequestEvent sre) {
+//    // needed to force creation of the WebSocket session for handshake
+//    ((HttpServletRequest) sre.getServletRequest()).getSession();
+//  }
+//
+//}

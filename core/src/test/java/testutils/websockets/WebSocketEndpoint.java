@@ -17,43 +17,43 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package testutils.websockets;
-
-import jakarta.websocket.OnClose;
-import jakarta.websocket.OnError;
-import jakarta.websocket.OnMessage;
-import jakarta.websocket.OnOpen;
-import jakarta.websocket.Session;
-import jakarta.websocket.server.ServerEndpoint;
-
-@ServerEndpoint(value = "/endpoint", configurator = ServletAwareConfig.class)
-public class WebSocketEndpoint {
-  public static final String WS_CONNECTION_USER_PROPERTY_KEY = "wsConnection";
-
-  @OnOpen
-  public void onOpen(final Session session) {
-    var wsConnection = getWsConnection(session);
-    wsConnection.setSession(session);
-  }
-
-  @OnMessage
-  public String handleTextMessage(Session session, String message) {
-    var wsConnection = getWsConnection(session);
-    wsConnection.addReceivedMessage(message);
-    return wsConnection.pollPreparedAnswer();
-  }
-
-  @OnClose
-  public void onClose(final Session session) {
-    getWsConnection(session).setIsClosed();
-  }
-
-  @OnError
-  public void onError(final Session session, final Throwable throwable) {
-    getWsConnection(session).setIsError(throwable);
-  }
-
-  private static WebSocketConnection getWsConnection(Session session) {
-    return (WebSocketConnection) session.getUserProperties().get(WS_CONNECTION_USER_PROPERTY_KEY);
-  }
-}
+//package testutils.websockets;
+//
+//import jakarta.websocket.OnClose;
+//import jakarta.websocket.OnError;
+//import jakarta.websocket.OnMessage;
+//import jakarta.websocket.OnOpen;
+//import jakarta.websocket.Session;
+//import jakarta.websocket.server.ServerEndpoint;
+//
+//@ServerEndpoint(value = "/endpoint", configurator = ServletAwareConfig.class)
+//public class WebSocketEndpoint {
+//  public static final String WS_CONNECTION_USER_PROPERTY_KEY = "wsConnection";
+//
+//  @OnOpen
+//  public void onOpen(final Session session) {
+//    var wsConnection = getWsConnection(session);
+//    wsConnection.setSession(session);
+//  }
+//
+//  @OnMessage
+//  public String handleTextMessage(Session session, String message) {
+//    var wsConnection = getWsConnection(session);
+//    wsConnection.addReceivedMessage(message);
+//    return wsConnection.pollPreparedAnswer();
+//  }
+//
+//  @OnClose
+//  public void onClose(final Session session) {
+//    getWsConnection(session).setIsClosed();
+//  }
+//
+//  @OnError
+//  public void onError(final Session session, final Throwable throwable) {
+//    getWsConnection(session).setIsError(throwable);
+//  }
+//
+//  private static WebSocketConnection getWsConnection(Session session) {
+//    return (WebSocketConnection) session.getUserProperties().get(WS_CONNECTION_USER_PROPERTY_KEY);
+//  }
+//}

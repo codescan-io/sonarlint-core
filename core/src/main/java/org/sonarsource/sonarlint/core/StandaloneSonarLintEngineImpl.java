@@ -137,7 +137,7 @@ public final class StandaloneSonarLintEngineImpl extends AbstractSonarLintEngine
       .collect(Collectors.toList()));
 
     return filteredActiveRules.stream().map(rd -> {
-      var activeRule = new ActiveRule(rd.getKey(), rd.getLanguage().getLanguageKey());
+      var activeRule = new ActiveRule(rd.getKey(), rd.getLanguage().getLanguageKey(), rd.getInternalKey().isPresent() ? rd.getInternalKey().get() : null);
       Map<String, String> effectiveParams = new HashMap<>(rd.getDefaultParams());
       Optional.ofNullable(configuration.ruleParameters().get(RuleKey.parse(rd.getKey()))).ifPresent(effectiveParams::putAll);
       activeRule.setParams(effectiveParams);
