@@ -54,6 +54,7 @@ public enum Language {
   TSQL("tsql", "tsql", "T-SQL", new String[] {".tsql"}, "sonar.tsql.file.suffixes"),
   TS("ts", "javascript", "TypeScript", new String[] {".ts", ".tsx"},
     "sonar.typescript.file.suffixes"),
+  CSS("css", "javascript", "CSS", new String[] {".css", ".less", ".scss"}, "sonar.css.file.suffixes"),
   JSP("jsp", "web", "JSP", new String[] {".jsp", ".jspf", ".jspx"}, "sonar.jsp.file.suffixes"),
   VF("vf", "codescan", "Visual Force & Lightning", new String[] {".page", ".component", ".app", ".evt", ".cmp", ".intf"}, "sf.vf.suffixes"),
   XML("xml", "xml", "XML", new String[] {".xml", ".xsd", ".xsl"}, "sonar.xml.file.suffixes"),
