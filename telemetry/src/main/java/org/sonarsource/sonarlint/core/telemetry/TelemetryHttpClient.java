@@ -88,18 +88,18 @@ public class TelemetryHttpClient {
     var showHotspotPayload = new ShowHotspotPayload(data.showHotspotRequestsCount());
     var hotspotPayload = new HotspotPayload(data.openHotspotInBrowserCount(), data.hotspotStatusChangedCount());
     var taintVulnerabilitiesPayload = new TaintVulnerabilitiesPayload(data.taintVulnerabilitiesInvestigatedLocallyCount(),
-      data.taintVulnerabilitiesInvestigatedRemotelyCount());
-    var issuePayload = new IssuePayload(data.issueStatusChangedRuleKeys());
+            data.taintVulnerabilitiesInvestigatedRemotelyCount());
+    var issuePayload = new IssuePayload(data.issueStatusChangedCount());
     var os = System.getProperty("os.name");
     var jre = System.getProperty("java.version");
     var telemetryRulesPayload = new TelemetryRulesPayload(attributesProvider.getNonDefaultEnabledRules(),
-      attributesProvider.getDefaultDisabledRules(), data.getRaisedIssuesRules(), data.getQuickFixesApplied());
+            attributesProvider.getDefaultDisabledRules(), data.getRaisedIssuesRules(), data.getQuickFixesApplied());
     var helpAndFeedbackPayload = new TelemetryHelpAndFeedbackPayload(data.getHelpAndFeedbackLinkClickedCounter());
     return new TelemetryPayload(daysSinceInstallation, data.numUseDays(), product, version, ideVersion, platform, architecture,
-      attributesProvider.usesConnectedMode(), attributesProvider.useSonarCloud(), systemTime, data.installTime(), os, jre,
-      attributesProvider.nodeVersion().orElse(null), analyzers, notifications, showHotspotPayload,
-      taintVulnerabilitiesPayload, telemetryRulesPayload,
-      hotspotPayload, issuePayload, helpAndFeedbackPayload, attributesProvider.additionalAttributes());
+            attributesProvider.usesConnectedMode(), attributesProvider.useSonarCloud(), systemTime, data.installTime(), os, jre,
+            attributesProvider.nodeVersion().orElse(null), analyzers, notifications, showHotspotPayload,
+            taintVulnerabilitiesPayload, telemetryRulesPayload,
+            hotspotPayload, issuePayload, helpAndFeedbackPayload, attributesProvider.additionalAttributes());
   }
 
   private void sendDelete(TelemetryPayload payload) {

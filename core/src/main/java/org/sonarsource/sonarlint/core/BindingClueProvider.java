@@ -185,17 +185,13 @@ public class BindingClueProvider {
   @CheckForNull
   private static BindingClue computeBindingClue(String filename, ScannerProperties scannerProps) {
     if (AUTOSCAN_CONFIG_FILENAME.equals(filename)) {
-      return new SonarCloudBindingClue(scannerProps.projectKey, scannerProps.organization);
+      return new SonarCloudBindingClue(scannerProps.projectKey, scannerProps.organization, scannerProps.serverUrl);
     }
     if (scannerProps.organization != null) {
-      return new SonarCloudBindingClue(scannerProps.projectKey, scannerProps.organization);
+      return new SonarCloudBindingClue(scannerProps.projectKey, scannerProps.organization, scannerProps.serverUrl);
     }
     if (scannerProps.serverUrl != null) {
-      if (removeEnd(scannerProps.serverUrl, "/").equals(getSonarCloudUrl())) {
-        return new SonarCloudBindingClue(scannerProps.projectKey, null);
-      } else {
-        return new SonarQubeBindingClue(scannerProps.projectKey, scannerProps.serverUrl);
-      }
+      return new SonarCloudBindingClue(scannerProps.projectKey, null, scannerProps.serverUrl);
     }
     if (scannerProps.projectKey != null) {
       return new UnknownBindingClue(scannerProps.projectKey);
@@ -243,10 +239,12 @@ public class BindingClueProvider {
 
     private final String sonarProjectKey;
     private final String organization;
+    private final String serverUrl;
 
-    SonarCloudBindingClue(@Nullable String sonarProjectKey, @Nullable String organization) {
+    SonarCloudBindingClue(@Nullable String sonarProjectKey, @Nullable String organization, @Nullable String serverUrl) {
       this.sonarProjectKey = sonarProjectKey;
       this.organization = organization;
+      this.serverUrl = serverUrl;
     }
 
     @Override

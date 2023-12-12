@@ -87,9 +87,9 @@ public class TelemetryServiceImpl implements TelemetryService {
     }
   }
 
-  public void issueStatusChanged(String ruleKey) {
+  public void issueStatusChanged() {
     if (isEnabled()) {
-      getTelemetryLocalStorageManager().tryUpdateAtomically(telemetryLocalStorage -> telemetryLocalStorage.addIssueStatusChanged(ruleKey));
+      getTelemetryLocalStorageManager().tryUpdateAtomically(TelemetryLocalStorage::incrementIssueStatusChangedCount);
     }
   }
 }

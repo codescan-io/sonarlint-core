@@ -63,7 +63,7 @@ class BindingSuggestionProviderTests {
   public static final String SC_1_ID = "sc1";
   public static final String SQ_2_ID = "sq2";
   public static final SonarQubeConnectionConfiguration SQ_1 = new SonarQubeConnectionConfiguration(SQ_1_ID, "http://mysonarqube.com", true);
-  public static final SonarCloudConnectionConfiguration SC_1 = new SonarCloudConnectionConfiguration(SC_1_ID, "myorg", true);
+  public static final SonarCloudConnectionConfiguration SC_1 = new SonarCloudConnectionConfiguration(SC_1_ID, "myorg", true, "https://app.codescan.io");
   public static final String CONFIG_SCOPE_ID_1 = "configScope1";
   public static final String CONFIG_SCOPE_ID_2 = "configScope2";
   public static final String PROJECT_KEY_1 = "projectKey1";
@@ -388,7 +388,7 @@ class BindingSuggestionProviderTests {
     when(bindingClueProvider.collectBindingCluesWithConnections(CONFIG_SCOPE_ID_1, Set.of(SQ_1_ID)))
       .thenReturn(List.of(
         new BindingClueProvider.BindingClueWithConnections(new BindingClueProvider.UnknownBindingClue(PROJECT_KEY_1), Set.of(SQ_1_ID, SC_1_ID)),
-        new BindingClueProvider.BindingClueWithConnections(new BindingClueProvider.SonarCloudBindingClue(null, null), Set.of(SC_1_ID))));
+        new BindingClueProvider.BindingClueWithConnections(new BindingClueProvider.SonarCloudBindingClue(null, null, null), Set.of(SC_1_ID))));
 
     when(sonarProjectsCache.getSonarProject(SQ_1_ID, PROJECT_KEY_1)).thenReturn(Optional.empty());
     when(sonarProjectsCache.getSonarProject(SC_1_ID, PROJECT_KEY_1)).thenReturn(Optional.empty());

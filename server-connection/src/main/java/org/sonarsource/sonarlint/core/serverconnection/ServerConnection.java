@@ -67,8 +67,6 @@ public class ServerConnection {
   private static final SonarLintLogger LOG = SonarLintLogger.get();
   private static final Version SECRET_ANALYSIS_MIN_SQ_VERSION = Version.create("9.9");
 
-  private static final Version CLEAN_CODE_TAXONOMY_MIN_SQ_VERSION = Version.create("10.2");
-
   private final Set<Language> enabledLanguagesToSync;
   private final IssueStoreReader issueStoreReader;
   private final LocalStorageSynchronizer storageSynchronizer;
@@ -100,13 +98,13 @@ public class ServerConnection {
     this.projectStorageUpdateExecutor = new ProjectStorageUpdateExecutor(storage);
     storage.plugins().cleanUp();
     coreEventRouter = new EventDispatcher()
-      .dispatch(RuleSetChangedEvent.class, new UpdateStorageOnRuleSetChanged(storage))
-      .dispatch(IssueChangedEvent.class, new UpdateStorageOnIssueChanged(storage))
-      .dispatch(TaintVulnerabilityRaisedEvent.class, new UpdateStorageOnTaintVulnerabilityRaised(storage))
-      .dispatch(TaintVulnerabilityClosedEvent.class, new UpdateStorageOnTaintVulnerabilityClosed(storage))
-      .dispatch(SecurityHotspotRaisedEvent.class, new UpdateStorageOnSecurityHotspotRaised(storage))
-      .dispatch(SecurityHotspotChangedEvent.class, new UpdateStorageOnSecurityHotspotChanged(storage))
-      .dispatch(SecurityHotspotClosedEvent.class, new UpdateStorageOnSecurityHotspotClosed(storage));
+            .dispatch(RuleSetChangedEvent.class, new UpdateStorageOnRuleSetChanged(storage))
+            .dispatch(IssueChangedEvent.class, new UpdateStorageOnIssueChanged(storage))
+            .dispatch(TaintVulnerabilityRaisedEvent.class, new UpdateStorageOnTaintVulnerabilityRaised(storage))
+            .dispatch(TaintVulnerabilityClosedEvent.class, new UpdateStorageOnTaintVulnerabilityClosed(storage))
+            .dispatch(SecurityHotspotRaisedEvent.class, new UpdateStorageOnSecurityHotspotRaised(storage))
+            .dispatch(SecurityHotspotChangedEvent.class, new UpdateStorageOnSecurityHotspotChanged(storage))
+            .dispatch(SecurityHotspotClosedEvent.class, new UpdateStorageOnSecurityHotspotClosed(storage));
     this.serverEventsAutoSubscriber = new ServerEventsAutoSubscriber();
   }
 
@@ -150,7 +148,7 @@ public class ServerConnection {
 
   public void subscribeForEvents(EndpointParams endpoint, HttpClient client, Set<String> projectKeys, Consumer<ServerEvent> clientEventConsumer, ClientLogOutput clientLogOutput) {
     serverEventsAutoSubscriber.subscribePermanently(new ServerApi(new ServerApiHelper(endpoint, client)), projectKeys, enabledLanguagesToSync,
-      e -> notifyHandlers(e, clientEventConsumer), clientLogOutput);
+            e -> notifyHandlers(e, clientEventConsumer), clientLogOutput);
   }
 
   private void notifyHandlers(ServerEvent serverEvent, Consumer<ServerEvent> clientEventConsumer) {
@@ -160,16 +158,16 @@ public class ServerConnection {
 
   public ProjectBinding calculatePathPrefixes(String projectKey, Collection<String> ideFilePaths) {
     List<Path> idePathList = ideFilePaths.stream()
-      .map(Paths::get)
-      .collect(Collectors.toList());
+            .map(Paths::get)
+            .collect(Collectors.toList());
     List<Path> sqPathList = storage.project(projectKey).components().read()
-      .getComponentList().stream()
-      .map(Paths::get)
-      .collect(Collectors.toList());
+            .getComponentList().stream()
+            .map(Paths::get)
+            .collect(Collectors.toList());
     var fileMatcher = new FileTreeMatcher();
     var match = fileMatcher.match(sqPathList, idePathList);
     return new ProjectBinding(projectKey, FilenameUtils.separatorsToUnix(match.sqPrefix().toString()),
-      FilenameUtils.separatorsToUnix(match.idePrefix().toString()));
+            FilenameUtils.separatorsToUnix(match.idePrefix().toString()));
   }
 
   public void downloadServerIssuesForFile(EndpointParams endpoint, HttpClient client, ProjectBinding projectBinding, String ideFilePath, String branchName) {
@@ -184,7 +182,7 @@ public class ServerConnection {
   }
 
   public void downloadServerTaintIssuesForFile(EndpointParams endpoint, HttpClient client, ProjectBinding projectBinding, String ideFilePath, String branchName,
-    ProgressMonitor progress) {
+          ProgressMonitor progress) {
     var serverApi = new ServerApi(new ServerApiHelper(endpoint, client));
     var serverVersion = readOrSynchronizeServerVersion(serverApi);
     issuesUpdater.updateFileTaints(serverApi, projectBinding, ideFilePath, branchName, isSonarCloud, serverVersion, progress);
@@ -220,22 +218,15 @@ public class ServerConnection {
   public boolean permitsHotspotTracking() {
     // when storage is not present, consider hotspots should not be detected
     return storage.serverInfo().read()
-      .map(serverInfo -> HotspotApi.permitsTracking(isSonarCloud, serverInfo::getVersion))
-      .orElse(false);
+            .map(serverInfo -> HotspotApi.permitsTracking(isSonarCloud, serverInfo::getVersion))
+            .orElse(false);
   }
 
   public boolean supportsSecretAnalysis() {
     // when storage is not present, assume that secrets are not supported by server
     return isSonarCloud || storage.serverInfo().read()
-      .map(serverInfo -> serverInfo.getVersion().compareToIgnoreQualifier(SECRET_ANALYSIS_MIN_SQ_VERSION) >= 0)
-      .orElse(false);
-  }
-
-  public boolean shouldSkipCleanCodeTaxonomy() {
-    // In connected mode, Clean Code taxonomy is skipped if the server is SonarQube < 10.2
-    return !isSonarCloud && storage.serverInfo().read()
-      .map(serverInfo -> serverInfo.getVersion().compareToIgnoreQualifier(CLEAN_CODE_TAXONOMY_MIN_SQ_VERSION) < 0)
-      .orElse(false);
+            .map(serverInfo -> serverInfo.getVersion().compareToIgnoreQualifier(SECRET_ANALYSIS_MIN_SQ_VERSION) >= 0)
+            .orElse(false);
   }
 
   public void syncServerIssuesForProject(EndpointParams endpoint, HttpClient client, String projectKey, String branchName) {

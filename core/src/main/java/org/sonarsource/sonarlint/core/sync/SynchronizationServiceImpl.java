@@ -32,7 +32,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import org.jetbrains.annotations.NotNull;
 import org.sonarsource.sonarlint.core.ServerApiProvider;
 import org.sonarsource.sonarlint.core.branch.SonarProjectBranchServiceImpl;
 import org.sonarsource.sonarlint.core.clientapi.SonarLintClient;
@@ -71,7 +70,7 @@ public class SynchronizationServiceImpl {
   private ScheduledExecutorService scheduledSynchronizer;
 
   public SynchronizationServiceImpl(SonarLintClient client, ConfigurationRepository configurationRepository, LanguageSupportRepository languageSupportRepository,
-    SonarProjectBranchServiceImpl branchService, ServerApiProvider serverApiProvider, StorageService storageService, InitializeParams params) {
+          SonarProjectBranchServiceImpl branchService, ServerApiProvider serverApiProvider, StorageService storageService, InitializeParams params) {
     this.client = client;
     this.configurationRepository = configurationRepository;
     this.languageSupportRepository = languageSupportRepository;
@@ -103,9 +102,9 @@ public class SynchronizationServiceImpl {
 
   private void autoSync() {
     var bindingsPerConnectionId = configurationRepository.getEffectiveBindingForLeafConfigScopesById()
-      .entrySet().stream().collect(
-        groupingBy(e -> e.getValue().getConnectionId(),
-          mapping(e -> new BoundConfigurationScope(e.getKey(), e.getValue().getSonarProjectKey()), toList())));
+            .entrySet().stream().collect(
+                    groupingBy(e -> e.getValue().getConnectionId(),
+                            mapping(e -> new BoundConfigurationScope(e.getKey(), e.getValue().getSonarProjectKey()), toList())));
     autoSync(bindingsPerConnectionId);
   }
 
@@ -131,12 +130,13 @@ public class SynchronizationServiceImpl {
   }
 
   private void autoSync(String connectionId, List<BoundConfigurationScope> boundConfigurationScopes, ProgressNotifier notifier, Set<String> synchronizedConfScopeIds,
-    float progress, float progressGap) {
+          float progress, float progressGap) {
     if (boundConfigurationScopes.isEmpty()) {
       return;
     }
     serverApiProvider.getServerApi(connectionId).ifPresent(serverApi -> {
-      var serverConnection = getServerConnection(connectionId, serverApi);
+      var serverConnection = new ServerConnection(storageService.getStorageFacade(), connectionId, serverApi.isSonarCloud(),
+              languageSupportRepository.getEnabledLanguagesInConnectedMode(), connectedModeEmbeddedPluginKeys);
       var subProgressGap = progressGap / boundConfigurationScopes.size();
       var subProgress = progress;
       for (BoundConfigurationScope scope : boundConfigurationScopes) {
@@ -147,14 +147,8 @@ public class SynchronizationServiceImpl {
     });
   }
 
-  @NotNull
-  public ServerConnection getServerConnection(String connectionId, ServerApi serverApi) {
-    return new ServerConnection(storageService.getStorageFacade(), connectionId, serverApi.isSonarCloud(),
-      languageSupportRepository.getEnabledLanguagesInConnectedMode(), connectedModeEmbeddedPluginKeys);
-  }
-
   private void autoSyncBoundConfigurationScope(BoundConfigurationScope boundScope, ServerApi serverApi,
-    ServerConnection serverConnection, Set<String> synchronizedConfScopeIds) {
+          ServerConnection serverConnection, Set<String> synchronizedConfScopeIds) {
     branchService.getEffectiveActiveSonarProjectBranch(boundScope.configurationScopeId).ifPresent(branch -> {
       serverConnection.syncServerIssuesForProject(serverApi, boundScope.sonarProjectKey, branch);
       if (languageSupportRepository.areTaintVulnerabilitiesSupported()) {
@@ -172,19 +166,21 @@ public class SynchronizationServiceImpl {
     }
     var configurationScopeId = changedEvent.getConfigurationScopeId();
     configurationRepository.getEffectiveBinding(configurationScopeId).ifPresent(binding -> autoSync(Map.of(requireNonNull(binding.getConnectionId()),
-      List.of(new BoundConfigurationScope(configurationScopeId, binding.getSonarProjectKey())))));
+            List.of(new BoundConfigurationScope(configurationScopeId, binding.getSonarProjectKey())))));
   }
 
   public void fetchProjectIssues(Binding binding, String activeBranch) {
     serverApiProvider.getServerApi(binding.getConnectionId()).ifPresent(serverApi -> {
-      var serverConnection = getServerConnection(binding.getConnectionId(), serverApi);
+      var serverConnection = new ServerConnection(storageService.getStorageFacade(), binding.getConnectionId(), serverApi.isSonarCloud(),
+              languageSupportRepository.getEnabledLanguagesInConnectedMode(), connectedModeEmbeddedPluginKeys);
       serverConnection.downloadServerIssuesForProject(serverApi, binding.getSonarProjectKey(), activeBranch);
     });
   }
 
   public void fetchFileIssues(Binding binding, String serverFileRelativePath, String activeBranch) {
     serverApiProvider.getServerApi(binding.getConnectionId()).ifPresent(serverApi -> {
-      var serverConnection = getServerConnection(binding.getConnectionId(), serverApi);
+      var serverConnection = new ServerConnection(storageService.getStorageFacade(), binding.getConnectionId(), serverApi.isSonarCloud(),
+              languageSupportRepository.getEnabledLanguagesInConnectedMode(), connectedModeEmbeddedPluginKeys);
       serverConnection.downloadServerIssuesForFile(serverApi, binding.getSonarProjectKey(), serverFileRelativePath, activeBranch);
     });
   }

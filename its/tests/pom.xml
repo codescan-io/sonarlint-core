@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-its</artifactId>
-    <version>9.2-SNAPSHOT</version>
+    <version>9.1.2-CODESCAN</version>
   </parent>
   <artifactId>sonarlint-core-its-tests</artifactId>
   <name>SonarLint Core - ITs - Tests</name>
@@ -20,7 +20,7 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-ws</artifactId>
-      <version>9.8.0.63668</version>
+      <version>${sonar-ws.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -67,6 +67,18 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.sonarsource.sonarqube</groupId>
+      <artifactId>sonar-ws</artifactId>
+      <version>${sonar-ws.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.sonarsource.api.plugin</groupId>
+          <artifactId>sonar-plugin-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 

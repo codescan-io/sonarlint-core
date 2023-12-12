@@ -25,15 +25,22 @@ import org.sonarsource.sonarlint.core.clientapi.common.UsernamePasswordDto;
 
 public class TransientSonarCloudConnectionDto {
 
+  private final String serverUrl;
+
   private final String organization;
 
   private final Either<TokenDto, UsernamePasswordDto> credentials;
 
-  public TransientSonarCloudConnectionDto(String organization, Either<TokenDto, UsernamePasswordDto> credentials) {
+  public TransientSonarCloudConnectionDto(String serverUrl, String organization, Either<TokenDto, UsernamePasswordDto> credentials) {
+    this.serverUrl = serverUrl;
     this.organization = organization;
     this.credentials = credentials;
   }
 
+  public String getServerUrl() {
+    return serverUrl;
+  }
+  
   public String getOrganization() {
     return organization;
   }

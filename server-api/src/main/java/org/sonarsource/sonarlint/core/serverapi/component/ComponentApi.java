@@ -23,11 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import org.sonarqube.ws.Projects;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.commons.progress.ProgressMonitor;
 import org.sonarsource.sonarlint.core.serverapi.ServerApiHelper;
 import org.sonarsource.sonarlint.core.serverapi.UrlUtils;
-import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Components;
+import org.sonarqube.ws.Components;
 
 public class ComponentApi {
   private static final SonarLintLogger LOG = SonarLintLogger.get();
@@ -65,9 +66,9 @@ public class ComponentApi {
   public List<ServerProject> getAllProjects(ProgressMonitor progress) {
     List<ServerProject> serverProjects = new ArrayList<>();
     helper.getPaginated(getAllProjectsUrl(),
-      Components.SearchWsResponse::parseFrom,
+      Projects.SearchWsResponse::parseFrom,
       r -> r.getPaging().getTotal(),
-      Components.SearchWsResponse::getComponentsList,
+            Projects.SearchWsResponse::getComponentsList,
       project -> serverProjects.add(new DefaultRemoteProject(project.getKey(), project.getName())),
       true,
       progress);
@@ -76,7 +77,7 @@ public class ComponentApi {
 
   private String getAllProjectsUrl() {
     var searchUrl = new StringBuilder();
-    searchUrl.append("api/components/search.protobuf?qualifiers=TRK");
+    searchUrl.append("api/projects/search.protobuf?qualifiers=TRK");
     helper.getOrganizationKey()
       .ifPresent(org -> searchUrl.append("&organization=").append(UrlUtils.urlEncode(org)));
     return searchUrl.toString();

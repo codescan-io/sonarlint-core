@@ -19,7 +19,6 @@
  */
 package org.sonarsource.sonarlint.core.serverconnection;
 
-import com.google.common.annotations.VisibleForTesting;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,18 +33,14 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.sonarsource.sonarlint.core.commons.CleanCodeAttribute;
-import org.sonarsource.sonarlint.core.commons.ImpactSeverity;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.RuleKey;
 import org.sonarsource.sonarlint.core.commons.RuleType;
-import org.sonarsource.sonarlint.core.commons.SoftwareQuality;
 import org.sonarsource.sonarlint.core.commons.TextRangeWithHash;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.commons.progress.ProgressMonitor;
 import org.sonarsource.sonarlint.core.serverapi.ServerApi;
-import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Common;
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Common.Flow;
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Common.TextRange;
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues;
@@ -77,10 +72,10 @@ public class TaintIssueDownloader {
     Map<String, String> sourceCodeByKey = new HashMap<>();
     var downloadVulnerabilitiesForRules = issueApi.downloadVulnerabilitiesForRules(key, taintRuleKeys, branchName, progress);
     downloadVulnerabilitiesForRules.getIssues()
-      .stream()
-      .map(i -> convertTaintVulnerability(serverApi.source(), i, downloadVulnerabilitiesForRules.getComponentPathsByKey(), sourceCodeByKey))
-      .filter(Objects::nonNull)
-      .forEach(result::add);
+            .stream()
+            .map(i -> convertTaintVulnerability(serverApi.source(), i, downloadVulnerabilitiesForRules.getComponentPathsByKey(), sourceCodeByKey))
+            .filter(Objects::nonNull)
+            .forEach(result::add);
 
     return result;
   }
@@ -98,26 +93,26 @@ public class TaintIssueDownloader {
     var apiResult = issueApi.pullTaintIssues(projectKey, branchName, enabledLanguages, lastSync.map(Instant::toEpochMilli).orElse(null));
     // Ignore project level issues
     var changedIssues = apiResult.getTaintIssues()
-      .stream()
-      // Ignore project level issues
-      .filter(i -> i.getMainLocation().hasFilePath())
-      .filter(not(TaintVulnerabilityLite::getClosed))
-      .map(TaintIssueDownloader::convertLiteTaintIssue)
-      .collect(Collectors.toList());
+            .stream()
+            // Ignore project level issues
+            .filter(i -> i.getMainLocation().hasFilePath())
+            .filter(not(TaintVulnerabilityLite::getClosed))
+            .map(TaintIssueDownloader::convertLiteTaintIssue)
+            .collect(Collectors.toList());
     var closedIssueKeys = apiResult.getTaintIssues()
-      .stream()
-      // Ignore project level issues
-      .filter(i -> i.getMainLocation().hasFilePath())
-      .filter(TaintVulnerabilityLite::getClosed)
-      .map(TaintVulnerabilityLite::getKey)
-      .collect(Collectors.toSet());
+            .stream()
+            // Ignore project level issues
+            .filter(i -> i.getMainLocation().hasFilePath())
+            .filter(TaintVulnerabilityLite::getClosed)
+            .map(TaintVulnerabilityLite::getKey)
+            .collect(Collectors.toSet());
 
     return new PullTaintResult(Instant.ofEpochMilli(apiResult.getTimestamp().getQueryTimestamp()), changedIssues, closedIssueKeys);
   }
 
   @CheckForNull
   private static ServerTaintIssue convertTaintVulnerability(SourceApi sourceApi, Issue taintVulnerabilityFromWs,
-    Map<String, String> componentsByKey, Map<String, String> sourceCodeByKey) {
+          Map<String, String> componentsByKey, Map<String, String> sourceCodeByKey) {
     var ruleKey = RuleKey.parse(taintVulnerabilityFromWs.getRule());
     var primaryLocation = convertPrimaryLocation(sourceApi, taintVulnerabilityFromWs, componentsByKey, sourceCodeByKey);
     var filePath = primaryLocation.getFilePath();
@@ -126,77 +121,38 @@ public class TaintIssueDownloader {
       return null;
     }
     var ruleDescriptionContextKey = taintVulnerabilityFromWs.hasRuleDescriptionContextKey() ? taintVulnerabilityFromWs.getRuleDescriptionContextKey() : null;
-    var cleanCodeAttribute = parseProtoCleanCodeAttribute(taintVulnerabilityFromWs);
-    var impacts = taintVulnerabilityFromWs.getImpactsList().stream()
-      .map(i -> Map.entry(parseProtoSoftwareQuality(i), parseProtoImpactSeverity(i)))
-      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     return new ServerTaintIssue(
-      taintVulnerabilityFromWs.getKey(),
-      !taintVulnerabilityFromWs.getResolution().isEmpty(),
-      ruleKey.toString(),
-      primaryLocation.getMessage(),
-      filePath,
-      ServerApiUtils.parseOffsetDateTime(taintVulnerabilityFromWs.getCreationDate()).toInstant(),
-      IssueSeverity.valueOf(taintVulnerabilityFromWs.getSeverity().name()),
-      RuleType.valueOf(taintVulnerabilityFromWs.getType().name()),
-      primaryLocation.getTextRange(), ruleDescriptionContextKey,
-      cleanCodeAttribute, impacts)
-        .setFlows(convertFlows(sourceApi, taintVulnerabilityFromWs.getFlowsList(), componentsByKey, sourceCodeByKey));
-  }
-
-  @CheckForNull
-  @VisibleForTesting
-  static CleanCodeAttribute parseProtoCleanCodeAttribute(Issue taintVulnerabilityFromWs) {
-    if (!taintVulnerabilityFromWs.hasCleanCodeAttribute() || taintVulnerabilityFromWs.getCleanCodeAttribute() == Common.CleanCodeAttribute.UNKNOWN_ATTRIBUTE) {
-      return null;
-    }
-    return CleanCodeAttribute.valueOf(taintVulnerabilityFromWs.getCleanCodeAttribute().name());
-  }
-
-  @CheckForNull
-  @VisibleForTesting
-  static CleanCodeAttribute parseProtoCleanCodeAttribute(TaintVulnerabilityLite taintVulnerabilityFromWs) {
-    if (!taintVulnerabilityFromWs.hasCleanCodeAttribute() || taintVulnerabilityFromWs.getCleanCodeAttribute() == Common.CleanCodeAttribute.UNKNOWN_ATTRIBUTE) {
-      return null;
-    }
-    return CleanCodeAttribute.valueOf(taintVulnerabilityFromWs.getCleanCodeAttribute().name());
-  }
-
-  @VisibleForTesting
-  static SoftwareQuality parseProtoSoftwareQuality(Common.Impact protoImpact) {
-    if (!protoImpact.hasSoftwareQuality() || protoImpact.getSoftwareQuality() == Common.SoftwareQuality.UNKNOWN_IMPACT_QUALITY) {
-      throw new IllegalArgumentException("Unknown or missing software quality");
-    }
-    return SoftwareQuality.valueOf(protoImpact.getSoftwareQuality().name());
-  }
-
-  @VisibleForTesting
-  static ImpactSeverity parseProtoImpactSeverity(Common.Impact protoImpact) {
-    if (!protoImpact.hasSeverity() || protoImpact.getSeverity() == Common.ImpactSeverity.UNKNOWN_IMPACT_SEVERITY) {
-      throw new IllegalArgumentException("Unknown or missing impact severity");
-    }
-    return ImpactSeverity.valueOf(protoImpact.getSeverity().name());
+            taintVulnerabilityFromWs.getKey(),
+            !taintVulnerabilityFromWs.getResolution().isEmpty(),
+            ruleKey.toString(),
+            primaryLocation.getMessage(),
+            filePath,
+            ServerApiUtils.parseOffsetDateTime(taintVulnerabilityFromWs.getCreationDate()).toInstant(),
+            IssueSeverity.valueOf(taintVulnerabilityFromWs.getSeverity().name()),
+            RuleType.valueOf(taintVulnerabilityFromWs.getType().name()),
+            primaryLocation.getTextRange(), ruleDescriptionContextKey)
+            .setFlows(convertFlows(sourceApi, taintVulnerabilityFromWs.getFlowsList(), componentsByKey, sourceCodeByKey));
   }
 
   private static List<ServerTaintIssue.Flow> convertFlows(SourceApi sourceApi, List<Flow> flowsList, Map<String, String> componentPathsByKey,
-    Map<String, String> sourceCodeByKey) {
+          Map<String, String> sourceCodeByKey) {
     return flowsList.stream()
-      .map(flowFromWs -> new ServerTaintIssue.Flow(flowFromWs.getLocationsList().stream().map(locationFromWs -> {
-        var componentPath = componentPathsByKey.get(locationFromWs.getComponent());
-        if (locationFromWs.hasTextRange()) {
-          var codeSnippet = getCodeSnippet(sourceApi, locationFromWs.getComponent(), locationFromWs.getTextRange(), sourceCodeByKey);
-          String textRangeHash;
-          if (codeSnippet != null) {
-            textRangeHash = hash(codeSnippet);
-          } else {
-            // Use empty String, the client will detect a mismatch with real hash and apply UX for mismatched locations
-            textRangeHash = "";
-          }
-          return new ServerTaintIssue.ServerIssueLocation(componentPath, convertTextRangeFromWs(locationFromWs.getTextRange(), textRangeHash), locationFromWs.getMsg());
-        }
-        return new ServerTaintIssue.ServerIssueLocation(componentPath, null, locationFromWs.getMsg());
-      }).collect(Collectors.toList())))
-      .collect(Collectors.toList());
+            .map(flowFromWs -> new ServerTaintIssue.Flow(flowFromWs.getLocationsList().stream().map(locationFromWs -> {
+              var componentPath = componentPathsByKey.get(locationFromWs.getComponent());
+              if (locationFromWs.hasTextRange()) {
+                var codeSnippet = getCodeSnippet(sourceApi, locationFromWs.getComponent(), locationFromWs.getTextRange(), sourceCodeByKey);
+                String textRangeHash;
+                if (codeSnippet != null) {
+                  textRangeHash = hash(codeSnippet);
+                } else {
+                  // Use empty String, the client will detect a mismatch with real hash and apply UX for mismatched locations
+                  textRangeHash = "";
+                }
+                return new ServerTaintIssue.ServerIssueLocation(componentPath, convertTextRangeFromWs(locationFromWs.getTextRange(), textRangeHash), locationFromWs.getMsg());
+              }
+              return new ServerTaintIssue.ServerIssueLocation(componentPath, null, locationFromWs.getMsg());
+            }).collect(Collectors.toList())))
+            .collect(Collectors.toList());
   }
 
   private static TextRangeWithHash toServerTaintIssueTextRange(Issues.TextRange textRange) {
@@ -212,20 +168,13 @@ public class TaintIssueDownloader {
     var severity = IssueSeverity.valueOf(liteTaintIssueFromWs.getSeverity().name());
     var type = RuleType.valueOf(liteTaintIssueFromWs.getType().name());
     var ruleDescriptionContextKey = liteTaintIssueFromWs.hasRuleDescriptionContextKey() ? liteTaintIssueFromWs.getRuleDescriptionContextKey() : null;
-    var cleanCodeAttribute = parseProtoCleanCodeAttribute(liteTaintIssueFromWs);
-    var impacts = liteTaintIssueFromWs.getImpactsList().stream()
-      .map(i -> Map.entry(
-        parseProtoSoftwareQuality(i),
-        parseProtoImpactSeverity(i)
-      ))
-      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     if (mainLocation.hasTextRange()) {
       taintIssue = new ServerTaintIssue(liteTaintIssueFromWs.getKey(), liteTaintIssueFromWs.getResolved(), liteTaintIssueFromWs.getRuleKey(), mainLocation.getMessage(),
-        filePath, creationDate, severity,
-        type, toServerTaintIssueTextRange(mainLocation.getTextRange()), ruleDescriptionContextKey, cleanCodeAttribute, impacts);
+              filePath, creationDate, severity,
+              type, toServerTaintIssueTextRange(mainLocation.getTextRange()), ruleDescriptionContextKey);
     } else {
       taintIssue = new ServerTaintIssue(liteTaintIssueFromWs.getKey(), liteTaintIssueFromWs.getResolved(), liteTaintIssueFromWs.getRuleKey(), mainLocation.getMessage(),
-        filePath, creationDate, severity, type, null, ruleDescriptionContextKey, cleanCodeAttribute, impacts);
+              filePath, creationDate, severity, type, null, ruleDescriptionContextKey);
     }
     taintIssue.setFlows(liteTaintIssueFromWs.getFlowsList().stream().map(TaintIssueDownloader::convertFlows).collect(Collectors.toList()));
     return taintIssue;
@@ -243,7 +192,7 @@ public class TaintIssueDownloader {
   }
 
   private static ServerTaintIssue.ServerIssueLocation convertPrimaryLocation(SourceApi sourceApi, Issue issueFromWs, Map<String, String> componentPathsByKey,
-    Map<String, String> sourceCodeByKey) {
+          Map<String, String> sourceCodeByKey) {
     var componentPath = componentPathsByKey.get(issueFromWs.getComponent());
     if (issueFromWs.hasTextRange()) {
       var codeSnippet = getCodeSnippet(sourceApi, issueFromWs.getComponent(), issueFromWs.getTextRange(), sourceCodeByKey);
@@ -284,8 +233,8 @@ public class TaintIssueDownloader {
 
   private static String getOrFetchSourceCode(SourceApi sourceApi, String fileKey, Map<String, String> sourceCodeByKey) {
     return sourceCodeByKey.computeIfAbsent(fileKey, k -> sourceApi
-      .getRawSourceCode(fileKey)
-      .orElse(""));
+            .getRawSourceCode(fileKey)
+            .orElse(""));
   }
 
   public static class PullTaintResult {

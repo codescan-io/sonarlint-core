@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-parent</artifactId>
-    <version>9.2-SNAPSHOT</version>
+    <version>9.1.2-CODESCAN</version>
   </parent>
   <artifactId>sonarlint-plugin-commons</artifactId>
   <name>SonarLint Core - Plugin Commons</name>
@@ -32,6 +32,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+<!--      Plugin api version goes here -->
       <groupId>org.sonarsource.api.plugin</groupId>
       <artifactId>sonar-plugin-api</artifactId>
       <version>${sonar-plugin-api.version}</version>
@@ -42,6 +43,17 @@
         </exclusion>
       </exclusions>
     </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.sonarsource.sonarqube</groupId>-->
+<!--      <artifactId>sonar-plugin-api-impl</artifactId>-->
+<!--      <version>${sonar-ws.version}</version>-->
+<!--      <exclusions>-->
+<!--        <exclusion>-->
+<!--          <groupId>org.sonarsource.api.plugin</groupId>-->
+<!--          <artifactId>sonar-plugin-api</artifactId>-->
+<!--        </exclusion>-->
+<!--      </exclusions>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>

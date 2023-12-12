@@ -90,12 +90,12 @@ public interface ConnectionService {
   CompletableFuture<CheckSmartNotificationsSupportedResponse> checkSmartNotificationsSupported(CheckSmartNotificationsSupportedParams params);
 
   @JsonRequest
-  CompletableFuture<ListUserOrganizationsResponse> listUserOrganizations(ListUserOrganizationsParams params);
+  CompletableFuture<ListUserOrganizationsResponse> listUserOrganizations(ListUserOrganizationsParams params, String hostUrl);
 
   /**
    * Find an organization by key. If not found the response will contain null.
    */
   @JsonRequest
-  CompletableFuture<GetOrganizationResponse> getOrganization(GetOrganizationParams params);
+  CompletableFuture<GetOrganizationResponse> getOrganization(GetOrganizationParams params, String hostUrl);
 
 }

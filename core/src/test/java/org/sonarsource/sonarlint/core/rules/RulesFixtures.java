@@ -19,7 +19,6 @@
  */
 package org.sonarsource.sonarlint.core.rules;
 
-import org.sonar.api.rules.CleanCodeAttribute;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RuleParamType;
 import org.sonar.api.server.rule.RulesDefinition;
@@ -31,15 +30,14 @@ public class RulesFixtures {
     RulesDefinition.Context c = new RulesDefinition.Context();
     var repository = c.createRepository("repo", Language.JAVA.getLanguageKey());
     repository.createRule("ruleKey")
-      .setName("ruleName")
-      .setType(RuleType.BUG)
-      .setCleanCodeAttribute(CleanCodeAttribute.TRUSTWORTHY)
-      .setHtmlDescription("Hello, world!")
-        .createParam("paramKey")
-          .setName("paramName")
-          .setType(RuleParamType.TEXT)
-          .setDescription("paramDesc")
-          .setDefaultValue("defaultValue");
+            .setName("ruleName")
+            .setType(RuleType.BUG)
+            .setHtmlDescription("Hello, world!")
+            .createParam("paramKey")
+            .setName("paramName")
+            .setType(RuleParamType.TEXT)
+            .setDescription("paramDesc")
+            .setDefaultValue("defaultValue");
     repository.done();
     var rule = c.repositories().get(0).rule("ruleKey");
     return new SonarLintRuleDefinition(rule);

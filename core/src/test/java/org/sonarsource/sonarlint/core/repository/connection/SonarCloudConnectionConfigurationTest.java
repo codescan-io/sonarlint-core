@@ -27,13 +27,13 @@ class SonarCloudConnectionConfigurationTest {
 
   @Test
   void testEqualsAndHashCode() {
-    var underTest = new SonarCloudConnectionConfiguration("id1", "org1", true);
+    var underTest = new SonarCloudConnectionConfiguration("id1", "org1", true, "https://app.codescan.io");
     assertThat(underTest)
-      .isEqualTo(new SonarCloudConnectionConfiguration("id1", "org1", true))
-      .isNotEqualTo(new SonarCloudConnectionConfiguration("id2", "org1", true))
-      .isNotEqualTo(new SonarCloudConnectionConfiguration("id1", "org2", true))
+      .isEqualTo(new SonarCloudConnectionConfiguration("id1", "org1", true, "https://app.codescan.io"))
+      .isNotEqualTo(new SonarCloudConnectionConfiguration("id2", "org1", true, "https://app.codescan.io"))
+      .isNotEqualTo(new SonarCloudConnectionConfiguration("id1", "org2", true, "https://app.codescan.io"))
       .isNotEqualTo(new SonarQubeConnectionConfiguration("id1", "http://server1", true))
-      .hasSameHashCodeAs(new SonarCloudConnectionConfiguration("id1", "org1", true));
+      .hasSameHashCodeAs(new SonarCloudConnectionConfiguration("id1", "org1", true, "https://app.codescan.io"));
   }
 
 }

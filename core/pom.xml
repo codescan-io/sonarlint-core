@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-parent</artifactId>
-    <version>9.2-SNAPSHOT</version>
+    <version>9.1.2-CODESCAN</version>
   </parent>
   <artifactId>sonarlint-core</artifactId>
   <name>SonarLint Core - Implementation</name>
@@ -162,12 +162,39 @@
       <artifactId>awaitility</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- For WebSockets testing -->
+    <!-- For Xodus -->
     <dependency>
-      <groupId>javax.websocket</groupId>
-      <artifactId>javax.websocket-api</artifactId>
-      <version>1.1</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.sonarsource.sonarqube</groupId>
+      <artifactId>sonar-ws</artifactId>
+      <version>${sonar-ws.version}</version>
+      <exclusions>
+        <!-- Only interested in the protobuf stubs -->
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.sonarsource.api.plugin</groupId>
+          <artifactId>sonar-plugin-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+<!--    Plugin API version goes here-->
+    <dependency>
+      <groupId>org.sonarsource.api.plugin</groupId>
+      <artifactId>sonar-plugin-api</artifactId>
+      <version>${sonar-plugin-api.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
@@ -175,13 +202,17 @@
       <version>10.1.12</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- For Xodus -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <scope>test</scope>
-    </dependency>
+    <!--    <dependency>-->
+<!--      <groupId>org.sonarsource.sonarqube</groupId>-->
+<!--      <artifactId>sonar-plugin-api-impl</artifactId>-->
+<!--      <version>${sonar-ws.version}</version>-->
+<!--      <exclusions>-->
+<!--        <exclusion>-->
+<!--          <groupId>org.sonarsource.api.plugin</groupId>-->
+<!--          <artifactId>sonar-plugin-api</artifactId>-->
+<!--        </exclusion>-->
+<!--      </exclusions>-->
+<!--    </dependency>-->
   </dependencies>
 
   <build>
@@ -234,7 +265,7 @@
                 <artifactItem>
                   <groupId>org.sonarsource.javascript</groupId>
                   <artifactId>sonar-javascript-plugin</artifactId>
-                  <version>9.6.0.18814</version>
+                  <version>9.12.1.20358</version>
                   <type>jar</type>
                 </artifactItem>
                 <artifactItem>
