@@ -103,7 +103,7 @@ public class ConnectionServiceImpl implements ConnectionService {
   }
 
   private static AbstractConnectionConfiguration adapt(SonarCloudConnectionConfigurationDto scDto) {
-    return new SonarCloudConnectionConfiguration(scDto.getConnectionId(), scDto.getOrganization(), scDto.getDisableNotifications());
+    return new SonarCloudConnectionConfiguration(scDto.getConnectionId(), scDto.getServerUrl(), scDto.getOrganization(), scDto.getDisableNotifications());
   }
 
   private static void putAndLogIfDuplicateId(Map<String, AbstractConnectionConfiguration> map, AbstractConnectionConfiguration config) {
@@ -197,7 +197,7 @@ public class ConnectionServiceImpl implements ConnectionService {
   ServerApiHelper buildServerApiHelper(Either<TransientSonarQubeConnectionDto, TransientSonarCloudConnectionDto> transientConnection) {
     var endpointParams = transientConnection.map(
       sq -> new EndpointParams(sq.getServerUrl(), false, null),
-      sc -> new EndpointParams(SonarCloudConnectionConfiguration.getSonarCloudUrl(), true, sc.getOrganization()));
+      sc -> new EndpointParams(sc.getServerUrl(), true, sc.getOrganization()));
     var httpClient = getClientFor(transientConnection
       .map(TransientSonarQubeConnectionDto::getCredentials, TransientSonarCloudConnectionDto::getCredentials));
     return new ServerApiHelper(endpointParams, httpClient);

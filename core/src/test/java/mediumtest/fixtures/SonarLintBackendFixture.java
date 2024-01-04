@@ -167,7 +167,7 @@ public class SonarLintBackendFixture {
     }
 
     public SonarLintBackendBuilder withSonarCloudConnection(String connectionId, String organizationKey) {
-      sonarCloudConnections.add(new SonarCloudConnectionConfigurationDto(connectionId, organizationKey, true));
+      sonarCloudConnections.add(new SonarCloudConnectionConfigurationDto(connectionId, "https://app.codescan.io", organizationKey, true));
       return this;
     }
 

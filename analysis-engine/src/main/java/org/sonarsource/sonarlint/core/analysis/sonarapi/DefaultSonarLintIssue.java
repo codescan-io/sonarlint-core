@@ -73,7 +73,7 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
     return this;
   }
 
-  @Override
+//  @Override
   public NewIssue setCodeVariants(@Nullable Iterable<String> iterable) {
     // not implemented
     return this;
@@ -203,7 +203,7 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
   }
 
   @CheckForNull
-  @Override
+//  @Override
   public List<String> codeVariants() {
     return Collections.emptyList();
   }

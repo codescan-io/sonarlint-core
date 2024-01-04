@@ -28,6 +28,7 @@ import org.sonarsource.sonarlint.core.clientapi.backend.connection.auth.HelpGene
 import org.sonarsource.sonarlint.core.clientapi.backend.connection.auth.HelpGenerateUserTokenResponse;
 import org.sonarsource.sonarlint.core.clientapi.client.OpenUrlInBrowserParams;
 import org.sonarsource.sonarlint.core.commons.Version;
+import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.embedded.server.AwaitingUserTokenFutureRepository;
 import org.sonarsource.sonarlint.core.embedded.server.EmbeddedServer;
 import org.sonarsource.sonarlint.core.http.HttpClientProvider;
@@ -41,6 +42,8 @@ import static org.sonarsource.sonarlint.core.serverapi.UrlUtils.urlEncode;
 @Singleton
 public class TokenGeneratorHelper {
   private static final Version MIN_SQ_VERSION_SUPPORTING_AUTOMATIC_TOKEN_GENERATION = Version.create("9.7");
+
+  private static final SonarLintLogger LOG = SonarLintLogger.get();
 
   private final SonarLintClient client;
   private final EmbeddedServer embeddedServer;
@@ -98,7 +101,7 @@ public class TokenGeneratorHelper {
       return new ServerApi(endpoint, httpClientProvider.getHttpClient()).system().getStatus()
         .thenApply(status -> Version.create(status.getVersion()).satisfiesMinRequirement(MIN_SQ_VERSION_SUPPORTING_AUTOMATIC_TOKEN_GENERATION));
     }
-    return CompletableFuture.completedFuture(false);
+    return CompletableFuture.completedFuture(true);
 
   }
 }

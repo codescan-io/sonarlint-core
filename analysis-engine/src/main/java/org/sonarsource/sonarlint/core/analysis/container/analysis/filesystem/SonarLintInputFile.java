@@ -162,7 +162,6 @@ public class SonarLintInputFile implements InputFile {
     return charset != null ? charset : Charset.defaultCharset();
   }
 
-  @Override
   public String md5Hash() {
     try {
       return DigestUtils.md5Hex(contents());

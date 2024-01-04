@@ -27,15 +27,22 @@ public class TransientSonarCloudConnectionDto {
 
   private final String organization;
 
+  private final String serverUrl;
+
   private final Either<TokenDto, UsernamePasswordDto> credentials;
 
-  public TransientSonarCloudConnectionDto(String organization, Either<TokenDto, UsernamePasswordDto> credentials) {
+  public TransientSonarCloudConnectionDto(String serverUrl, String organization, Either<TokenDto, UsernamePasswordDto> credentials) {
     this.organization = organization;
     this.credentials = credentials;
+    this.serverUrl = serverUrl;
   }
 
   public String getOrganization() {
     return organization;
+  }
+
+  public String getServerUrl() {
+    return serverUrl;
   }
 
   public Either<TokenDto, UsernamePasswordDto> getCredentials() {

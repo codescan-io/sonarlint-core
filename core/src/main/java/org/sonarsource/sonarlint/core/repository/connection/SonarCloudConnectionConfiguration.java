@@ -21,24 +21,38 @@ package org.sonarsource.sonarlint.core.repository.connection;
 
 import java.util.Objects;
 import javax.annotation.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.sonarsource.sonarlint.core.commons.ConnectionKind;
 import org.sonarsource.sonarlint.core.serverapi.EndpointParams;
 
 public class SonarCloudConnectionConfiguration extends AbstractConnectionConfiguration {
 
+  static final String CODESCAN_DOMAIN = "codescan.io";
+
   public static String getSonarCloudUrl() {
-    return System.getProperty("sonarlint.internal.sonarcloud.url", "https://sonarcloud.io");
+    return System.getProperty("sonarlint.internal.sonarcloud.url", "https://app.codescan.io");
+  }
+
+  public static boolean isSonarCloudAlias(String serverUrl) {
+    return StringUtils.removeEnd(serverUrl, "/").endsWith(CODESCAN_DOMAIN);
   }
 
   private final String organization;
 
-  public SonarCloudConnectionConfiguration(String connectionId, String organization, boolean disableNotifications) {
-    super(connectionId, ConnectionKind.SONARCLOUD, disableNotifications, getSonarCloudUrl());
+  private final String serverUrl;
+
+  public SonarCloudConnectionConfiguration(String connectionId, String serverUrl, String organization, boolean disableNotifications) {
+    super(connectionId, ConnectionKind.SONARCLOUD, disableNotifications, StringUtils.firstNonBlank(serverUrl, getSonarCloudUrl()));
     this.organization = organization;
+    this.serverUrl = StringUtils.firstNonBlank(serverUrl, getSonarCloudUrl());
   }
 
   public String getOrganization() {
     return organization;
+  }
+
+  public String getServerUrl() {
+    return serverUrl;
   }
 
   @Override

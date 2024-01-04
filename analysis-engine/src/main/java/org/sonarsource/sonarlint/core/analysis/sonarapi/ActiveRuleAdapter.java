@@ -59,8 +59,7 @@ public class ActiveRuleAdapter implements ActiveRule {
 
   @Override
   public String internalKey() {
-    // This is a hack for old versions of CFamily (https://github.com/SonarSource/sonar-cpp/pull/1598)
-    return ruleKey().rule();
+    return activeRule.getInternalKey();
   }
 
   @Override

@@ -48,7 +48,7 @@ public class ConnectionAwareHttpClientProvider {
       var response = client.getCredentials(new GetCredentialsParams(connectionId)).get(1, TimeUnit.MINUTES);
       var credentials = response.getCredentials();
       if (credentials == null) {
-        logger.debug("No credentials for connection {}", connectionId);
+        logger.warn("No credentials for connection {}", connectionId);
       } else {
         return credentials.map(
           tokenDto -> httpClientProvider.getHttpClientWithPreemptiveAuth(tokenDto.getToken(), null),

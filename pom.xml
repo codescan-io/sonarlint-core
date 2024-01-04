@@ -8,7 +8,7 @@
   </parent>
   <groupId>org.sonarsource.sonarlint.core</groupId>
   <artifactId>sonarlint-core-parent</artifactId>
-  <version>9.0-SNAPSHOT</version>
+  <version>9.2-CODESCAN</version>
   <packaging>pom</packaging>
   <name>SonarLint Core</name>
   <description>Library used by SonarLint flavors (Eclipse, IntelliJ, VSCode...)</description>
@@ -43,8 +43,10 @@
   </modules>
 
   <properties>
-    <sonar-plugin-api.version>10.0.0.695</sonar-plugin-api.version>
-    <sonar-markdown.version>9.4.0.54424</sonar-markdown.version>
+    <sonar-plugin-api.version>9.15.0.435</sonar-plugin-api.version>
+    <sonar-plugin-api-impl.version>9.9.3.79811</sonar-plugin-api-impl.version>
+    <sonar-ws.version>9.9.1.69595</sonar-ws.version>
+    <sonar-markdown.version>9.9.0.65466</sonar-markdown.version>
     <sonar-scanner-protocol.version>7.9</sonar-scanner-protocol.version>
     <protobuf.version>3.21.9</protobuf.version>
     <gitRepositoryName>sonarlint-core</gitRepositoryName>
@@ -196,6 +198,11 @@
         <artifactId>wiremock-jre8</artifactId>
         <version>2.35.0</version>
       </dependency>
+<!--      <dependency>-->
+<!--        <groupId>org.sonarsource.sonarqube</groupId>-->
+<!--        <artifactId>sonar-plugin-api-impl</artifactId>-->
+<!--        <version>${sonar-plugin-api-impl.version}</version>-->
+<!--      </dependency>-->
     </dependencies>
   </dependencyManagement>
 

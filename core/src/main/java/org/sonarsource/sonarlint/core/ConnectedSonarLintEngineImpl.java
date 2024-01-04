@@ -146,7 +146,8 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
     private final Map<String, ActiveRuleMetadata> activeRulesMetadata = new HashMap<>();
 
     public void includeRule(SonarLintRuleDefinition ruleOrTemplateDefinition, ServerActiveRule activeRule) {
-      var activeRuleForAnalysis = new ActiveRule(activeRule.getRuleKey(), ruleOrTemplateDefinition.getLanguage().getLanguageKey());
+      var activeRuleForAnalysis = new ActiveRule(activeRule.getRuleKey(), ruleOrTemplateDefinition.getLanguage().getLanguageKey(),
+              ruleOrTemplateDefinition.getInternalKey().isPresent() ? ruleOrTemplateDefinition.getInternalKey().get() : null);
       activeRuleForAnalysis.setTemplateRuleKey(trimToNull(activeRule.getTemplateKey()));
       activeRuleForAnalysis.setParams(getEffectiveParams(ruleOrTemplateDefinition, activeRule));
       activeRules.add(activeRuleForAnalysis);
@@ -166,7 +167,8 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
     }
 
     public void includeRule(SonarLintRuleDefinition rule) {
-      var activeRuleForAnalysis = new ActiveRule(rule.getKey(), rule.getLanguage().getLanguageKey());
+      var activeRuleForAnalysis = new ActiveRule(rule.getKey(), rule.getLanguage().getLanguageKey(),
+              rule.getInternalKey().isPresent() ? rule.getInternalKey().get() : null);
       activeRuleForAnalysis.setParams(rule.getDefaultParams());
       activeRules.add(activeRuleForAnalysis);
       activeRulesMetadata.put(activeRuleForAnalysis.getRuleKey(), new ActiveRuleMetadata(rule.getDefaultSeverity(), rule.getType()));

@@ -28,10 +28,12 @@ public class SonarCloudConnectionConfigurationDto {
    */
   private final String connectionId;
   private final String organization;
+  private final String serverUrl;
   private final boolean disableNotifications;
 
-  public SonarCloudConnectionConfigurationDto(@NonNull String connectionId, @NonNull String organization, boolean disableNotifications) {
+  public SonarCloudConnectionConfigurationDto(@NonNull String connectionId, @NonNull String serverUrl, @NonNull String organization, boolean disableNotifications) {
     this.connectionId = connectionId;
+    this.serverUrl = serverUrl;
     this.organization = organization;
     this.disableNotifications = disableNotifications;
   }
@@ -42,6 +44,10 @@ public class SonarCloudConnectionConfigurationDto {
 
   public String getOrganization() {
     return organization;
+  }
+
+  public String getServerUrl() {
+    return serverUrl;
   }
 
   public boolean getDisableNotifications() {
