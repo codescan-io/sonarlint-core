@@ -42,9 +42,6 @@ import static org.sonarsource.sonarlint.core.serverapi.UrlUtils.urlEncode;
 @Singleton
 public class TokenGeneratorHelper {
   private static final Version MIN_SQ_VERSION_SUPPORTING_AUTOMATIC_TOKEN_GENERATION = Version.create("9.7");
-
-  private static final SonarLintLogger LOG = SonarLintLogger.get();
-
   private final SonarLintClient client;
   private final EmbeddedServer embeddedServer;
   private final AwaitingUserTokenFutureRepository awaitingUserTokenFutureRepository;
