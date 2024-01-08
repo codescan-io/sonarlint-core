@@ -1,5 +1,5 @@
 /*
- * SonarLint Core - Implementation
+ * SonarLint Core - Analysis Engine
  * Copyright (C) 2016-2023 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
@@ -17,13 +17,21 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.sonarlint.core.client.api.standalone;
+package org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem;
 
-public enum StandaloneRuleParamType {
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.utils.PathUtils;
 
-  /**
-   * Keep in sync with constants in org.sonar.api.server.rule.RuleParamType
-   */
-  STRING, TEXT, BOOLEAN, INTEGER, FLOAT, SINGLE_SELECT_LIST;
+class AbsolutePathPredicate extends AbstractFilePredicate {
 
+    private final String path;
+
+    AbsolutePathPredicate(String path) {
+        this.path = PathUtils.sanitize(path);
+    }
+
+    @Override
+    public boolean apply(InputFile f) {
+        return path.equals(f.absolutePath());
+    }
 }

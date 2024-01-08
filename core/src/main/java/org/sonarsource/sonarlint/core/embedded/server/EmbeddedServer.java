@@ -41,7 +41,7 @@ import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 public class EmbeddedServer {
   private static final SonarLintLogger LOG = SonarLintLogger.get();
 
-  private static final int STARTING_PORT = 64120;
+  private static final int STARTING_PORT = 64101;
   private static final int ENDING_PORT = 64130;
 
   private static final int INVALID_PORT = -1;

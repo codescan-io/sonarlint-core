@@ -71,7 +71,7 @@ public class PluginsSynchronizer {
 
   private boolean shouldDownload(ServerPlugin serverPlugin, Map<String, StoredPlugin> storedPluginsByKey) {
     if (embeddedPluginKeys.contains(serverPlugin.getKey())) {
-      LOG.debug("[SYNC] Code analyzer '{}' is embedded in SonarLint. Skip downloading it.", serverPlugin.getKey());
+      LOG.debug("[SYNC] Code analyzer '{}' is embedded in CodeScan. Skip downloading it.", serverPlugin.getKey());
       return false;
     }
     if (upToDate(serverPlugin, storedPluginsByKey)) {
@@ -79,11 +79,11 @@ public class PluginsSynchronizer {
       return false;
     }
     if (!serverPlugin.isSonarLintSupported()) {
-      LOG.debug("[SYNC] Code analyzer '{}' does not support SonarLint. Skip downloading it.", serverPlugin.getKey());
+      LOG.debug("[SYNC] Code analyzer '{}' does not support CodeScan. Skip downloading it.", serverPlugin.getKey());
       return false;
     }
     if (sonarSourceDisabledPluginKeys.contains(serverPlugin.getKey())) {
-      LOG.debug("[SYNC] Code analyzer '{}' is disabled in SonarLint (language not enabled). Skip downloading it.", serverPlugin.getKey());
+      LOG.debug("[SYNC] Code analyzer '{}' is disabled in CodeScan (language not enabled). Skip downloading it.", serverPlugin.getKey());
       return false;
     }
     var pluginVersion = VersionUtils.getJarVersion(serverPlugin.getFilename());

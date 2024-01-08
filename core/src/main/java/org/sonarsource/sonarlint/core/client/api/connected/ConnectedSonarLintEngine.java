@@ -46,7 +46,7 @@ import org.sonarsource.sonarlint.core.serverconnection.issues.ServerIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerTaintIssue;
 
 /**
- * Entry point for SonarLint.
+ * Entry point for CodeScan plugin.
  */
 public interface ConnectedSonarLintEngine extends SonarLintEngine {
 

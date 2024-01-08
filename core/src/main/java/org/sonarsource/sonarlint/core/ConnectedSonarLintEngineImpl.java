@@ -245,14 +245,14 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
           if (StringUtils.isNotBlank(activeRuleFromStorage.getTemplateKey())) {
             ruleOrTemplateDefinition = analysisContext.get().findRule(activeRuleFromStorage.getTemplateKey()).orElse(null);
             if (ruleOrTemplateDefinition == null) {
-              LOG.debug("Rule {} is enabled on the server, but its template {} is not available in SonarLint", activeRuleFromStorage.getRuleKey(),
+              LOG.debug("Rule {} is enabled on the server, but its template {} is not available in CodeScan", activeRuleFromStorage.getRuleKey(),
                 activeRuleFromStorage.getTemplateKey());
               continue;
             }
           } else {
             ruleOrTemplateDefinition = analysisContext.get().findRule(activeRuleFromStorage.getRuleKey()).orElse(null);
             if (ruleOrTemplateDefinition == null) {
-              LOG.debug("Rule {} is enabled on the server, but not available in SonarLint", activeRuleFromStorage.getRuleKey());
+              LOG.debug("Rule {} is enabled on the server, but not available in CodeScan", activeRuleFromStorage.getRuleKey());
               continue;
             }
           }

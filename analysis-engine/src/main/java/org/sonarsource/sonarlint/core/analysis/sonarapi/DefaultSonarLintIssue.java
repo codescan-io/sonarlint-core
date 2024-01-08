@@ -92,7 +92,7 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
 
   @Override
   public DefaultSonarLintIssue gap(@Nullable Double gap) {
-    // Gap not used in SonarLint
+    // Gap not used in CodeScan
     return this;
   }
 
@@ -109,7 +109,7 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
 
   @Override
   public Double gap() {
-    throw new UnsupportedOperationException("No gap in SonarLint");
+    throw new UnsupportedOperationException("No gap in CodeScan");
   }
 
   @Override

@@ -50,7 +50,7 @@ public class SonarLintFileSystem implements FileSystem {
 
   @Override
   public File workDir() {
-    LOG.warn("No workDir in SonarLint");
+    LOG.warn("No workDir in CodeScan");
     return baseDir();
   }
 

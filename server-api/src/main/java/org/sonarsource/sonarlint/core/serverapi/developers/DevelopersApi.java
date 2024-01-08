@@ -86,7 +86,7 @@ public class DevelopersApi {
       }
 
     } catch (Exception e) {
-      LOG.error("Failed to parse SonarQube notifications response", e);
+      LOG.error("Failed to parse CodeScan notifications response", e);
       return Collections.emptyList();
     }
     return notifications;

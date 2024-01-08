@@ -23,7 +23,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 /**
- * SonarQube or SonarCloud endpoint parameters
+ * CodeScan endpoint parameters
  */
 public class EndpointParams {
 
@@ -50,7 +50,7 @@ public class EndpointParams {
    * Organization can be missing even for SonarCloud, because some API calls are made before knowing the organization (like fetching user organizations)
    */
   public Optional<String> getOrganization() {
-    return sonarCloud ? Optional.ofNullable(organization) : Optional.empty();
+    return Optional.ofNullable(organization);
   }
 
 }

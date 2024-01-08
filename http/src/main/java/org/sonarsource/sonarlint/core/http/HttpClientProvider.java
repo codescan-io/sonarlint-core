@@ -70,8 +70,7 @@ public class HttpClientProvider {
     var asyncConnectionManager = PoolingAsyncClientConnectionManagerBuilder.create()
       .setTlsStrategy(new DefaultClientTlsStrategy(sslFactoryBuilder.build().getSslContext()))
       .setDefaultTlsConfig(TlsConfig.custom()
-        // Force HTTP/1 since we know SQ/SC don't support HTTP/2 ATM
-        .setVersionPolicy(HttpVersionPolicy.FORCE_HTTP_1)
+        .setVersionPolicy(getHttpVersionPolicy())
         .build())
       .setDefaultConnectionConfig(connectionConfigBuilder.build())
       .build();
@@ -91,6 +90,19 @@ public class HttpClientProvider {
       .build();
 
     sharedClient.start();
+  }
+
+  private static HttpVersionPolicy getHttpVersionPolicy() {
+    String httpClientVersion = System.getProperty("codescan.httpclient.version");
+    HttpVersionPolicy httpVersionPolicy = HttpVersionPolicy.NEGOTIATE;
+    if (HttpVersionPolicy.FORCE_HTTP_1.name().equals(httpClientVersion)) {
+      httpVersionPolicy = HttpVersionPolicy.FORCE_HTTP_1;
+    } else if (HttpVersionPolicy.FORCE_HTTP_2.name().equals(httpClientVersion)) {
+      httpVersionPolicy = HttpVersionPolicy.FORCE_HTTP_2;
+    } else if (HttpVersionPolicy.NEGOTIATE.name().equals(httpClientVersion)) {
+      return HttpVersionPolicy.FORCE_HTTP_2;
+    }
+    return httpVersionPolicy;
   }
 
   private static void configureTrustStore(@Nullable Predicate<TrustManagerParameters> trustManagerParametersPredicate, SSLFactory.Builder sslFactoryBuilder,
