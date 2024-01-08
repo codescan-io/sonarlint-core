@@ -131,6 +131,9 @@ public class IssueApi {
           throw ServerApiHelper.handleError(response);
         }
         InputStream input = response.bodyAsStream();
+        if(input == null) {
+          return Collections.emptyList();
+        }
         Parser<ScannerInput.ServerIssue> parser = ScannerInput.ServerIssue.parser();
         return readMessages(input, parser);
       },
