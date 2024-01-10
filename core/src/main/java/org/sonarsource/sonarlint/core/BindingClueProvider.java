@@ -45,7 +45,7 @@ import org.sonarsource.sonarlint.core.repository.connection.SonarQubeConnectionC
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang.StringUtils.trimToNull;
 import static org.sonarsource.sonarlint.core.commons.log.SonarLintLogger.singlePlural;
-import static org.sonarsource.sonarlint.core.repository.connection.SonarCloudConnectionConfiguration.isSonarCloudAlias;
+import static org.sonarsource.sonarlint.core.repository.connection.SonarCloudConnectionConfiguration.isCodeScanCloudAlias;
 
 @Named
 @Singleton
@@ -190,7 +190,7 @@ public class BindingClueProvider {
       return new SonarCloudBindingClue(scannerProps.serverUrl, scannerProps.projectKey, scannerProps.organization);
     }
     if (scannerProps.serverUrl != null) {
-      if (isSonarCloudAlias(scannerProps.serverUrl)) {
+      if (isCodeScanCloudAlias(scannerProps.serverUrl)) {
         return new SonarCloudBindingClue(scannerProps.serverUrl, scannerProps.projectKey, null);
       } else {
         return new SonarQubeBindingClue(scannerProps.projectKey, scannerProps.serverUrl);

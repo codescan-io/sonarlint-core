@@ -43,7 +43,7 @@ import org.sonarsource.sonarlint.core.serverapi.stream.EventStream;
 public class PushApi {
   private static final SonarLintLogger LOG = SonarLintLogger.get();
 
-  private static final String API_PATH = "api/push/sonarlint_events";
+  private static final String API_PATH = "api/push/codescan_events";
   private static final Map<String, EventParser<?>> parsersByType = Map.of(
     "RuleSetChanged", new RuleSetChangedEventParser(),
     "IssueChanged", new IssueChangedEventParser(),

@@ -42,7 +42,7 @@ public class SonarCloudConnectionConfiguration extends AbstractConnectionConfigu
     return System.getProperty("sonarlint.internal.sonarcloud.url", "https://app.codescan.io");
   }
 
-  public static boolean isSonarCloudAlias(String url) {
+  public static boolean isCodeScanCloudAlias(String url) {
     if (url.contains(CODESCAN_DOMAIN)) {
       return true;
     }

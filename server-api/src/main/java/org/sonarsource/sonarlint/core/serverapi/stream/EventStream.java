@@ -69,13 +69,13 @@ public class EventStream {
   }
 
   private EventStream connect(String wsPath, ClientLogOutput clientLogOutput, Attempt currentAttempt) {
-    clientLogOutput.log("Connecting to server event-stream at '" + wsPath + "'...", DEBUG);
+//    clientLogOutput.log("Connecting to server event-stream at '" + wsPath + "'...", DEBUG);
     var eventBuffer = new EventBuffer();
     currentRequest.set(helper.getEventStream(wsPath,
       new HttpConnectionListener() {
         @Override
         public void onConnected() {
-          clientLogOutput.log("Connected to server event-stream", DEBUG);
+//          clientLogOutput.log("Connected to server event-stream", DEBUG);
           schedule(() -> connect(wsPath, clientLogOutput), HEART_BEAT_PERIOD * 3);
         }
 
@@ -88,7 +88,7 @@ public class EventStream {
         public void onClosed() {
           pendingFuture.get().cancel(true);
           // reconnect instantly (will also reset attempt parameters)
-          clientLogOutput.log("Disconnected from server event-stream, reconnecting now", DEBUG);
+//          clientLogOutput.log("Disconnected from server event-stream, reconnecting now", DEBUG);
           connect(wsPath, clientLogOutput);
         }
       },
