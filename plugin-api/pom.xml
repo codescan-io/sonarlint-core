@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-parent</artifactId>
-    <version>9.2-CODESCAN</version>
+    <version>9.2.0-CODESCAN</version>
   </parent>
   <artifactId>sonarlint-plugin-api</artifactId>
   <packaging>jar</packaging>
