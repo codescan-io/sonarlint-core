@@ -24,6 +24,6 @@ public enum StandaloneRuleParamType {
   /**
    * Keep in sync with constants in org.sonar.api.server.rule.RuleParamType
    */
-  STRING, TEXT, BOOLEAN, INTEGER, FLOAT, SINGLE_SELECT_LIST;
+  STRING, TEXT, BOOLEAN, INTEGER, FLOAT, SINGLE_SELECT_LIST, KEY_VALUE_MAP
 
 }

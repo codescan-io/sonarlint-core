@@ -55,9 +55,8 @@ import static org.sonarsource.sonarlint.core.serverapi.hotspot.HotspotApi.TRACKI
 public class HotspotServiceImpl implements HotspotService {
 
   private static final SonarLintLogger LOG = SonarLintLogger.get();
-  private static final String NO_BINDING_REASON = "The project is not bound, please bind it to SonarQube 9.7+ or SonarCloud";
-  private static final String UNSUPPORTED_SONARQUBE_REASON = "Security Hotspots detection is disabled with this version of SonarQube, " +
-    "please bind it to SonarQube 9.7+ or SonarCloud";
+  private static final String NO_BINDING_REASON = "The project is not bound, please bind it to CodeScan";
+  private static final String UNSUPPORTED_SONARQUBE_REASON = "Security Hotspots detection is disabled with this version of CodeScan";
 
   private static final String REVIEW_STATUS_UPDATE_PERMISSION_MISSING_REASON = "Changing a hotspot's status requires the 'Administer Security Hotspot' permission.";
   private final SonarLintClient client;

@@ -52,7 +52,7 @@ public class StandaloneRuleParam {
     try {
       return StandaloneRuleParamType.valueOf(apiType.name());
     } catch (IllegalArgumentException unknownType) {
-      LOG.warn("Unknown parameter type: " + apiType.name());
+      LOG.debug("Unknown parameter type: " + apiType.name());
       return StandaloneRuleParamType.STRING;
     }
   }

@@ -271,7 +271,7 @@ class SonarQubeCommunityEditionTests extends AbstractConnectedTests {
         var serverIssues = engine.getServerIssues(projectBinding, MAIN_BRANCH_NAME, "module_b/module_b1/src/main/java/com/sonar/it/samples/modules/b1/HelloB1.java");
         if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(9, 6)) {
           assertThat(serverIssues).isEmpty();
-          assertThat(logs).contains("Skip downloading file issues on SonarQube 9.6+");
+          assertThat(logs).contains("Skip downloading file issues on this version of CodeScan");
         } else {
           assertThat(serverIssues).hasSize(2);
         }
@@ -301,7 +301,7 @@ class SonarQubeCommunityEditionTests extends AbstractConnectedTests {
         var serverIssues = engine.getServerIssues(projectBinding, MAIN_BRANCH_NAME, "src/main/java/com/sonar/it/samples/modules/b1/HelloB1.java");
         if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(9, 6)) {
           assertThat(serverIssues).isEmpty();
-          assertThat(logs).contains("Skip downloading file issues on SonarQube 9.6+");
+          assertThat(logs).contains("Skip downloading file issues on this version of CodeScan");
         } else {
           assertThat(serverIssues).hasSize(2);
         }

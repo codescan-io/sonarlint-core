@@ -168,6 +168,13 @@ public class ConnectionServiceImpl implements ConnectionService {
   }
 
   @Override
+  public CompletableFuture<ValidateConnectionResponse> validateConnectionCredentials(ValidateConnectionParams params) {
+    var helper = buildServerApiHelper(params.getTransientConnection());
+    var connectionValidator = new ConnectionValidator(helper);
+    return connectionValidator.validateConnectionCredentials().thenApply(r -> new ValidateConnectionResponse(r.success(), r.message()));
+  }
+
+  @Override
   public CompletableFuture<CheckSmartNotificationsSupportedResponse> checkSmartNotificationsSupported(CheckSmartNotificationsSupportedParams params) {
     var helper = buildServerApiHelper(params.getTransientConnection());
     var developersApi = new ServerApi(helper).developers();

@@ -68,11 +68,22 @@ public interface ConnectionService {
    * <li>check that the server is reachable</li>
    * <li>check that the server minimal version is satisfied</li>
    * <li>check that the credentials are valid</li>
-   * <li>check that the organization exists (for SonarCloud)</li>
+   * <li>check that the organization exists (for CodeScanCloud)</li>
    * </ul>
    */
   @JsonRequest
   CompletableFuture<ValidateConnectionResponse> validateConnection(ValidateConnectionParams params);
+
+  /**
+   * Validate that connection is valid:
+   * <ul>
+   * <li>check that the server is reachable</li>
+   * <li>check that the server minimal version is satisfied</li>
+   * <li>check that the credentials are valid</li>
+   * </ul>
+   */
+  @JsonRequest
+  CompletableFuture<ValidateConnectionResponse> validateConnectionCredentials(ValidateConnectionParams params);
 
   /**
    * Check that smart notifications are supported by the server by sending a GET request to /api/developers/search_events?projects=&from=

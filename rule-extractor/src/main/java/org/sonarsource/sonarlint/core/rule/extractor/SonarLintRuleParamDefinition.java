@@ -53,7 +53,7 @@ public class SonarLintRuleParamDefinition {
     try {
       return SonarLintRuleParamType.valueOf(apiType.type());
     } catch (IllegalArgumentException unknownType) {
-      LOG.warn("Unknown parameter type: " + apiType.type());
+      LOG.debug("Unknown parameter type: " + apiType.type());
       return SonarLintRuleParamType.STRING;
     }
   }
