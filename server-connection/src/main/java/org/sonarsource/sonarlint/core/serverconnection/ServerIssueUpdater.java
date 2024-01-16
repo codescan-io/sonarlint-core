@@ -82,7 +82,7 @@ public class ServerIssueUpdater {
       }
       storage.project(projectBinding.projectKey()).findings().replaceAllIssuesOfFile(branchName, serverFilePath, issues);
     } else {
-      LOG.debug("Skip downloading file issues on SonarQube " + IssueApi.MIN_SQ_VERSION_SUPPORTING_PULL + "+");
+      LOG.debug("Skip downloading file issues on CodeScan " + IssueApi.MIN_SQ_VERSION_SUPPORTING_PULL + "+");
     }
   }
 
@@ -103,7 +103,7 @@ public class ServerIssueUpdater {
       }
       storage.project(projectBinding.projectKey()).findings().replaceAllTaintOfFile(branchName, serverFilePath, taintIssues);
     } else {
-      LOG.debug("Skip downloading file taint issues on SonarQube " + IssueApi.MIN_SQ_VERSION_SUPPORTING_PULL + "+");
+      LOG.debug("Skip downloading file taint issues on CodeScan " + IssueApi.MIN_SQ_VERSION_SUPPORTING_PULL + "+");
     }
 
   }
