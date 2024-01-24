@@ -94,15 +94,14 @@ public class HttpClientProvider {
 
   private static HttpVersionPolicy getHttpVersionPolicy() {
     String httpClientVersion = System.getProperty("codescan.httpclient.version");
-    HttpVersionPolicy httpVersionPolicy = HttpVersionPolicy.NEGOTIATE;
+
     if (HttpVersionPolicy.FORCE_HTTP_1.name().equals(httpClientVersion)) {
-      httpVersionPolicy = HttpVersionPolicy.FORCE_HTTP_1;
+      return HttpVersionPolicy.FORCE_HTTP_1;
     } else if (HttpVersionPolicy.FORCE_HTTP_2.name().equals(httpClientVersion)) {
-      httpVersionPolicy = HttpVersionPolicy.FORCE_HTTP_2;
-    } else if (HttpVersionPolicy.NEGOTIATE.name().equals(httpClientVersion)) {
       return HttpVersionPolicy.FORCE_HTTP_2;
+    } else {
+      return HttpVersionPolicy.NEGOTIATE;
     }
-    return httpVersionPolicy;
   }
 
   private static void configureTrustStore(@Nullable Predicate<TrustManagerParameters> trustManagerParametersPredicate, SSLFactory.Builder sslFactoryBuilder,
