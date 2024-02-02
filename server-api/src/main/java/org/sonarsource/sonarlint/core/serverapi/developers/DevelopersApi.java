@@ -46,13 +46,7 @@ public class DevelopersApi {
   }
 
   public boolean isSupported() {
-    if (helper.isSonarCloud()) {
-      return true;
-    }
-    var path = getWsPath(Collections.emptyMap());
-    try (var wsResponse = helper.rawGet(path)) {
-      return wsResponse.isSuccessful();
-    }
+    return false;
   }
 
   public List<Event> getEvents(Map<String, ZonedDateTime> projectTimestamps) {
