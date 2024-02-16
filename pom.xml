@@ -56,7 +56,7 @@
     <jdk.min.version>11</jdk.min.version>
     <gson.version>2.10</gson.version>
     <mockito.version>4.9.0</mockito.version>
-    <kotlin.version>1.6.21</kotlin.version>
+    <kotlin.version>1.7.22</kotlin.version>
     <lsp4j.version>0.19.0</lsp4j.version>
 
     <version.surefire.plugin>3.1.2</version.surefire.plugin>
