@@ -77,7 +77,7 @@ public class TokenGeneratorHelper {
             if (shouldWaitIncomingToken) {
               awaitingUserTokenFutureRepository.addExpectedResponse(serverBaseUrl, futureTokenResponse);
             } else {
-              futureTokenResponse.complete(new HelpGenerateUserTokenResponse(null));
+              futureTokenResponse.complete(new HelpGenerateUserTokenResponse(null, null, null));
             }
             return null;
           });

@@ -27,13 +27,26 @@ import javax.annotation.Nullable;
  */
 public class HelpGenerateUserTokenResponse {
   private final String token;
+  private final String organizationKey;
+  private final String projectKey;
 
-  public HelpGenerateUserTokenResponse(@Nullable String token) {
+  public HelpGenerateUserTokenResponse(@Nullable String token, @Nullable String organizationKey, @Nullable String projectKey) {
     this.token = token;
+    this.organizationKey = organizationKey;
+    this.projectKey = projectKey;
   }
 
   @CheckForNull
   public String getToken() {
     return token;
+  }
+
+  @CheckForNull
+  public String getOrganizationKey() {
+    return organizationKey;
+  }
+
+  public String getProjectKey() {
+    return projectKey;
   }
 }
