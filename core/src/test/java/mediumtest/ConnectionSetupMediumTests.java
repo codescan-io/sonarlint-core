@@ -211,7 +211,7 @@ class ConnectionSetupMediumTests {
 
     var connectionResponse = backend.getConnectionService()
       .checkSmartNotificationsSupported(new CheckSmartNotificationsSupportedParams(
-        new TransientSonarCloudConnectionDto("https://sonarcloud.io", Either.forLeft(new TokenDto("foo")))))
+        new TransientSonarCloudConnectionDto("https://sonarcloud.io", null, Either.forLeft(new TokenDto("foo")))))
       .get();
 
     assertThat(connectionResponse.isSuccess()).isTrue();

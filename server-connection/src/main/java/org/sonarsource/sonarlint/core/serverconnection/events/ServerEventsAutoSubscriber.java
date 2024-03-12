@@ -33,9 +33,10 @@ public class ServerEventsAutoSubscriber {
 
   public void subscribePermanently(ServerApi serverApi, Set<String> projectKeys, Set<Language> enabledLanguages, ServerEventHandler<ServerEvent> eventConsumer,
     ClientLogOutput clientLogOutput) {
-    cancelSubscription();
+    //cancelSubscription();
     if (!projectKeys.isEmpty() && !enabledLanguages.isEmpty()) {
-      attemptSubscription(serverApi, projectKeys, enabledLanguages, eventConsumer, clientLogOutput);
+      // Disabling sonarlint_events api
+      //attemptSubscription(serverApi, projectKeys, enabledLanguages, eventConsumer, clientLogOutput);
     }
   }
 

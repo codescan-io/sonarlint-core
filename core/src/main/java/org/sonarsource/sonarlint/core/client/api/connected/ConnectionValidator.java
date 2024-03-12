@@ -54,4 +54,14 @@ public class ConnectionValidator {
       .exceptionally(e -> new DefaultValidationResult(false, e.getCause().getMessage()));
   }
 
+    public CompletableFuture<ValidationResult> validateConnectionCredentials() {
+        var serverChecker = new ServerVersionAndStatusChecker(new ServerApi(helper));
+        var authChecker = new AuthenticationChecker(helper);
+        return serverChecker.checkVersionAndStatusAsync()
+                .thenApply(check -> {
+                    var validateCredentials = authChecker.validateCredentials();
+                    return validateCredentials;
+                })
+                .exceptionally(e -> new DefaultValidationResult(false, e.getCause().getMessage()));
+    }
 }

@@ -43,10 +43,9 @@ import org.sonarsource.sonarlint.core.repository.connection.SonarCloudConnection
 import org.sonarsource.sonarlint.core.repository.connection.SonarQubeConnectionConfiguration;
 
 import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang.StringUtils.removeEnd;
 import static org.apache.commons.lang.StringUtils.trimToNull;
 import static org.sonarsource.sonarlint.core.commons.log.SonarLintLogger.singlePlural;
-import static org.sonarsource.sonarlint.core.repository.connection.SonarCloudConnectionConfiguration.getSonarCloudUrl;
+import static org.sonarsource.sonarlint.core.repository.connection.SonarCloudConnectionConfiguration.isCodeScanCloudAlias;
 
 @Named
 @Singleton
@@ -185,14 +184,14 @@ public class BindingClueProvider {
   @CheckForNull
   private static BindingClue computeBindingClue(String filename, ScannerProperties scannerProps) {
     if (AUTOSCAN_CONFIG_FILENAME.equals(filename)) {
-      return new SonarCloudBindingClue(scannerProps.projectKey, scannerProps.organization);
+      return new SonarCloudBindingClue(scannerProps.serverUrl, scannerProps.projectKey, scannerProps.organization);
     }
     if (scannerProps.organization != null) {
-      return new SonarCloudBindingClue(scannerProps.projectKey, scannerProps.organization);
+      return new SonarCloudBindingClue(scannerProps.serverUrl, scannerProps.projectKey, scannerProps.organization);
     }
     if (scannerProps.serverUrl != null) {
-      if (removeEnd(scannerProps.serverUrl, "/").equals(getSonarCloudUrl())) {
-        return new SonarCloudBindingClue(scannerProps.projectKey, null);
+      if (isCodeScanCloudAlias(scannerProps.serverUrl)) {
+        return new SonarCloudBindingClue(scannerProps.serverUrl, scannerProps.projectKey, null);
       } else {
         return new SonarQubeBindingClue(scannerProps.projectKey, scannerProps.serverUrl);
       }
@@ -208,6 +207,9 @@ public class BindingClueProvider {
     @CheckForNull
     String getSonarProjectKey();
 
+    @CheckForNull
+    String getServerUrl();
+
   }
   public static class UnknownBindingClue implements BindingClue {
     private final String sonarProjectKey;
@@ -219,6 +221,11 @@ public class BindingClueProvider {
     @Override
     public String getSonarProjectKey() {
       return sonarProjectKey;
+    }
+
+    @Override
+    public String getServerUrl() {
+      return null;
     }
   }
 
@@ -237,14 +244,20 @@ public class BindingClueProvider {
       return sonarProjectKey;
     }
 
+    @Override
+    public String getServerUrl() {
+      return serverUrl;
+    }
   }
 
   public static class SonarCloudBindingClue implements BindingClue {
 
     private final String sonarProjectKey;
     private final String organization;
+    private final String serverUrl;
 
-    SonarCloudBindingClue(@Nullable String sonarProjectKey, @Nullable String organization) {
+    SonarCloudBindingClue(@Nullable String serverUrl, @Nullable String sonarProjectKey, @Nullable String organization) {
+      this.serverUrl = serverUrl;
       this.sonarProjectKey = sonarProjectKey;
       this.organization = organization;
     }
@@ -252,6 +265,11 @@ public class BindingClueProvider {
     @Override
     public String getSonarProjectKey() {
       return sonarProjectKey;
+    }
+
+    @Override
+    public String getServerUrl() {
+      return serverUrl;
     }
   }
 

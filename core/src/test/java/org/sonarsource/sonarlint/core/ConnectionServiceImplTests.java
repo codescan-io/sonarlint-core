@@ -63,8 +63,8 @@ class ConnectionServiceImplTests {
   public static final SonarQubeConnectionConfigurationDto SQ_DTO_1 = new SonarQubeConnectionConfigurationDto("sq1", "url1", true);
   public static final SonarQubeConnectionConfigurationDto SQ_DTO_1_DUP = new SonarQubeConnectionConfigurationDto("sq1", "url1_dup", true);
   public static final SonarQubeConnectionConfigurationDto SQ_DTO_2 = new SonarQubeConnectionConfigurationDto("sq2", "url2", true);
-  public static final SonarCloudConnectionConfigurationDto SC_DTO_1 = new SonarCloudConnectionConfigurationDto("sc1", "org1", true);
-  public static final SonarCloudConnectionConfigurationDto SC_DTO_2 = new SonarCloudConnectionConfigurationDto("sc2", "org2", true);
+  public static final SonarCloudConnectionConfigurationDto SC_DTO_1 = new SonarCloudConnectionConfigurationDto("sc1", "url1", "org1", true);
+  public static final SonarCloudConnectionConfigurationDto SC_DTO_2 = new SonarCloudConnectionConfigurationDto("sc2", "url2", "org2", true);
 
   EventBus eventBus;
   ConnectionServiceImpl underTest;
@@ -209,7 +209,7 @@ class ConnectionServiceImplTests {
     var httpClientProvider = mock(HttpClientProvider.class);
     underTest = new ConnectionServiceImpl(null, null, List.of(), List.of(), httpClientProvider, null);
 
-    var connectionsParams = new ValidateConnectionParams(new TransientSonarCloudConnectionDto("myOrg", Either.forLeft(new TokenDto("foo"))));
+    var connectionsParams = new ValidateConnectionParams(new TransientSonarCloudConnectionDto("https://app.codescan.io", "myOrg", Either.forLeft(new TokenDto("foo"))));
     underTest.buildServerApiHelper(connectionsParams.getTransientConnection());
 
     verify(httpClientProvider).getHttpClientWithPreemptiveAuth("foo", null);

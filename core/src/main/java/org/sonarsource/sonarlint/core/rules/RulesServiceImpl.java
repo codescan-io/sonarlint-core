@@ -212,7 +212,7 @@ public class RulesServiceImpl implements RulesService {
     try {
       return RuleParamType.valueOf(type.name());
     } catch (IllegalArgumentException unknownType) {
-      LOG.warn("Unknown parameter type: " + type.name());
+      LOG.debug("Unknown parameter type: " + type.name());
       return RuleParamType.STRING;
     }
   }

@@ -19,21 +19,39 @@
  */
 package org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem;
 
-import org.sonar.api.batch.fs.InputModule;
-import org.sonar.api.scanner.fs.InputProject;
+import org.sonar.api.batch.fs.FileSystem.Index;
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.utils.PathUtils;
 
-public class SonarLintInputProject implements InputModule, InputProject {
+import java.util.Arrays;
+import java.util.Collections;
 
-  public static final String SONARLINT_FAKE_PROJECT_KEY = "codescan";
+public class RelativePathPredicate extends AbstractFilePredicate {
 
-  @Override
-  public String key() {
-    return SONARLINT_FAKE_PROJECT_KEY;
-  }
+    private final String path;
 
-  @Override
-  public boolean isFile() {
-    return false;
-  }
+    RelativePathPredicate(String path) {
+        this.path = PathUtils.sanitize(path);
+    }
+
+    public String path() {
+        return path;
+    }
+
+    @Override
+    public boolean apply(InputFile f) {
+        return path.equals(f.relativePath());
+    }
+
+    @Override
+    public Iterable<InputFile> get(Index index) {
+        InputFile f = index.inputFile(this.path);
+        return f != null ? Arrays.asList(f) : Collections.<InputFile>emptyList();
+    }
+
+    @Override
+    public int priority() {
+        return DEFAULT_PRIORITY;
+    }
 
 }

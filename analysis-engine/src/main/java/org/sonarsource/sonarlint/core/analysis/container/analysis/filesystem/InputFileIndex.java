@@ -19,6 +19,7 @@
  */
 package org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -53,7 +54,12 @@ public class InputFileIndex implements FileSystem.Index {
 
   @Override
   public InputFile inputFile(String relativePath) {
-    throw new UnsupportedOperationException("inputFile(String relativePath)");
+    for (Iterator<InputFile> it = inputFiles.iterator(); it.hasNext(); ) {
+      InputFile inputFile = it.next();
+      if (inputFile.relativePath().equals(relativePath))
+        return inputFile;
+    }
+    return null;
   }
 
   @Override

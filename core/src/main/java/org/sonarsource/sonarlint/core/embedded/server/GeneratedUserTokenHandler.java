@@ -52,12 +52,17 @@ public class GeneratedUserTokenHandler implements HttpRequestHandler {
 
   @Override
   public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context) throws HttpException, IOException {
+    if (Method.OPTIONS.isSame(request.getMethod())) {
+      response.setCode(HttpStatus.SC_BAD_REQUEST);
+      return;
+    }
+
     if (!Method.POST.isSame(request.getMethod())) {
       response.setCode(HttpStatus.SC_BAD_REQUEST);
       return;
     }
 
-    String token = extractAndValidateToken(request);
+    TokenPayload token = extractAndValidateToken(request);
     if (token == null) {
       response.setCode(HttpStatus.SC_BAD_REQUEST);
       return;
@@ -73,25 +78,27 @@ public class GeneratedUserTokenHandler implements HttpRequestHandler {
     awaitingUserTokenFutureRepository.consumeFutureResponse(origin)
       .filter(not(CompletableFuture::isCancelled))
       .ifPresentOrElse(pendingFuture -> {
-        pendingFuture.complete(new HelpGenerateUserTokenResponse(token));
+        pendingFuture.complete(new HelpGenerateUserTokenResponse(token.token, token.organizationKey, token.projectKey));
         response.setCode(HttpStatus.SC_OK);
         response.setEntity(new StringEntity("OK"));
       }, () -> response.setCode(HttpStatus.SC_FORBIDDEN));
   }
 
-  private static String extractAndValidateToken(ClassicHttpRequest request) throws IOException, ParseException {
+  private static TokenPayload extractAndValidateToken(ClassicHttpRequest request) throws IOException, ParseException {
     var requestEntityString = EntityUtils.toString(request.getEntity(), "UTF-8");
     String token = null;
     try {
-      token = new Gson().fromJson(requestEntityString, TokenPayload.class).token;
+      return new Gson().fromJson(requestEntityString, TokenPayload.class);
     } catch (Exception e) {
       // will be converted to HTTP response later
       LOG.error("Could not deserialize user token", e);
     }
-    return token;
+    return null;
   }
 
   private static class TokenPayload {
     private String token;
+    private String organizationKey;
+    private String projectKey;
   }
 }

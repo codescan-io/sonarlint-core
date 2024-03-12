@@ -19,26 +19,69 @@
  */
 package org.sonarsource.sonarlint.core.repository.connection;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Objects;
 import javax.annotation.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.sonarsource.sonarlint.core.commons.ConnectionKind;
+import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.serverapi.EndpointParams;
 
 public class SonarCloudConnectionConfiguration extends AbstractConnectionConfiguration {
 
+  static final String CODESCAN_DOMAIN = "codescan.io";
+  static final String CODESCAN_HEALTH_ENDPOINT = "/_codescan/actuator/health";
+  private static final String CODESCAN_HEALTH_JSON_RESPONSE = "{\"status\":\"UP\"}";
+  private static final SonarLintLogger LOG = SonarLintLogger.get();
+
   public static String getSonarCloudUrl() {
-    return System.getProperty("sonarlint.internal.sonarcloud.url", "https://sonarcloud.io");
+    return System.getProperty("sonarlint.internal.sonarcloud.url", "https://app.codescan.io");
+  }
+
+  public static boolean isCodeScanCloudAlias(String url) {
+    if (url.contains(CODESCAN_DOMAIN)) {
+      return true;
+    }
+    HttpClient httpClient = HttpClient.newHttpClient();
+    HttpRequest httpRequest = HttpRequest.newBuilder()
+            .uri(URI.create(url + CODESCAN_HEALTH_ENDPOINT))
+            .build();
+    try {
+      HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+      int statusCode = httpResponse.statusCode();
+      if (statusCode == 200 && CODESCAN_HEALTH_JSON_RESPONSE.equals(httpResponse.body())) {
+        return true;
+      } else {
+        LOG.debug("isCodeScanCloudAlias health check request for host: {} failed with status code: {}.", url,
+                statusCode);
+        return false;
+      }
+    } catch (IOException | InterruptedException e) {
+      LOG.error("isCodeScanCloudAlias health check request for host: {} gave an exception.", e, url);
+      return false;
+    }
   }
 
   private final String organization;
 
-  public SonarCloudConnectionConfiguration(String connectionId, String organization, boolean disableNotifications) {
-    super(connectionId, ConnectionKind.SONARCLOUD, disableNotifications, getSonarCloudUrl());
+  private final String serverUrl;
+
+  public SonarCloudConnectionConfiguration(String connectionId, String serverUrl, String organization, boolean disableNotifications) {
+    super(connectionId, ConnectionKind.SONARCLOUD, disableNotifications, StringUtils.firstNonBlank(serverUrl, getSonarCloudUrl()));
     this.organization = organization;
+    this.serverUrl = StringUtils.firstNonBlank(serverUrl, getSonarCloudUrl());
   }
 
   public String getOrganization() {
     return organization;
+  }
+
+  public String getServerUrl() {
+    return serverUrl;
   }
 
   @Override

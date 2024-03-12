@@ -73,7 +73,7 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
     return this;
   }
 
-  @Override
+//  @Override
   public NewIssue setCodeVariants(@Nullable Iterable<String> iterable) {
     // not implemented
     return this;
@@ -92,7 +92,7 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
 
   @Override
   public DefaultSonarLintIssue gap(@Nullable Double gap) {
-    // Gap not used in SonarLint
+    // Gap not used in CodeScan
     return this;
   }
 
@@ -109,7 +109,7 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
 
   @Override
   public Double gap() {
-    throw new UnsupportedOperationException("No gap in SonarLint");
+    throw new UnsupportedOperationException("No gap in CodeScan");
   }
 
   @Override
@@ -203,7 +203,7 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
   }
 
   @CheckForNull
-  @Override
+//  @Override
   public List<String> codeVariants() {
     return Collections.emptyList();
   }

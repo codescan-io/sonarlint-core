@@ -42,6 +42,8 @@ public class EventStream {
   private static final Integer UNAUTHORIZED = 401;
   private static final Integer FORBIDDEN = 403;
   private static final Integer NOT_FOUND = 404;
+
+  private static final Integer NOT_ACCEPTABLE = 404;
   private static final long HEART_BEAT_PERIOD = 60;
 
   private final ServerApiHelper helper;
@@ -69,13 +71,13 @@ public class EventStream {
   }
 
   private EventStream connect(String wsPath, ClientLogOutput clientLogOutput, Attempt currentAttempt) {
-    clientLogOutput.log("Connecting to server event-stream at '" + wsPath + "'...", DEBUG);
+    //clientLogOutput.log("Connecting to server event-stream at '" + wsPath + "'...", DEBUG);
     var eventBuffer = new EventBuffer();
     currentRequest.set(helper.getEventStream(wsPath,
       new HttpConnectionListener() {
         @Override
         public void onConnected() {
-          clientLogOutput.log("Connected to server event-stream", DEBUG);
+          //clientLogOutput.log("Connected to server event-stream", DEBUG);
           schedule(() -> connect(wsPath, clientLogOutput), HEART_BEAT_PERIOD * 3);
         }
 
@@ -88,7 +90,7 @@ public class EventStream {
         public void onClosed() {
           pendingFuture.get().cancel(true);
           // reconnect instantly (will also reset attempt parameters)
-          clientLogOutput.log("Disconnected from server event-stream, reconnecting now", DEBUG);
+          //clientLogOutput.log("Disconnected from server event-stream, reconnecting now", DEBUG);
           connect(wsPath, clientLogOutput);
         }
       },
@@ -111,10 +113,10 @@ public class EventStream {
           msgBuilder.append(" (" + responseCode + ")");
         }
         msgBuilder.append(", retrying in " + retryDelay + "s");
-        clientLogOutput.log(msgBuilder.toString(), DEBUG);
+        //clientLogOutput.log(msgBuilder.toString(), DEBUG);
         schedule(() -> connect(wsPath, clientLogOutput, currentAttempt.next()), retryDelay);
       } else {
-        clientLogOutput.log("Cannot connect to server event-stream, stop retrying", DEBUG);
+        //clientLogOutput.log("Cannot connect to server event-stream, stop retrying", DEBUG);
       }
     }
   }
@@ -128,7 +130,7 @@ public class EventStream {
       clientLogOutput.log("Cannot connect to server event-stream, forbidden", DEBUG);
       return false;
     }
-    if (NOT_FOUND.equals(responseCode)) {
+    if (NOT_FOUND.equals(responseCode) || NOT_ACCEPTABLE.equals(responseCode)) {
       // the API is not supported (probably an old SQ or SC)
       clientLogOutput.log("Server events not supported by the server", DEBUG);
       return false;

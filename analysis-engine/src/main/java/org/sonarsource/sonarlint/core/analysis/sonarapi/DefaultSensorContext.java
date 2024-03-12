@@ -192,7 +192,7 @@ public class DefaultSensorContext implements SensorContext {
   }
 
   private static UnsupportedOperationException unsupported() {
-    return new UnsupportedOperationException("Not supported in SonarLint");
+    return new UnsupportedOperationException("Not supported in CodeScan");
   }
 
   @Override
