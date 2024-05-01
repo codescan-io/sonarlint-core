@@ -150,9 +150,9 @@ public class SynchronizationServiceImpl {
     ServerConnection serverConnection, Set<String> synchronizedConfScopeIds) {
     branchService.getEffectiveActiveSonarProjectBranch(boundScope.configurationScopeId).ifPresent(branch -> {
       serverConnection.syncServerIssuesForProject(serverApi, boundScope.sonarProjectKey, branch);
-      if (languageSupportRepository.areTaintVulnerabilitiesSupported()) {
+      /*if (languageSupportRepository.areTaintVulnerabilitiesSupported()) {
         serverConnection.syncServerTaintIssuesForProject(serverApi, boundScope.sonarProjectKey, branch);
-      }
+      }*/
       serverConnection.syncServerHotspotsForProject(serverApi, boundScope.sonarProjectKey, branch);
       synchronizedConfScopeIds.add(boundScope.configurationScopeId);
     });
