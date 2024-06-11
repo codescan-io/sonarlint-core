@@ -19,7 +19,6 @@
  */
 package org.sonarsource.sonarlint.core.repository.connection;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -33,9 +32,10 @@ import org.sonarsource.sonarlint.core.serverapi.EndpointParams;
 
 public class SonarCloudConnectionConfiguration extends AbstractConnectionConfiguration {
 
-  static final String CODESCAN_DOMAIN = "codescan.io";
+  static final String[] CODESCAN_DOMAINS = new String[]{"codescan.io", "autorabit.com"};
   static final String CODESCAN_HEALTH_ENDPOINT = "/_codescan/actuator/health";
   private static final String CODESCAN_HEALTH_JSON_RESPONSE = "{\"status\":\"UP\"}";
+  private static final String CODESCAN_HEALTH_JSON_RESPONSE_DOWN = "{\"status\":\"DOWN\"}";
   private static final SonarLintLogger LOG = SonarLintLogger.get();
 
   public static String getSonarCloudUrl() {
@@ -43,7 +43,8 @@ public class SonarCloudConnectionConfiguration extends AbstractConnectionConfigu
   }
 
   public static boolean isCodeScanCloudAlias(String url) {
-    if (url.contains(CODESCAN_DOMAIN)) {
+    url = removeTrailingSlashesFromUrl(url);
+    if (StringUtils.containsAny(url, CODESCAN_DOMAINS)) {
       return true;
     }
     HttpClient httpClient = HttpClient.newHttpClient();
@@ -53,17 +54,28 @@ public class SonarCloudConnectionConfiguration extends AbstractConnectionConfigu
     try {
       HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
       int statusCode = httpResponse.statusCode();
-      if (statusCode == 200 && CODESCAN_HEALTH_JSON_RESPONSE.equals(httpResponse.body())) {
+      if (statusCode == 200
+              && (CODESCAN_HEALTH_JSON_RESPONSE.equals(httpResponse.body())
+                || CODESCAN_HEALTH_JSON_RESPONSE_DOWN.equals(httpResponse.body()))) {
         return true;
       } else {
-        LOG.debug("isCodeScanCloudAlias health check request for host: {} failed with status code: {}.", url,
+        LOG.info("isCodeScanCloudAlias health check request for host {} failed with status code: {}.", url,
                 statusCode);
         return false;
       }
-    } catch (IOException | InterruptedException e) {
-      LOG.error("isCodeScanCloudAlias health check request for host: {} gave an exception.", e, url);
+    } catch (Exception e) {
+      LOG.error("isCodeScanCloudAlias health check request for host {} gave an exception", url, e);
+
       return false;
     }
+  }
+
+  private static String removeTrailingSlashesFromUrl(String url) {
+    String cleanedUrl = url.trim();
+    while (cleanedUrl.endsWith("/")) {
+      cleanedUrl = cleanedUrl.substring(0, cleanedUrl.length() - 1);
+    }
+    return cleanedUrl;
   }
 
   private final String organization;
