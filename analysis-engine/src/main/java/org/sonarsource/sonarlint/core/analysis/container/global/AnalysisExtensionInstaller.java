@@ -67,7 +67,9 @@ public class AnalysisExtensionInstaller extends ExtensionInstaller {
   }
 
   private static boolean onlySonarSourceSensor(String pluginKey, Object extension) {
-    return StringUtils.isNotBlank(pluginsMinVersions.getMinimumVersion(pluginKey)) || isNotSensor(extension);
+    return StringUtils.isNotBlank(pluginsMinVersions.getMinimumVersion(pluginKey))
+            || Language.containsPlugin(pluginKey)
+            || isNotSensor(extension);
   }
 
   private static boolean isNotSensor(Object extension) {
