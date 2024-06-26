@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 
 public enum Language {
 
-  ABAP("abap", "abap", "ABAP", new String[] {".abap", ".ab4", ".flow", ".asprog"}, "sonar.abap.file.suffixes"),
+  ABAP("abap", "abap", "ABAP", new String[] {".abap", ".ab4", ".asprog"}, "sonar.abap.file.suffixes"),
   APEX("sf", "codescan", "APEX", new String[] {".cls", ".trigger"}, "sf.apex.suffixes"),
   C("c", "cpp", "C", new String[] {".c", ".h"}, "sonar.c.file.suffixes"),
   CPP("cpp", "cpp", "C++", new String[] {".cc", ".cpp", ".cxx", ".c++", ".hh", ".hpp", ".hxx", ".h++", ".ipp"}, "sonar.cpp.file.suffixes"),
