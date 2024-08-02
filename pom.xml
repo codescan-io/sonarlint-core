@@ -43,7 +43,7 @@
   </modules>
 
   <properties>
-    <sonar-plugin-api.version>9.14-CODESCAN</sonar-plugin-api.version>
+    <sonar-plugin-api.version>9.15-CODESCAN</sonar-plugin-api.version>
     <sonar-ws.version>9.9.1.69595</sonar-ws.version>
     <sonar-markdown.version>9.9.0.65466</sonar-markdown.version>
     <sonar-scanner-protocol.version>7.9</sonar-scanner-protocol.version>
