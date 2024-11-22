@@ -8,7 +8,7 @@
   </parent>
   <groupId>org.sonarsource.sonarlint.core</groupId>
   <artifactId>sonarlint-core-parent</artifactId>
-  <version>9.2.0-CODESCAN</version>
+  <version>9.2.1-CODESCAN</version>
   <packaging>pom</packaging>
   <name>SonarLint Core</name>
   <description>Library used by SonarLint flavors (Eclipse, IntelliJ, VSCode...)</description>
@@ -43,7 +43,7 @@
   </modules>
 
   <properties>
-    <sonar-plugin-api.version>9.15-CODESCAN</sonar-plugin-api.version>
+    <sonar-plugin-api.version>10.11-CODESCAN</sonar-plugin-api.version>
     <sonar-plugin-api-impl.version>9.9.3.79811</sonar-plugin-api-impl.version>
     <sonar-ws.version>9.9.1.69595</sonar-ws.version>
     <sonar-markdown.version>9.9.0.65466</sonar-markdown.version>

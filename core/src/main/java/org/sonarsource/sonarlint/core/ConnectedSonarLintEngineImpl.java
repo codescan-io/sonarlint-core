@@ -117,8 +117,19 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
     var pluginDetails = loadingResult.getPluginCheckResultByKeys().values().stream().map(p -> new PluginDetails(p.getPlugin().getKey(), p.getPlugin().getName(),
       Optional.ofNullable(p.getPlugin().getVersion()).map(Version::toString).orElse(null), p.getSkipReason().orElse(null))).collect(Collectors.toList());
 
+    loadingResult.getLoadedPlugins().getPluginInstancesByKeys().forEach((k, v) -> {
+      LOG.debug("Plugin k: {}", k);
+    });
+
     var allRulesDefinitionsByKey = loadPluginMetadata(loadingResult.getLoadedPlugins(), globalConfig.getEnabledLanguages(), true, globalConfig.isHotspotsEnabled());
 
+    LOG.debug("In all rules by key size: {}", allRulesDefinitionsByKey.size());
+
+    allRulesDefinitionsByKey.forEach((r, sonarLintRuleDefinition) -> {
+      if (r.startsWith("sf")) {
+        LOG.debug("Key: {} Val: {}", r, sonarLintRuleDefinition.getKey());
+      }
+    });
     var analysisGlobalConfig = AnalysisEngineConfiguration.builder()
       .setClientPid(globalConfig.getClientPid())
       .setExtraProperties(globalConfig.extraProperties())
@@ -137,6 +148,11 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
     pluginsToLoadByKey.putAll(globalConfig.getEmbeddedPluginPathsByKey());
     Set<Path> plugins = new HashSet<>(pluginsToLoadByKey.values());
 
+    plugins.forEach(f -> {
+      LOG.debug("LoadPlugins: {}", f.toAbsolutePath());
+    });
+
+    globalConfig.getEnabledLanguages().forEach(f -> LOG.debug("Global Language: {}", f.getLanguageKey()));
     var config = new Configuration(plugins, globalConfig.getEnabledLanguages(), Optional.ofNullable(globalConfig.getNodeJsVersion()));
     return new PluginsLoader().load(config);
   }
@@ -251,6 +267,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
             }
           } else {
             ruleOrTemplateDefinition = analysisContext.get().findRule(activeRuleFromStorage.getRuleKey()).orElse(null);
+            LOG.debug("  * Rule check: rulekey: {}, obj: {}", activeRuleFromStorage.getRuleKey(), ruleOrTemplateDefinition);
             if (ruleOrTemplateDefinition == null) {
               LOG.debug("Rule {} is enabled on the server, but not available in CodeScan", activeRuleFromStorage.getRuleKey());
               continue;
