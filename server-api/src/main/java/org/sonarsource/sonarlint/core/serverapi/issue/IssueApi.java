@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import org.sonar.scanner.protocol.Constants;
 import org.sonar.scanner.protocol.input.ScannerInput;
 import org.sonarsource.sonarlint.core.commons.IssueStatus;
 import org.sonarsource.sonarlint.core.commons.Language;
@@ -43,6 +44,7 @@ import org.sonarsource.sonarlint.core.serverapi.exception.UnexpectedBodyExceptio
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues;
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues.Component;
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues.Issue;
+import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues.SearchWsResponse;
 
 import static java.util.Objects.requireNonNull;
 import static org.sonarsource.sonarlint.core.http.HttpClient.FORM_URL_ENCODED_CONTENT_TYPE;
@@ -129,27 +131,64 @@ public class IssueApi {
     return "";
   }
 
+//  public List<ScannerInput.ServerIssue> downloadAllFromBatchIssues(String key, @Nullable String branchName) {
+//    var batchIssueUrl = new StringBuilder();
+//    batchIssueUrl.append(getBatchIssuesUrl(key));
+//    batchIssueUrl.append(getUrlBranchParameter(branchName));
+//    return ServerApiHelper.processTimed(
+//            () -> serverApiHelper.rawGet(batchIssueUrl.toString()),
+//            response -> {
+//              if (response.code() == 403 || response.code() == 404) {
+//                return Collections.emptyList();
+//              } else if (response.code() != 200) {
+//                throw ServerApiHelper.handleError(response);
+//              }
+//              var input = response.bodyAsStream();
+//              var parser = ScannerInput.ServerIssue.parser();
+//              return readMessages(input, parser);
+//            },
+//            duration -> LOG.debug("Downloaded issues in {}ms", duration));
+//  }
+
   public List<ScannerInput.ServerIssue> downloadAllFromBatchIssues(String key, @Nullable String branchName) {
     var batchIssueUrl = new StringBuilder();
-    batchIssueUrl.append(getBatchIssuesUrl(key));
+    batchIssueUrl.append(getSonar10BatchIssueUrl(key));
     batchIssueUrl.append(getUrlBranchParameter(branchName));
-    return ServerApiHelper.processTimed(
-            () -> serverApiHelper.rawGet(batchIssueUrl.toString()),
-            response -> {
-              if (response.code() == 403 || response.code() == 404) {
-                return Collections.emptyList();
-              } else if (response.code() != 200) {
-                throw ServerApiHelper.handleError(response);
-              }
-              var input = response.bodyAsStream();
-              var parser = ScannerInput.ServerIssue.parser();
-              return readMessages(input, parser);
-            },
-            duration -> LOG.debug("Downloaded issues in {}ms", duration));
+
+    List<Issue> issues = new ArrayList<>();
+    List<ScannerInput.ServerIssue> response = new ArrayList<>();
+
+    serverApiHelper.getPaginated(batchIssueUrl.toString(),
+            Issues.SearchWsResponse::parseFrom,
+            r -> r.getPaging().getTotal(),
+            SearchWsResponse::getIssuesList,
+            issues::add,
+            false,
+            new ProgressMonitor(null));
+
+
+    for(Issue fileIssue : issues) {
+      response.add(ScannerInput.ServerIssue.newBuilder()
+              .setKey(fileIssue.getKey())
+              .setRuleKey(fileIssue.getRule())
+              .setChecksum(fileIssue.getHash())
+              .setMsg(fileIssue.getMessage())
+              .setLine(fileIssue.getLine())
+              .setPath(fileIssue.getComponent())
+              .setType(fileIssue.getType().name())
+              .setSeverity(Constants.Severity.forNumber(fileIssue.getSeverity().getNumber() + 1))
+              .build());
+    }
+
+    return response;
   }
 
   private static String getBatchIssuesUrl(String key) {
     return "/batch/issues?key=" + UrlUtils.urlEncode(key);
+  }
+
+  private static String getSonar10BatchIssueUrl(String key) {
+    return "/api/issues/search.protobuf?componentKeys=" + UrlUtils.urlEncode(key);
   }
 
   private static String getPullIssuesUrl(String projectKey, String branchName, Set<Language> enabledLanguages, @Nullable Long changedSince) {
