@@ -149,12 +149,13 @@ public class PluginInstancesLoader {
             Files.copy(zipFile.getInputStream(entry), outputFile, StandardCopyOption.REPLACE_EXISTING);
             LOG.debug("File successfully extracted");
           } catch (IOException e) {
-            throw new IOException("Error extracting file from ZIP: " + fileName, e);
+            LOG.error("Error extracting file from ZIP: {}", fileName);
+            throw new IOException(e);
           }
           return;
         }
       }
-      LOG.debug("File " + fileName + " not found in " + zipFilePath);
+      LOG.debug("File {} not found in {}", fileName, zipFilePath);
     }
   }
 
