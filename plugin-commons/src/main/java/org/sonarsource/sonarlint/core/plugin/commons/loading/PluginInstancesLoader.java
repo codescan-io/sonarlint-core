@@ -22,15 +22,18 @@ package org.sonarsource.sonarlint.core.plugin.commons.loading;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import javax.annotation.CheckForNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -133,10 +136,26 @@ public class PluginInstancesLoader {
     }
   }
 
-  private static void extractFile(Path zipFile, String fileName, Path outputFile) throws IOException {
-    try (var fileSystem = FileSystems.newFileSystem(zipFile, (ClassLoader) null)) {
-      var fileToExtract = fileSystem.getPath(fileName);
-      Files.copy(fileToExtract, outputFile);
+
+  private static void extractFile(Path zipFilePath, String fileName, Path outputFile) throws IOException {
+    try (ZipFile zipFile = new ZipFile(String.valueOf(zipFilePath))) {
+      Enumeration<? extends ZipEntry> entries = zipFile.entries();
+      while (entries.hasMoreElements()) {
+        ZipEntry entry = entries.nextElement();
+        String normalizedFileName = fileName.replace("\\", "/");
+        String normalizedJarName = entry.getName().replace("\\","/");
+        if (normalizedJarName.equals(normalizedFileName)) {
+          try{
+            Files.copy(zipFile.getInputStream(entry), outputFile, StandardCopyOption.REPLACE_EXISTING);
+            LOG.debug("File successfully extracted");
+          } catch (IOException e) {
+            LOG.error("Error extracting file from ZIP: {}", fileName);
+            throw new IOException(e);
+          }
+          return;
+        }
+      }
+      LOG.debug("File {} not found in {}", fileName, zipFilePath);
     }
   }
 
