@@ -20,6 +20,7 @@
 package org.sonarsource.sonarlint.core.serverconnection;
 
 import java.nio.file.Path;
+import java.security.MessageDigest;
 import org.sonarsource.sonarlint.core.serverapi.plugins.ServerPlugin;
 
 public class StoredPlugin {
@@ -46,6 +47,6 @@ public class StoredPlugin {
   }
 
   public boolean hasSameHash(ServerPlugin serverPlugin) {
-    return getHash().equals(serverPlugin.getHash());
+    return MessageDigest.isEqual(getHash().getBytes(), serverPlugin.getHash().getBytes());
   }
 }
