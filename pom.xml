@@ -56,15 +56,15 @@
     <jdk.min.version>11</jdk.min.version>
     <gson.version>2.10</gson.version>
     <mockito.version>4.9.0</mockito.version>
-    <kotlin.version>1.7.22</kotlin.version>
+    <kotlin.version>1.9.25</kotlin.version>
     <lsp4j.version>0.19.0</lsp4j.version>
 
     <version.surefire.plugin>3.1.2</version.surefire.plugin>
 
     <sonar.host.url>https://app.codescan.io</sonar.host.url>
-    <sonar.login>e0b1aba256426ca4d4bf0312062d7e2129eb88df</sonar.login>
+    <sonar.login></sonar.login>
     <sonar.password></sonar.password>
-    <sonar.organization>c0ae17aade58da85a4d275acfcd30a4c</sonar.organization>
+    <sonar.organization>org</sonar.organization>
     <sonar.projectKey>sonar-plugin-api</sonar.projectKey>
     <sonar.moduleKey>${artifactId}</sonar.moduleKey>
   </properties>
