@@ -8,7 +8,7 @@
   </parent>
   <groupId>org.sonarsource.sonarlint.core</groupId>
   <artifactId>sonarlint-core-parent</artifactId>
-  <version>9.1.2-CODESCAN</version>
+  <version>9.1.3-CODESCAN</version>
   <packaging>pom</packaging>
   <name>SonarLint Core</name>
   <description>Library used by SonarLint flavors (Eclipse, IntelliJ, VSCode...)</description>
@@ -43,7 +43,7 @@
   </modules>
 
   <properties>
-    <sonar-plugin-api.version>9.15-CODESCAN</sonar-plugin-api.version>
+    <sonar-plugin-api.version>10.14-CODESCAN</sonar-plugin-api.version>
     <sonar-ws.version>9.9.1.69595</sonar-ws.version>
     <sonar-markdown.version>9.9.0.65466</sonar-markdown.version>
     <sonar-scanner-protocol.version>7.9</sonar-scanner-protocol.version>
@@ -56,15 +56,15 @@
     <jdk.min.version>11</jdk.min.version>
     <gson.version>2.10</gson.version>
     <mockito.version>4.9.0</mockito.version>
-    <kotlin.version>1.7.22</kotlin.version>
+    <kotlin.version>1.9.25</kotlin.version>
     <lsp4j.version>0.19.0</lsp4j.version>
 
     <version.surefire.plugin>3.1.2</version.surefire.plugin>
 
     <sonar.host.url>https://app.codescan.io</sonar.host.url>
-    <sonar.login>e0b1aba256426ca4d4bf0312062d7e2129eb88df</sonar.login>
+    <sonar.login></sonar.login>
     <sonar.password></sonar.password>
-    <sonar.organization>c0ae17aade58da85a4d275acfcd30a4c</sonar.organization>
+    <sonar.organization>org</sonar.organization>
     <sonar.projectKey>sonar-plugin-api</sonar.projectKey>
     <sonar.moduleKey>${artifactId}</sonar.moduleKey>
   </properties>

@@ -30,7 +30,7 @@ import java.security.NoSuchAlgorithmException;
 public class HashingPathMapper implements PathMapper<String> {
 
   private static final String HEX_LETTERS = "0123456789abcdef";
-  private static final String HASHING_ALGORITHM = "SHA1";
+  private static final String HASHING_ALGORITHM = "SHA-256";
   private static final int HASH_LENGTH = 40;
 
   private final Path base;
