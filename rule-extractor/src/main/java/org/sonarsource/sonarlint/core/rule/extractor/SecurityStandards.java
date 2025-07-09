@@ -40,6 +40,7 @@ public final class SecurityStandards {
 
   public static final String UNKNOWN_STANDARD = "unknown";
   private static final String CWE_PREFIX = "cwe:";
+  private static final String CVSS_PREFIX = "cvss:";
 
   public enum SLCategory {
     BUFFER_OVERFLOW("buffer-overflow", HIGH),
@@ -111,12 +112,14 @@ public final class SecurityStandards {
 
   private final Set<String> standards;
   private final Set<String> cwe;
+  private final Set<String> cvss;
   private final SLCategory sLCategory;
   private final Set<SLCategory> ignoredSLCategories;
 
-  private SecurityStandards(Set<String> standards, Set<String> cwe, SLCategory sLCategory, Set<SLCategory> ignoredSLCategories) {
+  private SecurityStandards(Set<String> standards, Set<String> cwe, Set<String> cvss, SLCategory sLCategory, Set<SLCategory> ignoredSLCategories) {
     this.standards = standards;
     this.cwe = cwe;
+    this.cvss = cvss;
     this.sLCategory = sLCategory;
     this.ignoredSLCategories = ignoredSLCategories;
   }
@@ -140,16 +143,21 @@ public final class SecurityStandards {
     return cwe;
   }
 
+  public Set<String> getCvss() {
+    return cvss;
+  }
+
   /**
    * @throws IllegalStateException if {@code securityStandards} maps to multiple {@link SLCategory SLCategories}
    */
   public static SecurityStandards fromSecurityStandards(Set<String> securityStandards) {
     Set<String> standards = securityStandards.stream().filter(Objects::nonNull).collect(toSet());
     Set<String> cwe = toCwes(standards);
+    Set<String> cvss = toCvsss(standards);
     List<SLCategory> sl = toSLCategories(cwe);
     var slCategory = sl.iterator().next();
     Set<SLCategory> ignoredSLCategories = sl.stream().skip(1).collect(toSet());
-    return new SecurityStandards(standards, cwe, slCategory, ignoredSLCategories);
+    return new SecurityStandards(standards, cwe, cvss, slCategory, ignoredSLCategories);
   }
 
   private static Set<String> toCwes(Collection<String> securityStandards) {
@@ -157,6 +165,14 @@ public final class SecurityStandards {
       .filter(s -> s.startsWith(CWE_PREFIX))
       .map(s -> s.substring(CWE_PREFIX.length()))
       .collect(toSet());
+    return result.isEmpty() ? singleton(UNKNOWN_STANDARD) : result;
+  }
+
+  private static Set<String> toCvsss(Collection<String> securityStandards) {
+    Set<String> result = securityStandards.stream()
+            .filter(s -> s.startsWith(CVSS_PREFIX))
+            .map(s -> s.substring(CVSS_PREFIX.length()))
+            .collect(toSet());
     return result.isEmpty() ? singleton(UNKNOWN_STANDARD) : result;
   }
 
