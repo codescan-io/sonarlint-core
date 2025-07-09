@@ -22,7 +22,9 @@ package org.sonarsource.sonarlint.core.analysis.sonarapi;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
@@ -41,6 +43,7 @@ import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.Son
 import org.sonarsource.sonarlint.core.analysis.container.analysis.issue.SensorQuickFix;
 import org.sonarsource.sonarlint.plugin.api.issue.NewQuickFix;
 import org.sonarsource.sonarlint.plugin.api.issue.NewSonarLintIssue;
+import org.sonar.api.issue.impact.SoftwareQuality;
 
 import static java.util.Objects.requireNonNull;
 
@@ -223,4 +226,16 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
   public Optional<String> ruleDescriptionContextKey() {
     return ruleDescriptionContextKey;
   }
+
+
+  @Override
+  public NewIssue overrideImpact(SoftwareQuality var1, org.sonar.api.issue.impact.Severity var2) {
+    return null;
+  }
+
+  @Override
+  public Map<SoftwareQuality, org.sonar.api.issue.impact.Severity> overridenImpacts() {
+    return new HashMap<SoftwareQuality, org.sonar.api.issue.impact.Severity>();
+  }
+
 }
