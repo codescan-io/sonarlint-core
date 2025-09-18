@@ -21,10 +21,13 @@ package org.sonarsource.sonarlint.core.issuetracking;
 
 import java.util.Collection;
 import java.util.Collections;
+import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 
 public class CachingIssueTracker extends IssueTracker {
 
   private final IssueTrackerCache cache;
+  private static final SonarLintLogger LOG = SonarLintLogger.get();
+
 
   public CachingIssueTracker(IssueTrackerCache cache) {
     this.cache = cache;
@@ -38,8 +41,10 @@ public class CachingIssueTracker extends IssueTracker {
    * @param trackables the trackables in the file
    */
   public synchronized Collection<Trackable> matchAndTrackAsNew(String file, Collection<Trackable> trackables) {
+    LOG.info("In matchAndTrackAsNew");
     Collection<Trackable> tracked;
     if (cache.isFirstAnalysis(file)) {
+      LOG.info("Creating null first analysis");
       tracked = trackables;
     } else {
       tracked = apply(cache.getCurrentTrackables(file), trackables, false);
@@ -57,10 +62,11 @@ public class CachingIssueTracker extends IssueTracker {
   public synchronized Collection<Trackable> matchAndTrackAsBase(String file, Collection<Trackable> trackables) {
     // store issues (ProtobufIssueTrackable) are of no use since they can't be used in markers. There should have been
     // an analysis before that set the live issues for the file (even if it is empty)
+    LOG.info("In matchAndTrackAsBase");
     Collection<Trackable> current = cache.getLiveOrFail(file);
     if (current.isEmpty()) {
-      // whatever is the base, if current is empty, then nothing to do
-      return Collections.emptyList();
+      cache.put(file, trackables);
+      return trackables;
     }
     var tracked = apply(trackables, current, true);
     cache.put(file, tracked);

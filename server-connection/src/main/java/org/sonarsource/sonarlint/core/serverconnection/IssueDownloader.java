@@ -31,6 +31,7 @@ import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.RuleType;
 import org.sonarsource.sonarlint.core.commons.TextRangeWithHash;
+import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.serverapi.ServerApi;
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues;
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues.IssueLite;
@@ -45,6 +46,7 @@ import static java.util.function.Predicate.not;
 public class IssueDownloader {
 
   private final Set<Language> enabledLanguages;
+  private static final SonarLintLogger LOG = SonarLintLogger.get();
 
   public IssueDownloader(Set<Language> enabledLanguages) {
     this.enabledLanguages = enabledLanguages;

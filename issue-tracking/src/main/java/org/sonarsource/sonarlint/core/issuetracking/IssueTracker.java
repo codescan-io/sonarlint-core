@@ -21,6 +21,7 @@ package org.sonarsource.sonarlint.core.issuetracking;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 
 public class IssueTracker {
 
@@ -28,7 +29,12 @@ public class IssueTracker {
    * Local issue tracking: baseIssues are existing issue, nextIssues are raw issues coming from the analysis.
    * Server issue tracking: baseIssues are server issues, nextIssues are the existing issue, coming from local issue tracking.
    */
+  private static final SonarLintLogger LOG = SonarLintLogger.get();
+
   public Collection<Trackable> apply(Collection<Trackable> baseIssues, Collection<Trackable> nextIssues, boolean inheritSeverity) {
+    baseIssues.forEach(i -> LOG.info(">>>>Base {} {} {} {} {} {}", i.getRuleKey(), i.getServerIssueKey(), i.getLineHash(), i.isResolved(), i.getCreationDate(), i.getTextRange()!= null ? i.getTextRange().getHash() : ""));
+    nextIssues.forEach(i -> LOG.info(">>>>Next {} {} {} {} {} {}", i.getRuleKey(), i.getServerIssueKey(), i.getLineHash(), i.isResolved(), i.getCreationDate(), i.getTextRange()!= null ? i.getTextRange().getHash() : ""));
+
     Collection<Trackable> trackedIssues = new ArrayList<>();
     var tracking = new Tracker<>().track(() -> nextIssues, () -> baseIssues);
 
@@ -38,14 +44,18 @@ public class IssueTracker {
 
     for (Trackable next : tracking.getUnmatchedRaws()) {
       if (next.getServerIssueKey() != null) {
+        LOG.info("Disconnected {} {}", next.getRuleKey(), next.isResolved());
         // not matched with server anymore
         next = new DisconnectedTrackable(next);
       } else if (next.getCreationDate() == null) {
         // first time we see this issue locally
+        LOG.info("Leaked {} {}", next.getRuleKey(), next.isResolved());
         next = new LeakedTrackable(next);
       }
       trackedIssues.add(next);
     }
+
+    trackedIssues.forEach(i -> LOG.info("Tracked {} {} {}", i.getRuleKey(), i.getLine(), i.isResolved()));
 
     return trackedIssues;
   }

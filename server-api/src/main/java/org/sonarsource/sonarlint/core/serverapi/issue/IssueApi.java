@@ -20,16 +20,24 @@
 package org.sonarsource.sonarlint.core.serverapi.issue;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.sonar.scanner.protocol.Constants;
 import org.sonar.scanner.protocol.input.ScannerInput;
+import org.sonar.scanner.protocol.input.ScannerInput.ServerIssue.Builder;
 import org.sonarsource.sonarlint.core.commons.Language;
 import org.sonarsource.sonarlint.core.commons.Version;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
@@ -53,6 +61,8 @@ public class IssueApi {
   private static final SonarLintLogger LOG = SonarLintLogger.get();
 
   private final ServerApiHelper serverApiHelper;
+
+  private final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH);
 
   public IssueApi(ServerApiHelper serverApiHelper) {
     this.serverApiHelper = serverApiHelper;
@@ -123,29 +133,12 @@ public class IssueApi {
     return "";
   }
 
-//  public List<ScannerInput.ServerIssue> downloadAllFromBatchIssues(String key, @Nullable String branchName) {
-//    var batchIssueUrl = new StringBuilder();
-//    batchIssueUrl.append(getBatchIssuesUrl(key));
-//    batchIssueUrl.append(getUrlBranchParameter(branchName));
-//    return ServerApiHelper.processTimed(
-//      () -> serverApiHelper.rawGet(batchIssueUrl.toString()),
-//      response -> {
-//        if (response.code() == 403 || response.code() == 404) {
-//          return Collections.emptyList();
-//        } else if (response.code() != 200) {
-//          throw ServerApiHelper.handleError(response);
-//        }
-//        var input = response.bodyAsStream();
-//        var parser = ScannerInput.ServerIssue.parser();
-//        return readMessages(input, parser);
-//      },
-//      duration -> LOG.debug("Downloaded issues in {}ms", duration));
-//  }
-
   public List<ScannerInput.ServerIssue> downloadAllFromBatchIssues(String key, @Nullable String branchName) {
     var batchIssueUrl = new StringBuilder();
     batchIssueUrl.append(getSonar10BatchIssueUrl(key));
     batchIssueUrl.append(getUrlBranchParameter(branchName));
+    serverApiHelper.getOrganizationKey()
+            .ifPresent(org -> batchIssueUrl.append("&organization=").append(UrlUtils.urlEncode(org)));
 
     List<Issue> issues = new ArrayList<>();
     List<ScannerInput.ServerIssue> response = new ArrayList<>();
@@ -160,7 +153,8 @@ public class IssueApi {
 
 
     for(Issue fileIssue : issues) {
-      response.add(ScannerInput.ServerIssue.newBuilder()
+      String resolution = StringUtils.isNotEmpty(fileIssue.getResolution()) ? fileIssue.getResolution() : null;
+      Builder builder = ScannerInput.ServerIssue.newBuilder()
               .setKey(fileIssue.getKey())
               .setRuleKey(fileIssue.getRule())
               .setChecksum(fileIssue.getHash())
@@ -168,8 +162,15 @@ public class IssueApi {
               .setLine(fileIssue.getLine())
               .setPath(fileIssue.getComponent())
               .setType(fileIssue.getType().name())
-              .setSeverity(Constants.Severity.forNumber(fileIssue.getSeverity().getNumber() + 1))
-              .build());
+              .setCreationDate(getCreationDate(fileIssue))
+              .setSeverity(Constants.Severity.forNumber(fileIssue.getSeverity().getNumber() + 1));
+
+      LOG.debug("Downloading file issue {} Resol {} CD {}", builder.getKey(), builder.getResolution(), builder.getCreationDate());
+
+      if (resolution != null) {
+        builder.setResolution(resolution);
+      }
+      response.add(builder.build());
     }
 
     return response;
@@ -181,6 +182,17 @@ public class IssueApi {
 
   private static String getSonar10BatchIssueUrl(String key) {
     return "/api/issues/search.protobuf?componentKeys=" + UrlUtils.urlEncode(key);
+  }
+
+  private long getCreationDate(Issue issue) {
+    long creationDate = 0L;
+    if (StringUtils.isNotEmpty(issue.getCreationDate())) {
+      try {
+        LocalDateTime localDate = LocalDateTime.parse(issue.getCreationDate(), inputFormatter);
+        creationDate = localDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+      } catch (Exception e) {}
+    }
+    return creationDate;
   }
 
   private static String getPullIssuesUrl(String projectKey, String branchName, Set<Language> enabledLanguages, @Nullable Long changedSince) {

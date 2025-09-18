@@ -19,6 +19,8 @@
  */
 package org.sonarsource.sonarlint.core.issuetracking;
 
+import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
+
 /**
  * Combine a new Trackable ("next") with a previous state ("base")
  */
@@ -29,6 +31,8 @@ class CombinedTrackable extends AbstractTrackable {
    * Server issue tracking: base are server issues, next are the existing issue, coming from local issue tracking. We want to inherit severity and type
    * so that the server issues override analyzers.
    */
+  private static final SonarLintLogger LOG = SonarLintLogger.get();
+
   CombinedTrackable(Trackable base, Trackable next, boolean inheritSeverity) {
     super(next);
 
@@ -37,6 +41,7 @@ class CombinedTrackable extends AbstractTrackable {
     this.serverIssueKey = base.getServerIssueKey();
     this.resolved = base.isResolved();
     this.reviewStatus = base.getReviewStatus();
+    LOG.info("CombinedTrackable {} {} {} {}", base.getRuleKey(), base.getLineHash(), base.getTextRange()!=null ? base.getTextRange().getHash() : "", base.isResolved());
     if (inheritSeverity) {
       this.severity = base.getSeverity();
       if (base.getType() != null) {

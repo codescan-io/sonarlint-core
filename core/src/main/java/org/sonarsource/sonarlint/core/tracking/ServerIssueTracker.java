@@ -20,6 +20,7 @@
 package org.sonarsource.sonarlint.core.tracking;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.sonarsource.sonarlint.core.client.api.connected.ConnectedSonarLintEngine;
@@ -46,19 +47,25 @@ public class ServerIssueTracker {
   }
 
   public void update(EndpointParams endpoint, HttpClient client, ConnectedSonarLintEngine engine, ProjectBinding projectBinding, Collection<String> fileKeys, String branchName) {
+    LOGGER.info("===Updating server issues for {}", endpoint);
     update(fileKeys, fileKey -> fetchServerIssues(endpoint, client, engine, projectBinding, fileKey, branchName),
       fileKey -> fetchServerHotspots(endpoint, client, engine, projectBinding, fileKey, branchName));
   }
 
   public void update(ConnectedSonarLintEngine engine, ProjectBinding projectBinding, String branchName, Collection<String> fileKeys) {
+    LOGGER.info("===Updating solo issues");
     update(fileKeys, fileKey -> engine.getServerIssues(projectBinding, branchName, fileKey), fileKey -> engine.getServerHotspots(projectBinding, branchName, fileKey));
   }
 
   private void update(Collection<String> fileKeys, Function<String, Collection<ServerIssue>> issueGetter, Function<String, Collection<ServerHotspot>> hotspotsGetter) {
     try {
+      LOGGER.info("===In update");
       for (String fileKey : fileKeys) {
+        LOGGER.info("===FileKey {}", fileKey);
         var serverIssues = issueGetter.apply(fileKey);
+//        serverIssues.forEach(issue -> LOGGER.info("Non Issue: {} r{} cd {}", issue.getRuleKey(), issue.isResolved(), issue.getCreationDate()));
         Collection<Trackable> serverIssuesTrackable = serverIssues.stream().map(ServerIssueTrackable::new).collect(Collectors.toList());
+//        serverIssuesTrackable.forEach(issue -> LOGGER.info("Trackable Issue: {} l:{} r:{} cd: {}", issue.getRuleKey(), issue.getLine(), issue.isResolved(), issue.getCreationDate()));
         issueTracker.matchAndTrackAsBase(fileKey, serverIssuesTrackable);
 
         var serverHotspots = hotspotsGetter.apply(fileKey);
@@ -78,7 +85,8 @@ public class ServerIssueTracker {
     } catch (DownloadException e) {
       LOGGER.debug("Failed to download server issues", e);
     }
-    return engine.getServerIssues(projectBinding, branchName, ideFilePath);
+    List<ServerIssue> issues = engine.getServerIssues(projectBinding, branchName, ideFilePath);
+    return issues;
   }
 
   private static Collection<ServerHotspot> fetchServerHotspots(EndpointParams endpoint, HttpClient client, ConnectedSonarLintEngine engine,

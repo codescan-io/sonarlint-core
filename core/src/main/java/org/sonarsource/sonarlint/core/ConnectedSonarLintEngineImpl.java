@@ -267,7 +267,6 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
             }
           } else {
             ruleOrTemplateDefinition = analysisContext.get().findRule(activeRuleFromStorage.getRuleKey()).orElse(null);
-            LOG.debug("  * Rule check: rulekey: {}, obj: {}", activeRuleFromStorage.getRuleKey(), ruleOrTemplateDefinition);
             if (ruleOrTemplateDefinition == null) {
               LOG.debug("Rule {} is enabled on the server, but not available in CodeScan", activeRuleFromStorage.getRuleKey());
               continue;

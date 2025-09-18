@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 
 /**
  * Match and track a collection of issues.
@@ -35,10 +36,12 @@ import java.util.function.Supplier;
  * @param <B> type of the base trackables that are in the current collection
  */
 public class Tracker<R extends Trackable, B extends Trackable> {
+  private static final SonarLintLogger LOG = SonarLintLogger.get();
 
   public Tracking<R, B> track(Supplier<Collection<R>> rawTrackableSupplier, Supplier<Collection<B>> baseTrackableSupplier) {
     var tracking = new Tracking<>(rawTrackableSupplier, baseTrackableSupplier);
 
+    LOG.info(">>>>Tracking : {} {}", tracking.getMatchedRaws().size(), tracking.isComplete());
     // 1. match issues with same server issue key
     match(tracking, ServerIssueSearchKeyFactory.INSTANCE);
 
@@ -61,6 +64,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     // 7. match issues with same rule and same same line hash
     match(tracking, LineHashKeyFactory.INSTANCE);
 
+    LOG.info(">>>>Tracking 2 : {} {}", tracking.getMatchedRaws().size(), tracking.isComplete());
     return tracking;
   }
 
@@ -116,6 +120,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     @Override
     public boolean equals(Object o) {
       var that = (LineAndTextRangeHashKey) o;
+      LOG.info(">>> LineAndTextRangeHashKey Comparing {} {} {} to {} {} {}", ruleKey, textRangeHash, line, that.ruleKey, that.textRangeHash, that.line);
       // start with most discriminant field
       return Objects.equals(line, that.line)
         && Objects.equals(textRangeHash, that.textRangeHash)
@@ -156,6 +161,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     public boolean equals(Object o) {
       var that = (LineAndLineHashKey) o;
       // start with most discriminant field
+      LOG.info(">>> LineAndTextRangeHashKey Comparing {} {} {} to {} {} {}", ruleKey, lineHash, line, that.ruleKey, that.lineHash, that.line);
       return Objects.equals(line, that.line)
         && Objects.equals(lineHash, that.lineHash)
         && ruleKey.equals(that.ruleKey);
@@ -193,6 +199,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     public boolean equals(Object o) {
       var that = (LineHashKey) o;
       // start with most discriminant field
+      LOG.info(">>> LineHashKey Comparing {} {} to {} {}", ruleKey, lineHash, that.ruleKey, that.lineHash);
       return Objects.equals(lineHash, that.lineHash)
         && ruleKey.equals(that.ruleKey);
     }
@@ -230,6 +237,9 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     @Override
     public boolean equals(Object o) {
       var that = (TextRangeHashAndMessageKey) o;
+      LOG.info(">>> TextRangeHashAndMessageKey Comparing {} {} {} to {} {} {}", ruleKey, textRangeHash, message, that.ruleKey, that.textRangeHash, that.message);
+//      LOG.info(">>> TextRangeHashAndMessageKey Bool {} {} {}", Objects.equals(textRangeHash, that.textRangeHash),
+//              message.equals(that.message), ruleKey.equals(that.ruleKey));
       // start with most discriminant field
       return Objects.equals(textRangeHash, that.textRangeHash)
         && message.equals(that.message)
@@ -270,6 +280,8 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     public boolean equals(Object o) {
       var that = (LineAndMessageKey) o;
       // start with most discriminant field
+      LOG.info(">>> LineAndMessageKey Comparing {} {} {} to {} {} {}", ruleKey, message, line, that.ruleKey, that.message, that.line);
+      LOG.info(">>> LineAndMessageKey Bool {} {} {}", Objects.equals(line, that.line), message.equals(that.message), ruleKey.equals(that.ruleKey));
       return Objects.equals(line, that.line)
         && message.equals(that.message)
         && ruleKey.equals(that.ruleKey);
@@ -307,6 +319,8 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     @Override
     public boolean equals(Object o) {
       var that = (TextRangeHashKey) o;
+      LOG.info(">>> TextRangeHashKey Comparing {} {} to {} {}", ruleKey, textRangeHash, that.ruleKey, that.textRangeHash);
+
       // start with most discriminant field
       return Objects.equals(textRangeHash, that.textRangeHash)
         && ruleKey.equals(that.ruleKey);
@@ -340,6 +354,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     @Override
     public boolean equals(Object o) {
       var that = (ServerIssueSearchKey) o;
+      LOG.info(">>> ServerIssueSearchKey Comparing {} to {}", serverIssueKey, that.serverIssueKey);
       return !isBlank(serverIssueKey) && !isBlank(that.serverIssueKey) && serverIssueKey.equals(that.serverIssueKey);
     }
 

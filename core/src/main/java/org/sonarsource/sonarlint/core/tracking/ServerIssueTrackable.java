@@ -23,6 +23,7 @@ import org.sonarsource.sonarlint.core.commons.HotspotReviewStatus;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.RuleType;
 import org.sonarsource.sonarlint.core.commons.TextRangeWithHash;
+import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.issuetracking.Trackable;
 import org.sonarsource.sonarlint.core.serverconnection.issues.LineLevelServerIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.RangeLevelServerIssue;
@@ -31,6 +32,7 @@ import org.sonarsource.sonarlint.core.serverconnection.issues.ServerIssue;
 public class ServerIssueTrackable implements Trackable {
 
   private final ServerIssue serverIssue;
+  private static final SonarLintLogger LOG = SonarLintLogger.get();
 
   public ServerIssueTrackable(ServerIssue serverIssue) {
     this.serverIssue = serverIssue;
@@ -65,9 +67,11 @@ public class ServerIssueTrackable implements Trackable {
   @Override
   public Integer getLine() {
     if (serverIssue instanceof LineLevelServerIssue) {
+      LOG.info("ServerIssue type: {}, line: {}", serverIssue.getClass().getSimpleName(), ((LineLevelServerIssue) serverIssue).getLine());
       return ((LineLevelServerIssue) serverIssue).getLine();
     }
     if (serverIssue instanceof RangeLevelServerIssue) {
+      LOG.info("ServerIssue type: {}, line: {}", serverIssue.getClass().getSimpleName(), ((RangeLevelServerIssue) serverIssue).getTextRange().getStartLine());
       return ((RangeLevelServerIssue) serverIssue).getTextRange().getStartLine();
     }
     return null;
@@ -85,6 +89,21 @@ public class ServerIssueTrackable implements Trackable {
   public TextRangeWithHash getTextRange() {
     if (serverIssue instanceof RangeLevelServerIssue) {
       return ((RangeLevelServerIssue) serverIssue).getTextRange();
+    }
+    if (serverIssue instanceof LineLevelServerIssue) {
+      // Create a TextRangeWithHash for line-level issues
+      // Line-level issues span the entire line (offset 0 to end of line)
+      var lineLevelIssue = (LineLevelServerIssue) serverIssue;
+      var line = lineLevelIssue.getLine();
+      var lineHash = lineLevelIssue.getLineHash();
+      if (line != null && lineHash != null) {
+        // Create a text range that spans the entire line
+        // Start offset 0, end offset -1 (end of line)
+        // For line-level issues, the text range hash should be the same as the line hash
+        // since the text range spans the entire line
+        var textRange = new org.sonarsource.sonarlint.core.commons.TextRange(line, 0, line, -1);
+        return IssueTrackable.convertToTrackingTextRange(textRange, lineHash);
+      }
     }
     return null;
   }
