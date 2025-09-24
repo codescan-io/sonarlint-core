@@ -20,6 +20,8 @@
 package org.sonarsource.sonarlint.core.serverapi.issue;
 
 import java.io.IOException;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,6 +52,7 @@ import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues.Compon
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues.Issue;
 import org.sonarsource.sonarlint.core.serverapi.proto.sonarqube.ws.Issues.SearchWsResponse;
 
+import static org.apache.commons.lang3.StringUtils.truncate;
 import static org.sonarsource.sonarlint.core.http.HttpClient.FORM_URL_ENCODED_CONTENT_TYPE;
 import static org.sonarsource.sonarlint.core.serverapi.UrlUtils.urlEncode;
 import static org.sonarsource.sonarlint.core.serverapi.util.ProtobufUtil.readMessages;
@@ -79,6 +82,7 @@ public class IssueApi {
    * @param key project key, or file key.
    */
   public DownloadIssuesResult downloadVulnerabilitiesForRules(String key, Set<String> ruleKeys, @Nullable String branchName, ProgressMonitor progress) {
+    LOG.info("downloading the vulnerabilities "+getVulnerabilitiesUrl(key,ruleKeys));
     var searchUrl = new StringBuilder();
     searchUrl.append(getVulnerabilitiesUrl(key, ruleKeys));
     searchUrl.append(getUrlBranchParameter(branchName));
@@ -137,6 +141,7 @@ public class IssueApi {
     var batchIssueUrl = new StringBuilder();
     batchIssueUrl.append(getSonar10BatchIssueUrl(key));
     batchIssueUrl.append(getUrlBranchParameter(branchName));
+    LOG.info("batch isue url "+batchIssueUrl);
     serverApiHelper.getOrganizationKey()
             .ifPresent(org -> batchIssueUrl.append("&organization=").append(UrlUtils.urlEncode(org)));
 
@@ -153,6 +158,7 @@ public class IssueApi {
 
 
     for(Issue fileIssue : issues) {
+      LOG.info("file issues are "+fileIssue+", resolutin "+fileIssue.getResolution() +", key "+fileIssue.getStatus()+", message "+fileIssue.getMessage());
       String resolution = StringUtils.isNotEmpty(fileIssue.getResolution()) ? fileIssue.getResolution() : null;
       Builder builder = ScannerInput.ServerIssue.newBuilder()
               .setKey(fileIssue.getKey())
@@ -210,6 +216,9 @@ public class IssueApi {
   }
 
   public IssuesPullResult pullIssues(String projectKey, String branchName, Set<Language> enabledLanguages, @Nullable Long changedSince) {
+    String url =  "/api/issues/pull?projectKey=" + projectKey + "&branchName=" + branchName + "&changedSince=" + changedSince;
+    LOG.info("[IssuePull] Request URL = {}", url);
+    LOG.info("service api helper issue "+serverApiHelper.get(url));
     return ServerApiHelper.processTimed(
       () -> serverApiHelper.get(getPullIssuesUrl(projectKey, branchName, enabledLanguages, changedSince)),
       response -> {

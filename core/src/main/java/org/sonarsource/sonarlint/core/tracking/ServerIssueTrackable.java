@@ -115,11 +115,13 @@ public class ServerIssueTrackable implements Trackable {
 
   @Override
   public String getServerIssueKey() {
+    LOG.info("issue key after resolutions "+serverIssue.getKey());
     return serverIssue.getKey();
   }
 
   @Override
   public boolean isResolved() {
+    LOG.info("is issue Resolved.... after resolutions "+serverIssue.isResolved());
     return serverIssue.isResolved();
   }
 

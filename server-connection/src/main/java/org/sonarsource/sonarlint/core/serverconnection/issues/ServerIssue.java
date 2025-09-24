@@ -20,10 +20,12 @@
 package org.sonarsource.sonarlint.core.serverconnection.issues;
 
 import java.time.Instant;
+import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.RuleType;
+import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 
 public abstract class ServerIssue<G extends ServerIssue<G>> {
   private String key;
@@ -34,6 +36,8 @@ public abstract class ServerIssue<G extends ServerIssue<G>> {
   private Instant creationDate;
   private IssueSeverity userSeverity;
   private RuleType type;
+  private static final SonarLintLogger LOG = SonarLintLogger.get();
+
 
   protected ServerIssue(String key, boolean resolved, String ruleKey, String message, String filePath, Instant creationDate, @Nullable IssueSeverity userSeverity, RuleType type) {
     this.key = key;
@@ -44,6 +48,7 @@ public abstract class ServerIssue<G extends ServerIssue<G>> {
     this.creationDate = creationDate;
     this.userSeverity = userSeverity;
     this.type = type;
+    LOG.info("server issue details are "+key+", "+resolved);
   }
 
   public String getKey() {
@@ -51,6 +56,7 @@ public abstract class ServerIssue<G extends ServerIssue<G>> {
   }
 
   public boolean isResolved() {
+    LOG.info("is reolved in server "+resolved);
     return resolved;
   }
 

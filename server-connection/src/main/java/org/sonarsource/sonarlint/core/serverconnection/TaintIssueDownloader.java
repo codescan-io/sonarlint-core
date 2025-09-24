@@ -65,17 +65,19 @@ public class TaintIssueDownloader {
 
   public List<ServerTaintIssue> downloadTaintFromIssueSearch(ServerApi serverApi, String key, @Nullable String branchName, ProgressMonitor progress) {
     var issueApi = serverApi.issue();
-
+   LOG.info("server taint issue "+issueApi);
     List<ServerTaintIssue> result = new ArrayList<>();
 
     Set<String> taintRuleKeys = serverApi.rules().getAllTaintRules(List.of(Language.values()), progress);
     Map<String, String> sourceCodeByKey = new HashMap<>();
     var downloadVulnerabilitiesForRules = issueApi.downloadVulnerabilitiesForRules(key, taintRuleKeys, branchName, progress);
+    LOG.info("downloaded issue vulners "+downloadVulnerabilitiesForRules.getIssues());
     downloadVulnerabilitiesForRules.getIssues()
       .stream()
       .map(i -> convertTaintVulnerability(serverApi.source(), i, downloadVulnerabilitiesForRules.getComponentPathsByKey(), sourceCodeByKey))
       .filter(Objects::nonNull)
       .forEach(result::add);
+    LOG.info("tainted issue are {}",result);
 
     return result;
   }
