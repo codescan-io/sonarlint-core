@@ -36,7 +36,7 @@ public class IssueTracker {
     nextIssues.forEach(i -> LOG.info(">>>>Next {} {} {} {} {} {}", i.getRuleKey(), i.getServerIssueKey(), i.getLineHash(), i.isResolved(), i.getCreationDate(), i.getTextRange()!= null ? i.getTextRange().getHash() : ""));
 
     Collection<Trackable> trackedIssues = new ArrayList<>();
-    System.out.println("issues tracked are "+trackedIssues);
+    LOG.info("issues tracked are "+trackedIssues);
     var tracking = new Tracker<>().track(() -> nextIssues, () -> baseIssues);
 
     tracking.getMatchedRaws().entrySet().stream()
@@ -44,7 +44,7 @@ public class IssueTracker {
             .forEach(trackedIssues::add);
 
     for (Trackable next : tracking.getUnmatchedRaws()) {
-      System.out.println("tracked "+next);
+      LOG.info("tracked "+next);
       if (next.getServerIssueKey() != null) {
         LOG.info("Disconnected {} {}", next.getRuleKey(), next.isResolved());
         // not matched with server anymore
@@ -57,6 +57,7 @@ public class IssueTracker {
       trackedIssues.add(next);
     }
 
+    LOG.info("tracked size "+trackedIssues.size());
     trackedIssues.forEach(i -> LOG.info("Tracked {} {} {}", i.getRuleKey(), i.getLine(), i.isResolved()));
 
     return trackedIssues;

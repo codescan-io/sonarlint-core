@@ -82,6 +82,14 @@ public class Tracker<R extends Trackable, B extends Trackable> {
       baseSearch.get(searchKey).add(base);
     }
 
+    LOG.info("Initial {} search keys matched", baseSearch.size());
+    if (!baseSearch.isEmpty()) {
+      baseSearch.entrySet().stream().forEach(e -> {
+        LOG.info("BM {} {}", e.getKey(), e.getValue());
+      });
+    }
+
+
     for (R raw : tracking.getUnmatchedRaws()) {
       var rawKey = factory.apply(raw);
       Collection<B> bases = baseSearch.get(rawKey);
@@ -93,6 +101,8 @@ public class Tracker<R extends Trackable, B extends Trackable> {
         baseSearch.get(rawKey).remove(match);
       }
     }
+
+    LOG.info("Final {} search keys matched", baseSearch.size());
   }
 
   private interface SearchKey {
