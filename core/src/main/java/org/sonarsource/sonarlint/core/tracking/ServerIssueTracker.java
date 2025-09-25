@@ -19,6 +19,7 @@
  */
 package org.sonarsource.sonarlint.core.tracking;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -49,7 +50,7 @@ public class ServerIssueTracker {
   public void update(EndpointParams endpoint, HttpClient client, ConnectedSonarLintEngine engine, ProjectBinding projectBinding, Collection<String> fileKeys, String branchName) {
     LOGGER.info("===Updating server issues for {}", endpoint);
     update(fileKeys, fileKey -> fetchServerIssues(endpoint, client, engine, projectBinding, fileKey, branchName),
-      fileKey -> fetchServerHotspots(endpoint, client, engine, projectBinding, fileKey, branchName));
+      fileKey -> new ArrayList<>());
   }
 
   public void update(ConnectedSonarLintEngine engine, ProjectBinding projectBinding, String branchName, Collection<String> fileKeys) {

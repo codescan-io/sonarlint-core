@@ -158,7 +158,7 @@ public class IssueApi {
 
 
     for(Issue fileIssue : issues) {
-      LOG.info("file issues are "+fileIssue+", resolutin "+fileIssue.getResolution() +", key "+fileIssue.getStatus()+", message "+fileIssue.getMessage());
+//      LOG.info("file issues are "+fileIssue+", resolutin "+fileIssue.getResolution() +", key "+fileIssue.getStatus()+", message "+fileIssue.getMessage());
       String resolution = StringUtils.isNotEmpty(fileIssue.getResolution()) ? fileIssue.getResolution() : null;
       Builder builder = ScannerInput.ServerIssue.newBuilder()
               .setKey(fileIssue.getKey())

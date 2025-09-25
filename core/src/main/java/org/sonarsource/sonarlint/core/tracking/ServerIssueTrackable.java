@@ -67,11 +67,11 @@ public class ServerIssueTrackable implements Trackable {
   @Override
   public Integer getLine() {
     if (serverIssue instanceof LineLevelServerIssue) {
-      LOG.info("ServerIssue type: {}, line: {}", serverIssue.getClass().getSimpleName(), ((LineLevelServerIssue) serverIssue).getLine());
+//      LOG.info("ServerIssue type: {}, line: {}", serverIssue.getClass().getSimpleName(), ((LineLevelServerIssue) serverIssue).getLine());
       return ((LineLevelServerIssue) serverIssue).getLine();
     }
     if (serverIssue instanceof RangeLevelServerIssue) {
-      LOG.info("ServerIssue type: {}, line: {}", serverIssue.getClass().getSimpleName(), ((RangeLevelServerIssue) serverIssue).getTextRange().getStartLine());
+//      LOG.info("ServerIssue type: {}, line: {}", serverIssue.getClass().getSimpleName(), ((RangeLevelServerIssue) serverIssue).getTextRange().getStartLine());
       return ((RangeLevelServerIssue) serverIssue).getTextRange().getStartLine();
     }
     return null;
@@ -115,13 +115,13 @@ public class ServerIssueTrackable implements Trackable {
 
   @Override
   public String getServerIssueKey() {
-    LOG.info("issue key after resolutions "+serverIssue.getKey());
+//    LOG.info("issue key after resolutions "+serverIssue.getKey());
     return serverIssue.getKey();
   }
 
   @Override
   public boolean isResolved() {
-    LOG.info("is issue Resolved.... after resolutions "+serverIssue.isResolved());
+//    LOG.info("is issue Resolved.... after resolutions "+serverIssue.isResolved());
     return serverIssue.isResolved();
   }
 

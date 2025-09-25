@@ -44,7 +44,6 @@ public class IssueTracker {
             .forEach(trackedIssues::add);
 
     for (Trackable next : tracking.getUnmatchedRaws()) {
-      LOG.info("tracked "+next);
       if (next.getServerIssueKey() != null) {
         LOG.info("Disconnected {} {}", next.getRuleKey(), next.isResolved());
         // not matched with server anymore

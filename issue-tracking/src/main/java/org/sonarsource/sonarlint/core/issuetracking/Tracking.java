@@ -25,6 +25,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 
 /**
  * Store the state of tracking of issues.
@@ -43,9 +44,13 @@ public class Tracking<R extends Trackable, B extends Trackable> {
   private final Collection<R> raws;
   private final Collection<B> bases;
 
+  private static final SonarLintLogger LOG = SonarLintLogger.get();
+
+
   public Tracking(Supplier<Collection<R>> rawTrackableSupplier, Supplier<Collection<B>> baseTrackableSupplier) {
     this.raws = rawTrackableSupplier.get();
     this.bases = baseTrackableSupplier.get();
+    LOG.info("+++++Initializing Tracking - raw trackables {} base trackables {}", raws.size(), bases.size());
   }
 
   /**
@@ -60,10 +65,12 @@ public class Tracking<R extends Trackable, B extends Trackable> {
         result.add(r);
       }
     }
+    LOG.info("+++++Unmatched Raw count {}", result.size());
     return result;
   }
 
   public Map<R, B> getMatchedRaws() {
+    LOG.info("+++++Matched Raw count {}", rawToBase.size());
     return rawToBase;
   }
 
@@ -77,10 +84,14 @@ public class Tracking<R extends Trackable, B extends Trackable> {
         result.add(b);
       }
     }
+    LOG.info("+++++Unmatched Base count {}", result.size());
     return result;
   }
 
   void match(R raw, B base) {
+    LOG.info("++++++Matching Raw to Base {} {} {} {} - {} {} {} {}", raw.getRuleKey(), raw.getLineHash(), raw.getTextRange()!=null ? base.getTextRange().getHash() : "", raw.isResolved(),
+            base.getRuleKey(), base.getLineHash(), base.getTextRange()!=null ? base.getTextRange().getHash() : "", base.isResolved());
+
     rawToBase.put(raw, base);
     baseToRaw.put(base, raw);
   }

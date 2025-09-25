@@ -79,30 +79,31 @@ public class Tracker<R extends Trackable, B extends Trackable> {
       if (!baseSearch.containsKey(searchKey)) {
         baseSearch.put(searchKey, new ArrayList<>());
       }
+      LOG.info(">>>>Adding base to search: {} LH:{} TR:{} {}", base.getRuleKey(), base.getLineHash(),
+              base.getTextRange()!=null ? base.getTextRange().getHash() : "", base.isResolved());
       baseSearch.get(searchKey).add(base);
     }
 
-    LOG.info("Initial {} search keys matched", baseSearch.size());
-    if (!baseSearch.isEmpty()) {
-      baseSearch.entrySet().stream().forEach(e -> {
-        LOG.info("BM {} {}", e.getKey(), e.getValue());
-      });
-    }
-
+    LOG.info("----------------------------Initial {} search keys matched for {}", baseSearch.size(), factory.getClass().getSimpleName());
 
     for (R raw : tracking.getUnmatchedRaws()) {
       var rawKey = factory.apply(raw);
       Collection<B> bases = baseSearch.get(rawKey);
+      LOG.info(">>>>Printing raw for search: {} LH:{} TR:{} {}", raw.getRuleKey(), raw.getLineHash(),
+              raw.getTextRange()!=null ? raw.getTextRange().getHash() : "", raw.isResolved());
       if (bases != null && !bases.isEmpty()) {
         // TODO taking the first one. Could be improved if there are more than 2 issues on the same line.
         // Message could be checked to take the best one.
         var match = bases.iterator().next();
+        LOG.info(">----------Matched {} bases for key {}, taking first - {} {} {} {}", bases.size(), rawKey.getClass().getSimpleName(),
+                match.getRuleKey(), match.getLineHash(), match.getTextRange()!=null ? match.getTextRange().getHash() : "", match.isResolved());
+
         tracking.match(raw, match);
         baseSearch.get(rawKey).remove(match);
       }
     }
 
-    LOG.info("Final {} search keys matched", baseSearch.size());
+    LOG.info("----------------------------Final {} search keys matched, complete {}", baseSearch.size(), tracking.isComplete());
   }
 
   private interface SearchKey {
@@ -130,7 +131,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     @Override
     public boolean equals(Object o) {
       var that = (LineAndTextRangeHashKey) o;
-      LOG.info(">>> LineAndTextRangeHashKey Comparing {} {} {} to {} {} {}", ruleKey, textRangeHash, line, that.ruleKey, that.textRangeHash, that.line);
+//      LOG.info(">>> LineAndTextRangeHashKey Comparing {} {} {} to {} {} {}", ruleKey, textRangeHash, line, that.ruleKey, that.textRangeHash, that.line);
       // start with most discriminant field
       return Objects.equals(line, that.line)
         && Objects.equals(textRangeHash, that.textRangeHash)
@@ -171,7 +172,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     public boolean equals(Object o) {
       var that = (LineAndLineHashKey) o;
       // start with most discriminant field
-      LOG.info(">>> LineAndTextRangeHashKey Comparing {} {} {} to {} {} {}", ruleKey, lineHash, line, that.ruleKey, that.lineHash, that.line);
+//      LOG.info(">>> LineAndTextRangeHashKey Comparing {} {} {} to {} {} {}", ruleKey, lineHash, line, that.ruleKey, that.lineHash, that.line);
       return Objects.equals(line, that.line)
         && Objects.equals(lineHash, that.lineHash)
         && ruleKey.equals(that.ruleKey);
@@ -209,7 +210,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     public boolean equals(Object o) {
       var that = (LineHashKey) o;
       // start with most discriminant field
-      LOG.info(">>> LineHashKey Comparing {} {} to {} {}", ruleKey, lineHash, that.ruleKey, that.lineHash);
+//      LOG.info(">>> LineHashKey Comparing {} {} to {} {}", ruleKey, lineHash, that.ruleKey, that.lineHash);
       return Objects.equals(lineHash, that.lineHash)
         && ruleKey.equals(that.ruleKey);
     }
@@ -247,7 +248,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     @Override
     public boolean equals(Object o) {
       var that = (TextRangeHashAndMessageKey) o;
-      LOG.info(">>> TextRangeHashAndMessageKey Comparing {} {} {} to {} {} {}", ruleKey, textRangeHash, message, that.ruleKey, that.textRangeHash, that.message);
+//      LOG.info(">>> TextRangeHashAndMessageKey Comparing {} {} {} to {} {} {}", ruleKey, textRangeHash, message, that.ruleKey, that.textRangeHash, that.message);
 //      LOG.info(">>> TextRangeHashAndMessageKey Bool {} {} {}", Objects.equals(textRangeHash, that.textRangeHash),
 //              message.equals(that.message), ruleKey.equals(that.ruleKey));
       // start with most discriminant field
@@ -290,8 +291,8 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     public boolean equals(Object o) {
       var that = (LineAndMessageKey) o;
       // start with most discriminant field
-      LOG.info(">>> LineAndMessageKey Comparing {} {} {} to {} {} {}", ruleKey, message, line, that.ruleKey, that.message, that.line);
-      LOG.info(">>> LineAndMessageKey Bool {} {} {}", Objects.equals(line, that.line), message.equals(that.message), ruleKey.equals(that.ruleKey));
+//      LOG.info(">>> LineAndMessageKey Comparing {} {} {} to {} {} {}", ruleKey, message, line, that.ruleKey, that.message, that.line);
+//      LOG.info(">>> LineAndMessageKey Bool {} {} {}", Objects.equals(line, that.line), message.equals(that.message), ruleKey.equals(that.ruleKey));
       return Objects.equals(line, that.line)
         && message.equals(that.message)
         && ruleKey.equals(that.ruleKey);
@@ -329,7 +330,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     @Override
     public boolean equals(Object o) {
       var that = (TextRangeHashKey) o;
-      LOG.info(">>> TextRangeHashKey Comparing {} {} to {} {}", ruleKey, textRangeHash, that.ruleKey, that.textRangeHash);
+//      LOG.info(">>> TextRangeHashKey Comparing {} {} to {} {}", ruleKey, textRangeHash, that.ruleKey, that.textRangeHash);
 
       // start with most discriminant field
       return Objects.equals(textRangeHash, that.textRangeHash)
@@ -364,7 +365,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     @Override
     public boolean equals(Object o) {
       var that = (ServerIssueSearchKey) o;
-      LOG.info(">>> ServerIssueSearchKey Comparing {} to {}", serverIssueKey, that.serverIssueKey);
+//      LOG.info(">>> ServerIssueSearchKey Comparing {} to {}", serverIssueKey, that.serverIssueKey);
       return !isBlank(serverIssueKey) && !isBlank(that.serverIssueKey) && serverIssueKey.equals(that.serverIssueKey);
     }
 

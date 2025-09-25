@@ -65,9 +65,10 @@ public class CachingIssueTracker extends IssueTracker {
     LOG.info("In matchAndTrackAsBase");
     Collection<Trackable> current = cache.getLiveOrFail(file);
     if (current.isEmpty()) {
-      cache.put(file, trackables);
-      return trackables;
+      return Collections.emptyList();
     }
+    LOG.info("Current size: " + current.size());
+    LOG.info("Trackable size: " + trackables.size());
     var tracked = apply(trackables, current, true);
     cache.put(file, tracked);
     return tracked;

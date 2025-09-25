@@ -48,7 +48,7 @@ public abstract class ServerIssue<G extends ServerIssue<G>> {
     this.creationDate = creationDate;
     this.userSeverity = userSeverity;
     this.type = type;
-    LOG.info("server issue details are "+key+", "+resolved);
+//    LOG.info("server issue details are "+key+", "+resolved);
   }
 
   public String getKey() {
@@ -56,7 +56,7 @@ public abstract class ServerIssue<G extends ServerIssue<G>> {
   }
 
   public boolean isResolved() {
-    LOG.info("is reolved in server "+resolved);
+//    LOG.info("is reolved in server "+resolved);
     return resolved;
   }
 

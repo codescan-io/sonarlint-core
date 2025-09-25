@@ -41,7 +41,8 @@ class CombinedTrackable extends AbstractTrackable {
     this.serverIssueKey = base.getServerIssueKey();
     this.resolved = base.isResolved();
     this.reviewStatus = base.getReviewStatus();
-    LOG.info("CombinedTrackable {} {} {} {}", base.getRuleKey(), base.getLineHash(), base.getTextRange()!=null ? base.getTextRange().getHash() : "", base.isResolved());
+    LOG.info("CombinedTrackable Base {} {} {} {}", base.getRuleKey(), base.getLineHash(), base.getTextRange()!=null ? base.getTextRange().getHash() : "", base.isResolved());
+    LOG.info("CombinedTrackable Next {} {} {} {}", next.getRuleKey(), next.getLineHash(), next.getTextRange()!=null ? next.getTextRange().getHash() : "", next.isResolved());
     if (inheritSeverity) {
       this.severity = base.getSeverity();
       if (base.getType() != null) {
