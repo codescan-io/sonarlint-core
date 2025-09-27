@@ -156,9 +156,9 @@ public class IssueApi {
             false,
             new ProgressMonitor(null));
 
-
+LOG.info("issues downloaded from batch issues "+issues.size());
     for(Issue fileIssue : issues) {
-//      LOG.info("file issues are "+fileIssue+", resolutin "+fileIssue.getResolution() +", key "+fileIssue.getStatus()+", message "+fileIssue.getMessage());
+      LOG.info("file issues are "+fileIssue+", ====resolutin "+fileIssue.getResolution() +", ====key "+fileIssue.getStatus()+", ====message "+fileIssue.getMessage());
       String resolution = StringUtils.isNotEmpty(fileIssue.getResolution()) ? fileIssue.getResolution() : null;
       Builder builder = ScannerInput.ServerIssue.newBuilder()
               .setKey(fileIssue.getKey())

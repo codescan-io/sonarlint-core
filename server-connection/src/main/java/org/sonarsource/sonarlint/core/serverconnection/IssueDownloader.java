@@ -88,6 +88,7 @@ public class IssueDownloader {
     var issueApi = serverApi.issue();
 
     var apiResult = issueApi.pullIssues(projectKey, branchName, enabledLanguages, lastSync.map(Instant::toEpochMilli).orElse(null));
+    LOG.info("Pulled {} issues ({} closed) from server for project {}", apiResult, apiResult, projectKey);
     // Ignore project level issues
     var changedIssues = apiResult.getIssues()
       .stream()
@@ -103,40 +104,50 @@ public class IssueDownloader {
       .filter(IssueLite::getClosed)
       .map(IssueLite::getKey)
       .collect(Collectors.toSet());
+    LOG.info("After filtering project level issues, {} issues remain ({} closed) for project {} and isue are {}", changedIssues.size() + closedIssueKeys.size(),
+      closedIssueKeys.size(), projectKey,changedIssues);
 
     return new PullResult(Instant.ofEpochMilli(apiResult.getTimestamp().getQueryTimestamp()), changedIssues, closedIssueKeys);
   }
 
   private static ServerIssue convertBatchIssue(ScannerInput.ServerIssue batchIssueFromWs) {
     var ruleKey = batchIssueFromWs.getRuleRepository() + ":" + batchIssueFromWs.getRuleKey();
-    // We have filtered out issues without file path earlier
     var filePath = batchIssueFromWs.getPath();
     var creationDate = Instant.ofEpochMilli(batchIssueFromWs.getCreationDate());
     var userSeverity = batchIssueFromWs.getManualSeverity() ? IssueSeverity.valueOf(batchIssueFromWs.getSeverity().name()) : null;
     var ruleType = RuleType.valueOf(batchIssueFromWs.getType());
+    var resolution = batchIssueFromWs.hasResolution() ? batchIssueFromWs.getResolution() : null;
+    var status = batchIssueFromWs.hasStatus() ? batchIssueFromWs.getStatus() : null;
+    LOG.info("convertBatchIssue: key=" + batchIssueFromWs.getKey() + ", resolution=" + resolution + ", status=" + status);
     if (batchIssueFromWs.hasLine()) {
+      LOG.info("convertBatchIssue: Creating LineLevelServerIssue for key=" + batchIssueFromWs.getKey());
       return new LineLevelServerIssue(batchIssueFromWs.getKey(), batchIssueFromWs.hasResolution(), ruleKey, batchIssueFromWs.getMsg(), batchIssueFromWs.getChecksum(), filePath,
-        creationDate, userSeverity, ruleType, batchIssueFromWs.getLine());
+        creationDate, userSeverity, ruleType, batchIssueFromWs.getLine(), resolution, status);
     } else {
+      LOG.info("convertBatchIssue: Creating FileLevelServerIssue for key=" + batchIssueFromWs.getKey());
       return new FileLevelServerIssue(batchIssueFromWs.getKey(), batchIssueFromWs.hasResolution(), ruleKey, batchIssueFromWs.getMsg(), filePath, creationDate, userSeverity,
-        ruleType);
+        ruleType, resolution, status);
     }
   }
 
   private static ServerIssue convertLiteIssue(IssueLite liteIssueFromWs) {
     var mainLocation = liteIssueFromWs.getMainLocation();
-    // We have filtered out issues without file path earlier
     var filePath = mainLocation.getFilePath();
     var creationDate = Instant.ofEpochMilli(liteIssueFromWs.getCreationDate());
     var userSeverity = liteIssueFromWs.hasUserSeverity() ? IssueSeverity.valueOf(liteIssueFromWs.getUserSeverity().name()) : null;
     var ruleType = RuleType.valueOf(liteIssueFromWs.getType().name());
+    String resolutionLite = null; // TODO: Add support when IssueLite provides resolution
+    String statusLite = null;     // TODO: Add support when IssueLite provides status
+    LOG.info("convertLiteIssue: key=" + liteIssueFromWs.getKey() + ", resolution=" + resolutionLite + ", status=" + statusLite);
     if (mainLocation.hasTextRange()) {
+      LOG.info("convertLiteIssue: Creating RangeLevelServerIssue for key=" + liteIssueFromWs.getKey());
       return new RangeLevelServerIssue(liteIssueFromWs.getKey(), liteIssueFromWs.getResolved(), liteIssueFromWs.getRuleKey(), mainLocation.getMessage(),
         filePath, creationDate, userSeverity,
-        ruleType, toServerIssueTextRange(mainLocation.getTextRange()));
+        ruleType, toServerIssueTextRange(mainLocation.getTextRange()), resolutionLite, statusLite);
     } else {
+      LOG.info("convertLiteIssue: Creating FileLevelServerIssue for key=" + liteIssueFromWs.getKey());
       return new FileLevelServerIssue(liteIssueFromWs.getKey(), liteIssueFromWs.getResolved(), liteIssueFromWs.getRuleKey(), mainLocation.getMessage(),
-        filePath, creationDate, userSeverity, ruleType);
+        filePath, creationDate, userSeverity, ruleType, resolutionLite, statusLite);
     }
   }
 
