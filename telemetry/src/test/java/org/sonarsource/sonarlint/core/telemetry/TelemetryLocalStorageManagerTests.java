@@ -165,7 +165,7 @@ class TelemetryLocalStorageManagerTests {
         try {
           latch.await();
         } catch (InterruptedException e) {
-          e.printStackTrace();
+          System.err.println(e.getMessage());
         }
         storage.tryUpdateAtomically(data -> {
           data.setNumUseDays(data.numUseDays() + 1);
@@ -179,7 +179,7 @@ class TelemetryLocalStorageManagerTests {
       } catch (ExecutionException e) {
         fail(e.getCause());
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        System.err.println(e.getMessage());
       }
     });
     assertThat(storage.tryRead().numUseDays()).isEqualTo(nThreads);

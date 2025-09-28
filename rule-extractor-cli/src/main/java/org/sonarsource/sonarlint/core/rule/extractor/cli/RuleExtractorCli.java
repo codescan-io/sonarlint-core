@@ -80,7 +80,7 @@ public class RuleExtractorCli implements Callable<Integer> {
       }
       return 0;
     } catch (Exception e) {
-      e.printStackTrace(System.err);
+      System.err.println(e.getMessage());
       return -1;
     }
   }
