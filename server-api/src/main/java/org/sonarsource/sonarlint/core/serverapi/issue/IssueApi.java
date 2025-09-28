@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.sonar.scanner.protocol.Constants;
 import org.sonar.scanner.protocol.input.ScannerInput;
 import org.sonarsource.sonarlint.core.commons.Language;
@@ -146,6 +147,8 @@ public class IssueApi {
     var batchIssueUrl = new StringBuilder();
     batchIssueUrl.append(getSonar10BatchIssueUrl(key));
     batchIssueUrl.append(getUrlBranchParameter(branchName));
+    serverApiHelper.getOrganizationKey()
+            .ifPresent(org -> batchIssueUrl.append("&organization=").append(UrlUtils.urlEncode(org)));
 
     List<Issue> issues = new ArrayList<>();
     List<ScannerInput.ServerIssue> response = new ArrayList<>();
@@ -160,7 +163,8 @@ public class IssueApi {
 
 
     for(Issue fileIssue : issues) {
-      response.add(ScannerInput.ServerIssue.newBuilder()
+      String resolution = StringUtils.isNotEmpty(fileIssue.getResolution()) ? fileIssue.getResolution() : null;
+      ScannerInput.ServerIssue.Builder builder = ScannerInput.ServerIssue.newBuilder()
               .setKey(fileIssue.getKey())
               .setRuleKey(fileIssue.getRule())
               .setChecksum(fileIssue.getHash())
@@ -168,8 +172,12 @@ public class IssueApi {
               .setLine(fileIssue.getLine())
               .setPath(fileIssue.getComponent())
               .setType(fileIssue.getType().name())
-              .setSeverity(Constants.Severity.forNumber(fileIssue.getSeverity().getNumber() + 1))
-              .build());
+              .setSeverity(Constants.Severity.forNumber(fileIssue.getSeverity().getNumber() + 1));
+
+      if (StringUtils.isNotEmpty(resolution)) {
+        builder.setResolution(resolution);
+      }
+      response.add(builder.build());
     }
 
     return response;
