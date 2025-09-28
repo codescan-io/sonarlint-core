@@ -106,7 +106,8 @@ public class IssueDownloader {
   }
 
   private static ServerIssue convertBatchIssue(ScannerInput.ServerIssue batchIssueFromWs) {
-    var ruleKey = batchIssueFromWs.getRuleRepository() + ":" + batchIssueFromWs.getRuleKey();
+//    var ruleKey = batchIssueFromWs.getRuleRepository() + ":" + batchIssueFromWs.getRuleKey();
+    var ruleKey = batchIssueFromWs.getRuleKey();
     // We have filtered out issues without file path earlier
     var filePath = batchIssueFromWs.getPath();
     var creationDate = Instant.ofEpochMilli(batchIssueFromWs.getCreationDate());
