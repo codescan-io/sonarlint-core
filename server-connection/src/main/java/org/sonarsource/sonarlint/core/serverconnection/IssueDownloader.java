@@ -66,14 +66,15 @@ public class IssueDownloader {
     List<ServerIssue> result = new ArrayList<>();
 
     var batchIssues = issueApi.downloadAllFromBatchIssues(key, branchName);
-
+LOG.info("Downloaded {} issues from batch for project {} on branch {}", batchIssues.size(), key, branchName);
     for (ScannerInput.ServerIssue batchIssue : batchIssues) {
+      LOG.info("Processing batch issue: {}", batchIssue);
       // We ignore project level issues
       if (!RulesApi.TAINT_REPOS.contains(batchIssue.getRuleRepository()) && batchIssue.hasPath()) {
         result.add(convertBatchIssue(batchIssue));
       }
     }
-
+LOG.info("After filtering project level issues, {} issues remain for project {} and result ", result.size(), key,result);
     return result;
   }
 
@@ -86,7 +87,7 @@ public class IssueDownloader {
    */
   public PullResult downloadFromPull(ServerApi serverApi, String projectKey, String branchName, Optional<Instant> lastSync) {
     var issueApi = serverApi.issue();
-
+LOG.info("Pulling issues from server for project {} on branch {} since {}", projectKey, branchName, lastSync);
     var apiResult = issueApi.pullIssues(projectKey, branchName, enabledLanguages, lastSync.map(Instant::toEpochMilli).orElse(null));
     LOG.info("Pulled {} issues ({} closed) from server for project {}", apiResult, apiResult, projectKey);
     // Ignore project level issues
@@ -110,25 +111,77 @@ public class IssueDownloader {
     return new PullResult(Instant.ofEpochMilli(apiResult.getTimestamp().getQueryTimestamp()), changedIssues, closedIssueKeys);
   }
 
-  private static ServerIssue convertBatchIssue(ScannerInput.ServerIssue batchIssueFromWs) {
-    var ruleKey = batchIssueFromWs.getRuleRepository() + ":" + batchIssueFromWs.getRuleKey();
-    var filePath = batchIssueFromWs.getPath();
-    var creationDate = Instant.ofEpochMilli(batchIssueFromWs.getCreationDate());
-    var userSeverity = batchIssueFromWs.getManualSeverity() ? IssueSeverity.valueOf(batchIssueFromWs.getSeverity().name()) : null;
-    var ruleType = RuleType.valueOf(batchIssueFromWs.getType());
-    var resolution = batchIssueFromWs.hasResolution() ? batchIssueFromWs.getResolution() : null;
-    var status = batchIssueFromWs.hasStatus() ? batchIssueFromWs.getStatus() : null;
-    LOG.info("convertBatchIssue: key=" + batchIssueFromWs.getKey() + ", resolution=" + resolution + ", status=" + status);
-    if (batchIssueFromWs.hasLine()) {
-      LOG.info("convertBatchIssue: Creating LineLevelServerIssue for key=" + batchIssueFromWs.getKey());
-      return new LineLevelServerIssue(batchIssueFromWs.getKey(), batchIssueFromWs.hasResolution(), ruleKey, batchIssueFromWs.getMsg(), batchIssueFromWs.getChecksum(), filePath,
-        creationDate, userSeverity, ruleType, batchIssueFromWs.getLine(), resolution, status);
+  private static ServerIssue convertBatchIssue(ScannerInput.ServerIssue batch) {
+    var ruleKey      = batch.getRuleRepository() + ":" + batch.getRuleKey();
+    var filePath     = batch.getPath();
+    var creationDate = Instant.ofEpochMilli(batch.getCreationDate());
+    var userSeverity = batch.getManualSeverity() ? IssueSeverity.valueOf(batch.getSeverity().name()) : null;
+    var ruleType     = RuleType.valueOf(batch.getType());
+
+    String repo = batch.getRuleRepository();
+    String keyFromServer = batch.getRuleKey(); // may already be "sf:AvoidSoqlInLoops" in some payloads
+
+    if (keyFromServer != null && keyFromServer.contains(":")) {
+      // Already fully-qualified on the wire; just strip a possible leading colon
+      ruleKey = keyFromServer.startsWith(":") ? keyFromServer.substring(1) : keyFromServer;
+    } else if (repo != null && !repo.isBlank()) {
+      ruleKey = repo + ":" + keyFromServer;
     } else {
-      LOG.info("convertBatchIssue: Creating FileLevelServerIssue for key=" + batchIssueFromWs.getKey());
-      return new FileLevelServerIssue(batchIssueFromWs.getKey(), batchIssueFromWs.hasResolution(), ruleKey, batchIssueFromWs.getMsg(), filePath, creationDate, userSeverity,
-        ruleType, resolution, status);
+      // Fallback: just the key as-is
+      ruleKey = keyFromServer;
+    }
+
+LOG.info("convertBatchIssue: key={}, ruleKey={}, filePath={}, creationDate={}, userSeverity={}, ruleType={}",
+      batch.getKey(), ruleKey, filePath, creationDate, userSeverity, ruleType);
+    // Map server resolution -> boolean resolved
+    String resolution = batch.hasResolution() ? batch.getResolution() : null;
+    LOG.info("convertBatchIssue: resolution={}", resolution);
+    var status = batch.hasStatus() ? batch.getStatus() : null;
+    LOG.info("convertBatchIssue: status={}", status);
+
+    boolean isResolved =
+            "FALSE-POSITIVE".equals(resolution)
+                    || "WONTFIX".equals(resolution)
+                    || "FIXED".equals(resolution)
+                    || "CONFIRM".equals(resolution);
+
+    // Prefer server checksum as the pairing fingerprint; otherwise compute a stable fallback
+    String lineHash = (batch.getChecksum() != null && !batch.getChecksum().isEmpty())
+            ? batch.getChecksum()
+            : fallbackLineHash(ruleKey, batch.getMsg(), batch.hasLine() ? batch.getLine() : null);
+
+    LOG.info("convertBatchIssue: key={}, resolution={}, resolved={}", batch.getKey(), resolution, isResolved);
+
+    if (batch.hasLine()) {
+      LOG.info("convertBatchIssue: Creating LineLevelServerIssue for key={}, lineHash={}", batch.getKey(), lineHash);
+      return new LineLevelServerIssue(
+              batch.getKey(), isResolved, ruleKey, batch.getMsg(), lineHash,
+              filePath, creationDate, userSeverity, ruleType, batch.getLine()
+      );
+    } else {
+      LOG.info("convertBatchIssue: Creating FileLevelServerIssue for key={}", batch.getKey());
+      return new FileLevelServerIssue(
+              batch.getKey(), isResolved, ruleKey, batch.getMsg(),
+              filePath, creationDate, userSeverity, ruleType
+      );
     }
   }
+
+  private static String fallbackLineHash(String ruleKey, String msg, Integer line) {
+    LOG.info("Computing fallback line hash for ruleKey={}, line={}", ruleKey, line);
+    String normalizedMsg = msg == null ? "" : msg.replaceAll("\\s+", " ").trim().toLowerCase();
+    String payload = ruleKey + "|" + normalizedMsg + "|" + (line == null ? "" : line.toString());
+    try {
+      var md = java.security.MessageDigest.getInstance("SHA-1");
+      byte[] dig = md.digest(payload.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+      var sb = new StringBuilder(dig.length * 2);
+      for (byte b : dig) sb.append(String.format("%02x", b));
+      return sb.toString();
+    } catch (Exception e) {
+      return Integer.toHexString(payload.hashCode());
+    }
+  }
+
 
   private static ServerIssue convertLiteIssue(IssueLite liteIssueFromWs) {
     var mainLocation = liteIssueFromWs.getMainLocation();
@@ -143,11 +196,11 @@ public class IssueDownloader {
       LOG.info("convertLiteIssue: Creating RangeLevelServerIssue for key=" + liteIssueFromWs.getKey());
       return new RangeLevelServerIssue(liteIssueFromWs.getKey(), liteIssueFromWs.getResolved(), liteIssueFromWs.getRuleKey(), mainLocation.getMessage(),
         filePath, creationDate, userSeverity,
-        ruleType, toServerIssueTextRange(mainLocation.getTextRange()), resolutionLite, statusLite);
+        ruleType, toServerIssueTextRange(mainLocation.getTextRange()));
     } else {
       LOG.info("convertLiteIssue: Creating FileLevelServerIssue for key=" + liteIssueFromWs.getKey());
       return new FileLevelServerIssue(liteIssueFromWs.getKey(), liteIssueFromWs.getResolved(), liteIssueFromWs.getRuleKey(), mainLocation.getMessage(),
-        filePath, creationDate, userSeverity, ruleType, resolutionLite, statusLite);
+        filePath, creationDate, userSeverity, ruleType);
     }
   }
 

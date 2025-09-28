@@ -130,6 +130,7 @@ public class SynchronizationServiceImpl {
 
   private void autoSync(String connectionId, List<BoundConfigurationScope> boundConfigurationScopes, ProgressNotifier notifier, Set<String> synchronizedConfScopeIds,
     float progress, float progressGap) {
+    LOG.info("Auto-sync for connection id: {}, {} bound configuration scopes", connectionId, boundConfigurationScopes.size());
     if (boundConfigurationScopes.isEmpty()) {
       return;
     }
@@ -148,6 +149,7 @@ public class SynchronizationServiceImpl {
 
   private void autoSyncBoundConfigurationScope(BoundConfigurationScope boundScope, ServerApi serverApi,
     ServerConnection serverConnection, Set<String> synchronizedConfScopeIds) {
+    LOG.info("Auto-sync for configuration scope id: {}, project key: {}", boundScope.configurationScopeId, boundScope.sonarProjectKey);
     branchService.getEffectiveActiveSonarProjectBranch(boundScope.configurationScopeId).ifPresent(branch -> {
       serverConnection.syncServerIssuesForProject(serverApi, boundScope.sonarProjectKey, branch);
       /*if (languageSupportRepository.areTaintVulnerabilitiesSupported()) {

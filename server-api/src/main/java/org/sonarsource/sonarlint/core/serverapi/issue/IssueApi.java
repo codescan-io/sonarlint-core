@@ -72,6 +72,7 @@ public class IssueApi {
   }
 
   public static boolean supportIssuePull(boolean isSonarCloud, Version serverVersion) {
+    LOG.info("isSonarCloud "+isSonarCloud+", serverVersion "+serverVersion);
     return !isSonarCloud && serverVersion.compareToIgnoreQualifier(IssueApi.MIN_SQ_VERSION_SUPPORTING_PULL) >= 0;
   }
 
@@ -132,6 +133,7 @@ public class IssueApi {
 
   private static String getUrlBranchParameter(@Nullable String branchName) {
     if (branchName != null) {
+      LOG.info("branch name is ====136 "+branchName);
       return "&branch=" + urlEncode(branchName);
     }
     return "";
@@ -158,8 +160,9 @@ public class IssueApi {
 
 LOG.info("issues downloaded from batch issues "+issues.size());
     for(Issue fileIssue : issues) {
-      LOG.info("file issues are "+fileIssue+", ====resolutin "+fileIssue.getResolution() +", ====key "+fileIssue.getStatus()+", ====message "+fileIssue.getMessage());
+      LOG.info("file issues are "+fileIssue+", ====resolutin "+fileIssue.getResolution() +", ====key "+fileIssue.getStatus());
       String resolution = StringUtils.isNotEmpty(fileIssue.getResolution()) ? fileIssue.getResolution() : null;
+      LOG.info("resolution is ======163 : "+resolution);
       Builder builder = ScannerInput.ServerIssue.newBuilder()
               .setKey(fileIssue.getKey())
               .setRuleKey(fileIssue.getRule())
@@ -174,11 +177,14 @@ LOG.info("issues downloaded from batch issues "+issues.size());
       LOG.debug("Downloading file issue {} Resol {} CD {}", builder.getKey(), builder.getResolution(), builder.getCreationDate());
 
       if (resolution != null) {
+        LOG.info("resolution is ======173 is not null: "+resolution);
+        LOG.info("setting resolution to builder,++= "+builder);
         builder.setResolution(resolution);
       }
+      LOG.info("adding to response+++ "+response);
       response.add(builder.build());
     }
-
+LOG.info("response from batch issues "+response.size());
     return response;
   }
 
@@ -187,6 +193,7 @@ LOG.info("issues downloaded from batch issues "+issues.size());
   }
 
   private static String getSonar10BatchIssueUrl(String key) {
+    LOG.info("in getSonar10BatchIssueUrl method, key is "+key);
     return "/api/issues/search.protobuf?componentKeys=" + UrlUtils.urlEncode(key);
   }
 
@@ -217,7 +224,7 @@ LOG.info("issues downloaded from batch issues "+issues.size());
 
   public IssuesPullResult pullIssues(String projectKey, String branchName, Set<Language> enabledLanguages, @Nullable Long changedSince) {
     String url =  "/api/issues/pull?projectKey=" + projectKey + "&branchName=" + branchName + "&changedSince=" + changedSince;
-    LOG.info("[IssuePull] Request URL = {}", url);
+    LOG.info("[-------IssuePull] Request URL = {}", url);
     LOG.info("service api helper issue "+serverApiHelper.get(url));
     return ServerApiHelper.processTimed(
       () -> serverApiHelper.get(getPullIssuesUrl(projectKey, branchName, enabledLanguages, changedSince)),
@@ -273,6 +280,7 @@ LOG.info("issues downloaded from batch issues "+issues.size());
   }
 
   public CompletableFuture<Void> changeStatusAsync(String issueKey, String status) {
+    LOG.info("Changing status of issue {} to {}", truncate(issueKey, 10), status);
     var body = "issue=" + urlEncode(issueKey) + "&transition=" + urlEncode(status);
     return serverApiHelper.postAsync("/api/issues/do_transition", FORM_URL_ENCODED_CONTENT_TYPE, body)
       .thenAccept(response -> {

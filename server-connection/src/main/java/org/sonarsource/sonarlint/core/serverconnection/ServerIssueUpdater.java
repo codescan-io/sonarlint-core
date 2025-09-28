@@ -44,16 +44,21 @@ public class ServerIssueUpdater {
   }
 
   public void update(ServerApi serverApi, String projectKey, String branchName, boolean isSonarCloud, Version serverVersion) {
+    LOG.info("Updating issues for project " + projectKey + " on branch " + branchName);
+    LOG.info(IssueApi.supportIssuePull(isSonarCloud, serverVersion) + " -----56");
     if (IssueApi.supportIssuePull(isSonarCloud, serverVersion)) {
       sync(serverApi, projectKey, branchName);
     } else {
       List<ServerIssue> issues = issueDownloader.downloadFromBatch(serverApi, projectKey, branchName);
+      LOG.info("Downloaded " + issues.size() + " issues for project " + projectKey + " on branch " + branchName);
       storage.project(projectKey).findings().replaceAllIssuesOfBranch(branchName, issues);
     }
   }
 
   public void sync(ServerApi serverApi, String projectKey, String branchName) {
+    LOG.info("Synchronizing issues for project " + projectKey + " on branch " + branchName);
     var lastSync = storage.project(projectKey).findings().getLastIssueSyncTimestamp(branchName);
+    LOG.info("Last sync was at " + lastSync);
     var result = issueDownloader.downloadFromPull(serverApi, projectKey, branchName, lastSync);
     storage.project(projectKey).findings().mergeIssues(branchName, result.getChangedIssues(), result.getClosedIssueKeys(), result.getQueryTimestamp());
   }
@@ -67,15 +72,21 @@ public class ServerIssueUpdater {
 
   public void updateFileIssues(ServerApi serverApi, ProjectBinding projectBinding, String ideFilePath, String branchName, boolean isSonarCloud,
     Version serverVersion) {
+    LOG.info("Updating issues for file " + ideFilePath + " on branch " + branchName);
     String serverFilePath = IssueStorePaths.idePathToServerPath(projectBinding, ideFilePath);
     if (serverFilePath == null) {
+      LOG.info("Cannot find server path for file: " + ideFilePath + ", skipping issue download");
       return;
     }
     var fileKey = IssueStorePaths.componentKey(projectBinding, serverFilePath);
+    LOG.info("File key is:====82 " + fileKey);
     if (!IssueApi.supportIssuePull(isSonarCloud, serverVersion)) {
+LOG.info("In updateFileIssues method==== if it is cloud");
+LOG.info(!IssueApi.supportIssuePull(isSonarCloud, serverVersion)+" -----79");
       List<ServerIssue> issues = new ArrayList<>();
       try {
         issues.addAll(issueDownloader.downloadFromBatch(serverApi, fileKey, branchName));
+        LOG.info("Downloaded22222 " + issues.size() + " issues for file " + ideFilePath + " on branch " + branchName);
       } catch (Exception e) {
         // null as cause so that it doesn't get wrapped
         throw new DownloadException("Failed to update file issues: " + e.getMessage(), null);

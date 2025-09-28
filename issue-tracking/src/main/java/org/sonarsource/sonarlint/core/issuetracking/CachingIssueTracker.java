@@ -50,6 +50,7 @@ public class CachingIssueTracker extends IssueTracker {
       tracked = apply(cache.getCurrentTrackables(file), trackables, false);
     }
     cache.put(file, tracked);
+    LOG.info("Tracked size in cache: " + cache+" and tracked ++ "+tracked);
     return tracked;
   }
 
@@ -67,14 +68,19 @@ public class CachingIssueTracker extends IssueTracker {
     if (current.isEmpty()) {
       return Collections.emptyList();
     }
+    LOG.info("Trackable {} and Current {}", trackables, current);
     LOG.info("Current size: " + current.size());
     LOG.info("Trackable size: " + trackables.size());
     var tracked = apply(trackables, current, true);
+    LOG.info("cache in matchAndTrack as base "+cache);
     cache.put(file, tracked);
+    LOG.info("cache in matchAndTrack as base "+cache+" also tracked "+tracked);
+
     return tracked;
   }
 
   public void clear() {
+    LOG.info("Clearing cache ===== "+cache);
     cache.clear();
   }
 

@@ -38,6 +38,20 @@ import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 public class Tracker<R extends Trackable, B extends Trackable> {
   private static final SonarLintLogger LOG = SonarLintLogger.get();
 
+  private static String normalizeRule(String rk) {
+    LOG.info("Normalizing rule key in tracker: {}", rk);
+    if (rk == null) return null;
+    LOG.info("Normalized rule key in tracker: {}", rk.startsWith(":") ? rk.substring(1) : rk);
+    return rk.startsWith(":") ? rk.substring(1) : rk;
+  }
+
+  private static String normMsg(String s) {
+    LOG.info("Normalizing message in tracker: {}", s);
+    LOG.info("Normalized message in tracker: {}", s == null ? "" : s.replaceAll("\\s+", " ").trim().toLowerCase());
+    return s == null ? "" : s.replaceAll("\\s+", " ").trim().toLowerCase();
+  }
+
+
   public Tracking<R, B> track(Supplier<Collection<R>> rawTrackableSupplier, Supplier<Collection<B>> baseTrackableSupplier) {
     var tracking = new Tracking<>(rawTrackableSupplier, baseTrackableSupplier);
 
@@ -70,6 +84,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
 
   private void match(Tracking<R, B> tracking, SearchKeyFactory factory) {
     if (tracking.isComplete()) {
+      LOG.info(">>>>Tracking complete, skipping match for {}", factory.getClass().getSimpleName());
       return;
     }
 
@@ -88,9 +103,11 @@ public class Tracker<R extends Trackable, B extends Trackable> {
 
     for (R raw : tracking.getUnmatchedRaws()) {
       var rawKey = factory.apply(raw);
+      LOG.info(">>>>Searching raw for key: {}", rawKey.getClass().getSimpleName()+" rawww "+raw);
       Collection<B> bases = baseSearch.get(rawKey);
       LOG.info(">>>>Printing raw for search: {} LH:{} TR:{} {}", raw.getRuleKey(), raw.getLineHash(),
               raw.getTextRange()!=null ? raw.getTextRange().getHash() : "", raw.isResolved());
+      LOG.info("bases found are "+bases+" and base search size is "+baseSearch.size());
       if (bases != null && !bases.isEmpty()) {
         // TODO taking the first one. Could be improved if there are more than 2 issues on the same line.
         // Message could be checked to take the best one.
@@ -98,6 +115,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
         LOG.info(">----------Matched {} bases for key {}, taking first - {} {} {} {}", bases.size(), rawKey.getClass().getSimpleName(),
                 match.getRuleKey(), match.getLineHash(), match.getTextRange()!=null ? match.getTextRange().getHash() : "", match.isResolved());
 
+        LOG.info("trying to match raw and match ===="+raw+" with "+match);
         tracking.match(raw, match);
         baseSearch.get(rawKey).remove(match);
       }
@@ -162,7 +180,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     private final String lineHash;
 
     LineAndLineHashKey(Trackable trackable) {
-      this.ruleKey = trackable.getRuleKey();
+      this.ruleKey = normalizeRule(trackable.getRuleKey());
       this.line = trackable.getLine();
       this.lineHash = trackable.getLineHash();
     }
@@ -201,7 +219,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     private final String lineHash;
 
     LineHashKey(Trackable trackable) {
-      this.ruleKey = trackable.getRuleKey();
+      this.ruleKey = normalizeRule(trackable.getRuleKey());
       this.lineHash = trackable.getLineHash();
     }
 
@@ -238,8 +256,9 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     private final String textRangeHash;
 
     TextRangeHashAndMessageKey(Trackable trackable) {
-      this.ruleKey = trackable.getRuleKey();
-      this.message = trackable.getMessage();
+      this.ruleKey = normalizeRule(trackable.getRuleKey());
+
+      this.message = normMsg(trackable.getMessage()); // normalize
       var textRange = trackable.getTextRange();
       this.textRangeHash = textRange != null ? textRange.getHash() : null;
     }
@@ -281,8 +300,8 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     private final Integer line;
 
     LineAndMessageKey(Trackable trackable) {
-      this.ruleKey = trackable.getRuleKey();
-      this.message = trackable.getMessage();
+      this.ruleKey = normalizeRule(trackable.getRuleKey());
+      this.message = normMsg(trackable.getMessage()); // normalize
       this.line = trackable.getLine();
     }
 
@@ -321,7 +340,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
     private final String textRangeHash;
 
     TextRangeHashKey(Trackable trackable) {
-      this.ruleKey = trackable.getRuleKey();
+      this.ruleKey = normalizeRule(trackable.getRuleKey());
       var textRange = trackable.getTextRange();
       this.textRangeHash = textRange != null ? textRange.getHash() : null;
     }
@@ -344,6 +363,7 @@ public class Tracker<R extends Trackable, B extends Trackable> {
       return result;
     }
   }
+
 
   private enum TextRangeHashKeyFactory implements SearchKeyFactory {
     INSTANCE;

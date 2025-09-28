@@ -36,6 +36,7 @@ public abstract class ServerIssue<G extends ServerIssue<G>> {
   private Instant creationDate;
   private IssueSeverity userSeverity;
   private RuleType type;
+
   private static final SonarLintLogger LOG = SonarLintLogger.get();
 
 
@@ -48,7 +49,7 @@ public abstract class ServerIssue<G extends ServerIssue<G>> {
     this.creationDate = creationDate;
     this.userSeverity = userSeverity;
     this.type = type;
-//    LOG.info("server issue details are "+key+", "+resolved);
+    LOG.info("server issue details are "+key+", "+resolved);
   }
 
   public String getKey() {

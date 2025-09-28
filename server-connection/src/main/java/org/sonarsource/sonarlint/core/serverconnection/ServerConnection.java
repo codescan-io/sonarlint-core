@@ -173,6 +173,7 @@ public class ServerConnection {
   public void downloadServerIssuesForFile(EndpointParams endpoint, HttpClient client, ProjectBinding projectBinding, String ideFilePath, String branchName) {
     var serverApi = new ServerApi(new ServerApiHelper(endpoint, client));
     var serverVersion = readOrSynchronizeServerVersion(serverApi);
+    LOG.info("Server version is=== 176 " + serverVersion);
     issuesUpdater.updateFileIssues(serverApi, projectBinding, ideFilePath, branchName, isSonarCloud, serverVersion);
   }
 
@@ -184,6 +185,7 @@ public class ServerConnection {
   }
 
   private Version readOrSynchronizeServerVersion(ServerApi serverApi) {
+    LOG.info("Reading or synchronizing server version");
     return serverInfoSynchronizer.readOrSynchronizeServerInfo(serverApi).getVersion();
   }
 
@@ -226,7 +228,9 @@ public class ServerConnection {
   }
 
   public void syncServerIssuesForProject(ServerApi serverApi, String projectKey, String branchName) {
+    LOG.info("Server version is=== 231 " + readOrSynchronizeServerVersion(serverApi));
     var serverVersion = readOrSynchronizeServerVersion(serverApi);
+    LOG.info("in oor not to sync "+IssueApi.supportIssuePull(isSonarCloud, serverVersion) + " ----233");
     if (IssueApi.supportIssuePull(isSonarCloud, serverVersion)) {
       LOG.info("[SYNC] Synchronizing issues for project '{}' on branch '{}'", projectKey, branchName);
       issuesUpdater.sync(serverApi, projectKey, branchName);
