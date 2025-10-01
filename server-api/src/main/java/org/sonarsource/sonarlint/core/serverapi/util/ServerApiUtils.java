@@ -34,16 +34,54 @@ public class ServerApiUtils {
 
   private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DATETIME_FORMAT);
 
-  public static String extractCodeSnippet(String sourceCode, TextRange textRange) {
+  public static String extractCodeSnippet(@Nullable String sourceCode, TextRange textRange) {
+    if (sourceCode == null || sourceCode.isEmpty()) {
+      return "";
+    }
     return extractCodeSnippet(sourceCode.split("\\r?\\n"), textRange);
   }
 
   private static String extractCodeSnippet(String[] sourceCodeLines, TextRange textRange) {
+    // Validate textRange parameters
+    if (textRange.getStartLine() <= 0 || textRange.getEndLine() <= 0) {
+      return "";
+    }
+    if (textRange.getStartLine() > textRange.getEndLine()) {
+      return "";
+    }
+    if (textRange.getStartLine() > sourceCodeLines.length || textRange.getEndLine() > sourceCodeLines.length) {
+      return "";
+    }
+    
     if (textRange.getStartLine() == textRange.getEndLine()) {
-      var fullline = sourceCodeLines[textRange.getStartLine() - 1];
+      var lineIndex = textRange.getStartLine() - 1;
+      var fullline = sourceCodeLines[lineIndex];
+      
+      // Validate offsets within the line
+      if (textRange.getStartOffset() < 0 || textRange.getEndOffset() < 0) {
+        return "";
+      }
+      if (textRange.getStartOffset() > textRange.getEndOffset()) {
+        return "";
+      }
+      if (textRange.getStartOffset() > fullline.length() || textRange.getEndOffset() > fullline.length()) {
+        return "";
+      }
+      
       return fullline.substring(textRange.getStartOffset(), textRange.getEndOffset());
     } else {
       var linesOfTextRange = Arrays.copyOfRange(sourceCodeLines, textRange.getStartLine() - 1, textRange.getEndLine());
+      
+      // Validate start offset for first line
+      if (textRange.getStartOffset() < 0 || textRange.getStartOffset() > linesOfTextRange[0].length()) {
+        return "";
+      }
+      
+      // Validate end offset for last line
+      if (textRange.getEndOffset() < 0 || textRange.getEndOffset() > linesOfTextRange[linesOfTextRange.length - 1].length()) {
+        return "";
+      }
+      
       linesOfTextRange[0] = linesOfTextRange[0].substring(textRange.getStartOffset());
       linesOfTextRange[linesOfTextRange.length - 1] = linesOfTextRange[linesOfTextRange.length - 1].substring(0, textRange.getEndOffset());
       return String.join("\n", linesOfTextRange);

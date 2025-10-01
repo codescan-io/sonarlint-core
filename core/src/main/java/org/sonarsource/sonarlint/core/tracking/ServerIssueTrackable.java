@@ -43,7 +43,11 @@ public class ServerIssueTrackable implements Trackable {
 
   @Override
   public String getRuleKey() {
-    return serverIssue.getRuleKey();
+    String ruleKey = serverIssue.getRuleKey();
+    if (ruleKey != null && ruleKey.startsWith(":")) {
+      ruleKey = ruleKey.substring(1);
+    }
+    return ruleKey;
   }
 
   @Override
