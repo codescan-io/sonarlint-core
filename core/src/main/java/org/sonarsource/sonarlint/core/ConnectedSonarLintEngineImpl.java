@@ -577,4 +577,69 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
 
   }
 
+  @Override
+  public boolean checkIfCrossFileAnalysisIsEnabled(ProjectBinding projectBinding) {
+    var analyzerConfiguration = loadAnalyzerConfiguration(projectBinding);
+    if (analyzerConfiguration == null) {
+      return false;
+    }
+
+    return CrossFileAnalysisMode.isActive(analyzerConfiguration);
+  }
+
+  private AnalyzerConfiguration loadAnalyzerConfiguration(ProjectBinding projectBinding) {
+    try {
+      return serverConnection.getAnalyzerConfiguration(projectBinding.projectKey());
+    } catch (StorageException e) {
+      LOG.debug("Unable to read analyzer configuration from local storage", e);
+      return null;
+    }
+  }
+
+  private static final class CrossFileAnalysisMode {
+
+    private static final String ENABLED_SETTING_KEY = "codescan.ide.crossFileAnalysis";
+    private static final String LANGUAGE_KEY = "sf";
+    private static final Set<String> CROSS_FILE_RULE_KEYS = Set.of("sf:AvoidSoqlInLoops");
+    private CrossFileAnalysisMode() {}
+
+    private static boolean isActive(AnalyzerConfiguration analyzerConfiguration) {
+      return isEnabled(analyzerConfiguration) && areCrossFileRulesAvailable(analyzerConfiguration, LANGUAGE_KEY);
+    }
+
+    private static boolean isEnabled(AnalyzerConfiguration analyzerConfiguration) {
+      var settings = analyzerConfiguration.getSettings();
+      if (settings == null) {
+        return false;
+      }
+
+      var allSettings = settings.getAll();
+      if (allSettings == null || allSettings.isEmpty() || !allSettings.containsKey(ENABLED_SETTING_KEY)) {
+        return false;
+      }
+
+      return Boolean.parseBoolean(allSettings.get(ENABLED_SETTING_KEY));
+    }
+
+    private static boolean areCrossFileRulesAvailable(AnalyzerConfiguration analyzerConfiguration,
+                String languageKey) {
+      var ruleSetsByLanguageKey = analyzerConfiguration.getRuleSetByLanguageKey();
+      if (ruleSetsByLanguageKey == null || ruleSetsByLanguageKey.isEmpty()) {
+                // Can happen before the first synchronization
+                return false;
+      }
+
+      var ruleSet = ruleSetsByLanguageKey.get(languageKey);
+      if (ruleSet == null) {
+        return false;
+      }
+
+      var availableRulesByKey = ruleSet.getRulesByKey();
+      if (availableRulesByKey == null || availableRulesByKey.isEmpty()) {
+        return false;
+      }
+
+     return CROSS_FILE_RULE_KEYS.stream().anyMatch(availableRulesByKey::containsKey);
+    }
+  }
 }
