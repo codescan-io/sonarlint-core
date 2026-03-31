@@ -600,7 +600,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
 
     private static final String ENABLED_SETTING_KEY = "codescan.ide.crossFileAnalysis";
     private static final String LANGUAGE_KEY = "sf";
-    private static final Set<String> CROSS_FILE_RULE_KEYS = Set.of("sf:AvoidSoqlInLoops");
+    private static final Set<String> CROSS_FILE_RULE_KEYS = Set.of("sf:AvoidSoqlInLoops","sf:UnescapedOutput","sf:ResourceInjection","sf:ServerSideRequestForgery");
     private CrossFileAnalysisMode() {}
 
     private static boolean isActive(AnalyzerConfiguration analyzerConfiguration) {
