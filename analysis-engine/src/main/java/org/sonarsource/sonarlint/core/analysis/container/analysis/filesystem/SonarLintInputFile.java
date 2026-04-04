@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import javax.annotation.CheckForNull;
@@ -53,11 +54,17 @@ public class SonarLintInputFile implements InputFile {
   private boolean ignoreAllIssues;
   private final Set<Integer> noSonarLines = new HashSet<>();
   private Collection<int[]> ignoreIssuesOnlineRanges;
+  private List<InputFile> dependencyInputFiles;
 
   public SonarLintInputFile(ClientInputFile clientInputFile, Function<SonarLintInputFile, Metadata> metadataGenerator) {
     this.clientInputFile = clientInputFile;
     this.metadataGenerator = metadataGenerator;
     this.relativePath = PathUtils.sanitize(clientInputFile.relativePath());
+  }
+
+  public SonarLintInputFile(ClientInputFile clientInputFile, Function<SonarLintInputFile, Metadata> metadataGenerator,List<InputFile> dependencyInputFiles) {
+    this(clientInputFile,metadataGenerator);
+    this.dependencyInputFiles = dependencyInputFiles;
   }
 
   public void checkMetadata() {
@@ -288,4 +295,8 @@ public class SonarLintInputFile implements InputFile {
     return ignoreIssuesOnlineRanges.stream().anyMatch(r -> r[0] <= line && line <= r[1]);
   }
 
+  @Override
+  public List<InputFile> getDependencyFiles() {
+    return dependencyInputFiles;
+  }
 }

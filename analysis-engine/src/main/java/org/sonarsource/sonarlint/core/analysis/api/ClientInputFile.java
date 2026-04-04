@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.List;
 import javax.annotation.CheckForNull;
 import org.sonarsource.sonarlint.core.commons.Language;
 
@@ -86,4 +87,12 @@ public interface ClientInputFile {
    */
   URI uri();
 
+  /**
+   * Dependency files of this file. If not null, files contain at least one usage of a method defined in this file.
+   *
+   * @return the dependency files, or {@code null} if none
+   */
+  default List<ClientInputFile> getDependencyFiles() {
+    return null;
+  }
 }
