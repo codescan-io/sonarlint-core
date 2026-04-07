@@ -53,7 +53,7 @@ public class ModuleInputFileBuilder {
         throw new IllegalStateException("Failed to open a stream on file: " + f.uri(), e);
       }
       return fileMetadata.readMetadata(stream, charset != null ? charset : Charset.defaultCharset(), f.uri(), null);
-    }, buildDependencyInputFiles(inputFile));
+    }, buildReferenceInputFiles(inputFile));
     defaultInputFile.setType(inputFile.isTest() ? Type.TEST : Type.MAIN);
     var fileLanguage = inputFile.language();
     if (fileLanguage != null) {
@@ -66,26 +66,26 @@ public class ModuleInputFileBuilder {
     return defaultInputFile;
   }
 
-  public List<InputFile> buildDependencyInputFiles(ClientInputFile inputFile) {
-    List<ClientInputFile> dependencyFiles = inputFile.getReferenceFiles();
-    if (dependencyFiles == null) return null;
+  public List<InputFile> buildReferenceInputFiles(ClientInputFile inputFile) {
+    List<ClientInputFile> referenceFiles = inputFile.getReferenceFiles();
+    if (referenceFiles == null) return null;
 
     List<InputFile> result = new LinkedList<>();
-    for (var dependencyFile : dependencyFiles) {
-      result.add(toSonarLintInputFile(dependencyFile, inputFile));
+    for (var referenceFile : referenceFiles) {
+      result.add(toSonarLintInputFile(referenceFile, inputFile));
     }
     return result;
   }
 
-  private SonarLintInputFile toSonarLintInputFile(ClientInputFile dependencyFile, ClientInputFile parentFile) {
-    return new SonarLintInputFile(dependencyFile, f -> {
-      LOG.debug("Initializing metadata of dependency file {} for {}", f.uri(), parentFile.uri());
+  private SonarLintInputFile toSonarLintInputFile(ClientInputFile referenceFile, ClientInputFile parentFile) {
+    return new SonarLintInputFile(referenceFile, f -> {
+      LOG.debug("Initializing metadata of Reference file {} for {}", f.uri(), parentFile.uri());
       try {
         var charset = f.charset();
         return fileMetadata.readMetadata(f.inputStream(), charset != null ? charset : Charset.defaultCharset(),
                   f.uri(), null);
       } catch (IOException e) {
-        throw new IllegalStateException("Failed to open stream for dependency file: " + f.uri(), e);
+        throw new IllegalStateException("Failed to open stream for reference file: " + f.uri(), e);
       }
     }, null);
   }
