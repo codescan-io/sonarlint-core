@@ -54,7 +54,7 @@ public class SonarLintInputFile implements InputFile {
   private boolean ignoreAllIssues;
   private final Set<Integer> noSonarLines = new HashSet<>();
   private Collection<int[]> ignoreIssuesOnlineRanges;
-  private List<InputFile> dependencyInputFiles;
+  private List<InputFile> referenceFiles;
 
   public SonarLintInputFile(ClientInputFile clientInputFile, Function<SonarLintInputFile, Metadata> metadataGenerator) {
     this.clientInputFile = clientInputFile;
@@ -62,9 +62,9 @@ public class SonarLintInputFile implements InputFile {
     this.relativePath = PathUtils.sanitize(clientInputFile.relativePath());
   }
 
-  public SonarLintInputFile(ClientInputFile clientInputFile, Function<SonarLintInputFile, Metadata> metadataGenerator,List<InputFile> dependencyInputFiles) {
+  public SonarLintInputFile(ClientInputFile clientInputFile, Function<SonarLintInputFile, Metadata> metadataGenerator,List<InputFile> referenceFiles) {
     this(clientInputFile,metadataGenerator);
-    this.dependencyInputFiles = dependencyInputFiles;
+    this.referenceFiles = referenceFiles;
   }
 
   public void checkMetadata() {
@@ -296,7 +296,7 @@ public class SonarLintInputFile implements InputFile {
   }
 
   @Override
-  public List<InputFile> getDependencyFiles() {
-    return dependencyInputFiles;
+  public List<InputFile> getReferenceFiles() {
+    return referenceFiles;
   }
 }

@@ -88,11 +88,11 @@ public interface ClientInputFile {
   URI uri();
 
   /**
-   * Dependency files of this file. If not null, files contain at least one usage of a method defined in this file.
+   * Reference files of this file. If not null, files contain at least one usage of a method defined in this file.
    *
-   * @return the dependency files, or {@code null} if none
+   * @return the Reference files, or {@code null} if none
    */
-  default List<ClientInputFile> getDependencyFiles() {
+  default List<ClientInputFile> getReferenceFiles() {
     return null;
   }
 }

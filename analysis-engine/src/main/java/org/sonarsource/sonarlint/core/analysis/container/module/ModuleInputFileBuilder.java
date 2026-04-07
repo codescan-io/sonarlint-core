@@ -67,7 +67,7 @@ public class ModuleInputFileBuilder {
   }
 
   public List<InputFile> buildDependencyInputFiles(ClientInputFile inputFile) {
-    List<ClientInputFile> dependencyFiles = inputFile.getDependencyFiles();
+    List<ClientInputFile> dependencyFiles = inputFile.getReferenceFiles();
     if (dependencyFiles == null) return null;
 
     List<InputFile> result = new LinkedList<>();
