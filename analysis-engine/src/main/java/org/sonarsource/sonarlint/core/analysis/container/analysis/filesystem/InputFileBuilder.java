@@ -67,7 +67,7 @@ public class InputFileBuilder {
     return defaultInputFile;
   }
 
-  public List<InputFile> buildReferenceInputFiles(ClientInputFile inputFile) {
+  private List<InputFile> buildReferenceInputFiles(ClientInputFile inputFile) {
     if (CollectionUtils.isEmpty(inputFile.getReferenceFiles())) {
       return null;
     } else {
