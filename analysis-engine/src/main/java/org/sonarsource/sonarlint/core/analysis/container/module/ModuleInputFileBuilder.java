@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFile.Type;
@@ -32,6 +31,7 @@ import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.Fil
 import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.LanguageDetection;
 import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.SonarLintInputFile;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
+import org.springframework.util.CollectionUtils;
 
 public class ModuleInputFileBuilder {
   private static final SonarLintLogger LOG = SonarLintLogger.get();
@@ -68,9 +68,13 @@ public class ModuleInputFileBuilder {
   }
 
   public List<InputFile> buildReferenceInputFiles(ClientInputFile inputFile) {
-    return Optional.ofNullable(inputFile.getReferenceFiles()).map(referenceFiles -> referenceFiles.stream()
-            .<InputFile>map(referenceFile -> toSonarLintInputFile(referenceFile, inputFile))
-            .collect(Collectors.toList())).orElse(null);
+    if (CollectionUtils.isEmpty(inputFile.getReferenceFiles())) {
+      return null;
+    } else {
+      return inputFile.getReferenceFiles().stream()
+               .<InputFile>map(referenceFile -> toSonarLintInputFile(referenceFile, inputFile))
+               .collect(Collectors.toList());
+    }
   }
 
   private SonarLintInputFile toSonarLintInputFile(ClientInputFile referenceFile, ClientInputFile parentFile) {
