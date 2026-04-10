@@ -22,8 +22,9 @@ package org.sonarsource.sonarlint.core.analysis.container.module;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFile.Type;
 import org.sonarsource.sonarlint.core.analysis.api.ClientInputFile;
@@ -67,14 +68,9 @@ public class ModuleInputFileBuilder {
   }
 
   public List<InputFile> buildReferenceInputFiles(ClientInputFile inputFile) {
-    List<ClientInputFile> referenceFiles = inputFile.getReferenceFiles();
-    if (referenceFiles == null) return null;
-
-    List<InputFile> result = new LinkedList<>();
-    for (var referenceFile : referenceFiles) {
-      result.add(toSonarLintInputFile(referenceFile, inputFile));
-    }
-    return result;
+    return Optional.ofNullable(inputFile.getReferenceFiles()).map(referenceFiles -> referenceFiles.stream()
+            .<InputFile>map(referenceFile -> toSonarLintInputFile(referenceFile, inputFile))
+            .collect(Collectors.toList())).orElse(null);
   }
 
   private SonarLintInputFile toSonarLintInputFile(ClientInputFile referenceFile, ClientInputFile parentFile) {

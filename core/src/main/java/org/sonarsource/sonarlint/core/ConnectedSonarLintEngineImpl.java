@@ -82,6 +82,7 @@ import org.sonarsource.sonarlint.core.serverconnection.ServerConnection;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerTaintIssue;
 import org.sonarsource.sonarlint.core.serverconnection.storage.StorageException;
+import org.springframework.util.CollectionUtils;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
@@ -614,7 +615,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       }
 
       var allSettings = settings.getAll();
-      if (allSettings == null || allSettings.isEmpty() || !allSettings.containsKey(ENABLED_SETTING_KEY)) {
+      if (CollectionUtils.isEmpty(allSettings) || !allSettings.containsKey(ENABLED_SETTING_KEY)) {
         return false;
       }
 
@@ -623,7 +624,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
 
     private static boolean areCrossFileRulesAvailable(AnalyzerConfiguration analyzerConfiguration, String languageKey) {
       var ruleSetsByLanguageKey = analyzerConfiguration.getRuleSetByLanguageKey();
-      if (ruleSetsByLanguageKey == null || ruleSetsByLanguageKey.isEmpty()) {
+      if (CollectionUtils.isEmpty(ruleSetsByLanguageKey)) {
         // Can happen before the first synchronization
         return false;
       }
@@ -634,7 +635,7 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
       }
 
       var availableRulesByKey = ruleSet.getRulesByKey();
-      if (availableRulesByKey == null || availableRulesByKey.isEmpty()) {
+      if (CollectionUtils.isEmpty(availableRulesByKey)) {
         return false;
       }
 
