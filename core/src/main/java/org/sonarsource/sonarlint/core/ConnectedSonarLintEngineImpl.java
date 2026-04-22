@@ -588,6 +588,15 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
     return CrossFileAnalysisMode.isActive(analyzerConfiguration);
   }
 
+  @Override
+  public String  getAvailableCrossFileAnalysisRuleKey(ProjectBinding projectBinding) {
+    var analyzerConfiguration = loadAnalyzerConfiguration(projectBinding);
+    if (analyzerConfiguration == null) {
+      return "";
+    }
+    return  CrossFileAnalysisMode.getAvailableCrossFileAnalysisRuleKey(analyzerConfiguration);
+  }
+
   private AnalyzerConfiguration loadAnalyzerConfiguration(ProjectBinding projectBinding) {
     try {
       return serverConnection.getAnalyzerConfiguration(projectBinding.projectKey());
@@ -601,11 +610,20 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
 
     private static final String ENABLED_SETTING_KEY = "codescan.ide.crossFileAnalysis";
     private static final String LANGUAGE_KEY = "sf";
-    private static final Set<String> CROSS_FILE_RULE_KEYS = Set.of("sf:AvoidSoqlInLoops","sf:UnescapedOutput","sf:ResourceInjection","sf:ServerSideRequestForgery");
+    private static final List<String> CROSS_FILE_RULE_KEYS = List.of("sf:AvoidSoqlInLoops","sf:UnescapedOutput","sf:ResourceInjection","sf:ServerSideRequestForgery");
     private CrossFileAnalysisMode() {}
 
     private static boolean isActive(AnalyzerConfiguration analyzerConfiguration) {
       return isEnabled(analyzerConfiguration) && areCrossFileRulesAvailable(analyzerConfiguration, LANGUAGE_KEY);
+    }
+
+    private static String getAvailableCrossFileAnalysisRuleKey(AnalyzerConfiguration analyzerConfiguration) {
+      if (isActive(analyzerConfiguration)) {
+        return CROSS_FILE_RULE_KEYS.stream()
+                .filter(analyzerConfiguration.getRuleSetByLanguageKey().get(LANGUAGE_KEY).getRulesByKey()::containsKey)
+                .findFirst().orElse("");
+      }
+      return "";
     }
 
     private static boolean isEnabled(AnalyzerConfiguration analyzerConfiguration) {
