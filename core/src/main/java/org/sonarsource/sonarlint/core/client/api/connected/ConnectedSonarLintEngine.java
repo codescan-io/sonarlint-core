@@ -215,4 +215,7 @@ public interface ConnectedSonarLintEngine extends SonarLintEngine {
 
   void subscribeForEvents(EndpointParams endpoint, HttpClient client, Set<String> projectKeys, Consumer<ServerEvent> eventConsumer, @Nullable ClientLogOutput clientLogOutput);
 
+  boolean checkIfCrossFileAnalysisIsEnabled(ProjectBinding projectBinding);
+
+  String getAvailableCrossFileAnalysisRuleKey(ProjectBinding projectBinding);
 }

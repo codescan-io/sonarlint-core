@@ -22,12 +22,16 @@ package org.sonarsource.sonarlint.core.analysis.container.module;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFile.Type;
 import org.sonarsource.sonarlint.core.analysis.api.ClientInputFile;
 import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.FileMetadata;
 import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.LanguageDetection;
 import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.SonarLintInputFile;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
+import org.springframework.util.CollectionUtils;
 
 public class ModuleInputFileBuilder {
   private static final SonarLintLogger LOG = SonarLintLogger.get();
@@ -50,7 +54,7 @@ public class ModuleInputFileBuilder {
         throw new IllegalStateException("Failed to open a stream on file: " + f.uri(), e);
       }
       return fileMetadata.readMetadata(stream, charset != null ? charset : Charset.defaultCharset(), f.uri(), null);
-    });
+    }, buildReferenceInputFiles(inputFile));
     defaultInputFile.setType(inputFile.isTest() ? Type.TEST : Type.MAIN);
     var fileLanguage = inputFile.language();
     if (fileLanguage != null) {
@@ -61,6 +65,29 @@ public class ModuleInputFileBuilder {
     }
 
     return defaultInputFile;
+  }
+
+  private List<InputFile> buildReferenceInputFiles(ClientInputFile inputFile) {
+    if (CollectionUtils.isEmpty(inputFile.getReferenceFiles())) {
+      return null;
+    } else {
+      return inputFile.getReferenceFiles().stream()
+               .<InputFile>map(referenceFile -> toSonarLintInputFile(referenceFile, inputFile))
+               .collect(Collectors.toList());
+    }
+  }
+
+  private SonarLintInputFile toSonarLintInputFile(ClientInputFile referenceFile, ClientInputFile parentFile) {
+    return new SonarLintInputFile(referenceFile, f -> {
+      LOG.debug("Initializing metadata of Reference file {} for {}", f.uri(), parentFile.uri());
+      try {
+        var charset = f.charset();
+        return fileMetadata.readMetadata(f.inputStream(), charset != null ? charset : Charset.defaultCharset(),
+                  f.uri(), null);
+      } catch (IOException e) {
+        throw new IllegalStateException("Failed to open stream for reference file: " + f.uri(), e);
+      }
+    }, null);
   }
 
 }
