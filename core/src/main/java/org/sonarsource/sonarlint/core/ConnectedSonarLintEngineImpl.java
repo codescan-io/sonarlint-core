@@ -82,6 +82,7 @@ import org.sonarsource.sonarlint.core.serverconnection.ServerConnection;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerIssue;
 import org.sonarsource.sonarlint.core.serverconnection.issues.ServerTaintIssue;
 import org.sonarsource.sonarlint.core.serverconnection.storage.StorageException;
+import org.springframework.util.CollectionUtils;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
@@ -582,4 +583,86 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
 
   }
 
+  @Override
+  public boolean checkIfCrossFileAnalysisIsEnabled(ProjectBinding projectBinding) {
+    var analyzerConfiguration = loadAnalyzerConfiguration(projectBinding);
+    if (analyzerConfiguration == null) {
+      return false;
+    }
+
+    return CrossFileAnalysisMode.isActive(analyzerConfiguration);
+  }
+
+  @Override
+  public String  getAvailableCrossFileAnalysisRuleKey(ProjectBinding projectBinding) {
+    var analyzerConfiguration = loadAnalyzerConfiguration(projectBinding);
+    if (analyzerConfiguration == null) {
+      return "";
+    }
+    return  CrossFileAnalysisMode.getAvailableCrossFileAnalysisRuleKey(analyzerConfiguration);
+  }
+
+  private AnalyzerConfiguration loadAnalyzerConfiguration(ProjectBinding projectBinding) {
+    try {
+      return serverConnection.getAnalyzerConfiguration(projectBinding.projectKey());
+    } catch (StorageException e) {
+      LOG.debug("Unable to read analyzer configuration from local storage", e);
+      return null;
+    }
+  }
+
+  private static final class CrossFileAnalysisMode {
+
+    private static final String ENABLED_SETTING_KEY = "codescan.ide.crossFileAnalysis";
+    private static final String LANGUAGE_KEY = "sf";
+    private static final List<String> CROSS_FILE_RULE_KEYS = List.of("sf:AvoidSoqlInLoops","sf:UnescapedOutput","sf:ResourceInjection","sf:ServerSideRequestForgery");
+    private CrossFileAnalysisMode() {}
+
+    private static boolean isActive(AnalyzerConfiguration analyzerConfiguration) {
+      return isEnabled(analyzerConfiguration) && areCrossFileRulesAvailable(analyzerConfiguration, LANGUAGE_KEY);
+    }
+
+    private static String getAvailableCrossFileAnalysisRuleKey(AnalyzerConfiguration analyzerConfiguration) {
+      if (isActive(analyzerConfiguration)) {
+        return CROSS_FILE_RULE_KEYS.stream()
+                .filter(analyzerConfiguration.getRuleSetByLanguageKey().get(LANGUAGE_KEY).getRulesByKey()::containsKey)
+                .findFirst().orElse("");
+      }
+      return "";
+    }
+
+    private static boolean isEnabled(AnalyzerConfiguration analyzerConfiguration) {
+      var settings = analyzerConfiguration.getSettings();
+      if (settings == null) {
+        return false;
+      }
+
+      var allSettings = settings.getAll();
+      if (CollectionUtils.isEmpty(allSettings) || !allSettings.containsKey(ENABLED_SETTING_KEY)) {
+        return false;
+      }
+
+      return Boolean.parseBoolean(allSettings.get(ENABLED_SETTING_KEY));
+    }
+
+    private static boolean areCrossFileRulesAvailable(AnalyzerConfiguration analyzerConfiguration, String languageKey) {
+      var ruleSetsByLanguageKey = analyzerConfiguration.getRuleSetByLanguageKey();
+      if (CollectionUtils.isEmpty(ruleSetsByLanguageKey)) {
+        // Can happen before the first synchronization
+        return false;
+      }
+
+      var ruleSet = ruleSetsByLanguageKey.get(languageKey);
+      if (ruleSet == null) {
+        return false;
+      }
+
+      var availableRulesByKey = ruleSet.getRulesByKey();
+      if (CollectionUtils.isEmpty(availableRulesByKey)) {
+        return false;
+      }
+
+     return CROSS_FILE_RULE_KEYS.stream().anyMatch(availableRulesByKey::containsKey);
+    }
+  }
 }
