@@ -527,6 +527,11 @@ public final class ConnectedSonarLintEngineImpl extends AbstractSonarLintEngine 
   }
 
   @Override
+  public Map<String, String> getProjectSettings(String projectKey) {
+    return serverConnection.getAnalyzerConfiguration(projectKey).getSettings().getAll();
+  }
+
+  @Override
   public void stop(boolean deleteStorage) {
     setLogging(null);
     try {

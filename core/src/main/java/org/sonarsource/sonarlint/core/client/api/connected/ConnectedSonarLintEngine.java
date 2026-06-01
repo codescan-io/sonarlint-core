@@ -218,4 +218,6 @@ public interface ConnectedSonarLintEngine extends SonarLintEngine {
   boolean checkIfCrossFileAnalysisIsEnabled(ProjectBinding projectBinding);
 
   String getAvailableCrossFileAnalysisRuleKey(ProjectBinding projectBinding);
+
+  Map<String, String> getProjectSettings(String projectKey);
 }
