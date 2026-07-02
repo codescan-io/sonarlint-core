@@ -22,8 +22,8 @@ package org.sonarsource.sonarlint.core.repository.vcs;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 
 @Named
 @Singleton

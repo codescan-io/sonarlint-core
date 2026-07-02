@@ -20,8 +20,8 @@
 package org.sonarsource.sonarlint.core;
 
 import java.util.concurrent.CompletableFuture;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.sonarsource.sonarlint.core.clientapi.SonarLintClient;
 import org.sonarsource.sonarlint.core.clientapi.backend.initialize.InitializeParams;
 import org.sonarsource.sonarlint.core.clientapi.backend.connection.auth.HelpGenerateUserTokenParams;

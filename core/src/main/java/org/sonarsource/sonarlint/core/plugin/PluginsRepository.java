@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.CheckForNull;
-import javax.annotation.PreDestroy;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.sonarsource.sonarlint.core.plugin.commons.LoadedPlugins;
 @Named
 @Singleton
