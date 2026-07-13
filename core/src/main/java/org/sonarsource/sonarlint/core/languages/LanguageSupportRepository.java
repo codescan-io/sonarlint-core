@@ -22,8 +22,8 @@ package org.sonarsource.sonarlint.core.languages;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.sonarsource.sonarlint.core.clientapi.backend.initialize.InitializeParams;
 import org.sonarsource.sonarlint.core.commons.Language;
 

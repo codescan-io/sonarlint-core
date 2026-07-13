@@ -20,7 +20,7 @@
 package org.sonarsource.sonarlint.core.spring;
 
 import com.google.common.eventbus.EventBus;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;

@@ -48,13 +48,13 @@
     <sonar-ws.version>9.9.1.69595</sonar-ws.version>
     <sonar-markdown.version>9.9.0.65466</sonar-markdown.version>
     <sonar-scanner-protocol.version>7.9</sonar-scanner-protocol.version>
-    <protobuf.version>3.21.9</protobuf.version>
+    <protobuf.version>3.25.5</protobuf.version>
     <gitRepositoryName>sonarlint-core</gitRepositoryName>
     <okhttp.version>5.0.0-alpha.10</okhttp.version>
     <junit.jupiter.version>5.9.1</junit.jupiter.version>
     <junit.vintage.version>5.9.1</junit.vintage.version>
     <artifactsToPublish>${project.groupId}:sonarlint-core:jar</artifactsToPublish>
-    <jdk.min.version>11</jdk.min.version>
+    <jdk.min.version>17</jdk.min.version>
     <gson.version>2.10</gson.version>
     <mockito.version>4.9.0</mockito.version>
     <kotlin.version>1.9.25</kotlin.version>
@@ -115,7 +115,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
-        <version>1.22</version>
+        <version>1.26.0</version>
       </dependency>
       <dependency>
         <groupId>com.google.code.gson</groupId>
@@ -164,6 +164,16 @@
         <version>1.3.2</version>
       </dependency>
       <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>2.1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.inject</groupId>
+        <artifactId>jakarta.inject-api</artifactId>
+        <version>2.0.1</version>
+      </dependency>
+      <dependency>
         <groupId>uk.org.webcompere</groupId>
         <artifactId>system-stubs-jupiter</artifactId>
         <version>2.0.1</version>
@@ -181,7 +191,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents.client5</groupId>
         <artifactId>httpclient5</artifactId>
-        <version>5.2.1</version>
+        <version>5.2.2</version>
       </dependency>
       <dependency>
         <groupId>io.github.hakky54</groupId>
@@ -251,7 +261,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>3.4.1</version>
+          <version>3.6.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
