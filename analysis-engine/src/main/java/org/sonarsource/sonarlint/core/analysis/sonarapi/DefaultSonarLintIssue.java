@@ -57,6 +57,7 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
   private Severity overriddenSeverity;
   private final List<QuickFix> quickFixes;
   private Optional<String> ruleDescriptionContextKey = Optional.empty();
+  private String variableType = null;
 
   public DefaultSonarLintIssue(SonarLintInputProject project, Path baseDir, @Nullable SensorStorage storage) {
     super(storage);
@@ -218,8 +219,20 @@ public class DefaultSonarLintIssue extends DefaultStorable implements Issue, New
   }
 
   @Override
+  public NewIssue setVariableType(@Nullable String variableType) {
+    this.variableType = variableType;
+    return this;
+  }
+
+  @Override
   public boolean isQuickFixAvailable() {
     return !quickFixes.isEmpty();
+  }
+
+  @Nullable
+  @Override
+  public String getVariableType() {
+    return variableType;
   }
 
   @Override
