@@ -22,8 +22,8 @@ package org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.common;
 import com.google.gson.annotations.JsonAdapter;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
-import org.sonarsource.sonarlint.core.rpc.protocol.common.Either;
 import org.sonarsource.sonarlint.core.rpc.protocol.adapter.EitherCredentialsAdapterFactory;
+import org.sonarsource.sonarlint.core.rpc.protocol.common.Either;
 import org.sonarsource.sonarlint.core.rpc.protocol.common.TokenDto;
 import org.sonarsource.sonarlint.core.rpc.protocol.common.UsernamePasswordDto;
 
@@ -34,9 +34,18 @@ public class TransientSonarCloudConnectionDto {
   @JsonAdapter(EitherCredentialsAdapterFactory.class)
   private final Either<TokenDto, UsernamePasswordDto> credentials;
 
+  // CodeScan: the server address for this call; when empty, the cloud address given at start-up is used.
+  // Not named "serverUrl": EitherTransientConnectionAdapterFactory reads any JSON with "serverUrl" as a SonarQube connection.
+  private final String cloudServerUrl;
+
   public TransientSonarCloudConnectionDto(@Nullable String organization, Either<TokenDto, UsernamePasswordDto> credentials) {
+    this(organization, credentials, null);
+  }
+
+  public TransientSonarCloudConnectionDto(@Nullable String organization, Either<TokenDto, UsernamePasswordDto> credentials, @Nullable String cloudServerUrl) {
     this.organization = organization;
     this.credentials = credentials;
+    this.cloudServerUrl = cloudServerUrl;
   }
 
   @CheckForNull
@@ -46,5 +55,10 @@ public class TransientSonarCloudConnectionDto {
 
   public Either<TokenDto, UsernamePasswordDto> getCredentials() {
     return credentials;
+  }
+
+  @CheckForNull
+  public String getCloudServerUrl() {
+    return cloudServerUrl;
   }
 }

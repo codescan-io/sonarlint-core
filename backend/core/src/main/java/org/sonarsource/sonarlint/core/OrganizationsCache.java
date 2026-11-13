@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
@@ -49,7 +50,8 @@ public class OrganizationsCache {
   private static final SonarLintLogger LOG = SonarLintLogger.get();
   private final ServerApiProvider serverApiProvider;
 
-  private final Cache<Either<TokenDto, UsernamePasswordDto>, TextSearchIndex<OrganizationDto>> textSearchIndexCacheByCredentials = CacheBuilder.newBuilder()
+  // CodeScan: the cache key is the credentials plus the server address, so the same token used against two servers gets two lists
+  private final Cache<Map.Entry<Either<TokenDto, UsernamePasswordDto>, String>, TextSearchIndex<OrganizationDto>> textSearchIndexCacheByCredentials = CacheBuilder.newBuilder()
     .expireAfterWrite(5, TimeUnit.MINUTES)
     .build();
 
@@ -57,8 +59,9 @@ public class OrganizationsCache {
     this.serverApiProvider = serverApiProvider;
   }
 
-  public List<OrganizationDto> fuzzySearchOrganizations(Either<TokenDto, UsernamePasswordDto> credentials, String searchText, SonarLintCancelMonitor cancelMonitor) {
-    return getTextSearchIndex(credentials, cancelMonitor).search(searchText)
+  public List<OrganizationDto> fuzzySearchOrganizations(Either<TokenDto, UsernamePasswordDto> credentials, String searchText, @Nullable String serverUrl,
+    SonarLintCancelMonitor cancelMonitor) {
+    return getTextSearchIndex(credentials, serverUrl, cancelMonitor).search(searchText)
       .entrySet()
       .stream()
       .sorted(Comparator.comparing(Map.Entry<OrganizationDto, Double>::getValue).reversed()
@@ -68,13 +71,13 @@ public class OrganizationsCache {
       .collect(Collectors.toList());
   }
 
-  public TextSearchIndex<OrganizationDto> getTextSearchIndex(Either<TokenDto, UsernamePasswordDto> credentials, SonarLintCancelMonitor cancelMonitor) {
+  public TextSearchIndex<OrganizationDto> getTextSearchIndex(Either<TokenDto, UsernamePasswordDto> credentials, @Nullable String serverUrl, SonarLintCancelMonitor cancelMonitor) {
     try {
-      return textSearchIndexCacheByCredentials.get(credentials, () -> {
+      return textSearchIndexCacheByCredentials.get(cacheKey(credentials, serverUrl), () -> {
         LOG.debug("Load user organizations...");
         List<OrganizationDto> orgs;
         try {
-          var serverApi = serverApiProvider.getForSonarCloudNoOrg(credentials);
+          var serverApi = serverApiProvider.getForSonarCloudNoOrg(credentials, serverUrl);
           var serverOrganizations = serverApi.organization().listUserOrganizations(cancelMonitor);
           orgs = serverOrganizations.stream().map(o -> new OrganizationDto(o.getKey(), o.getName(), o.getDescription())).collect(Collectors.toList());
         } catch (Exception e) {
@@ -96,16 +99,21 @@ public class OrganizationsCache {
     }
   }
 
-  public List<OrganizationDto> listUserOrganizations(Either<TokenDto, UsernamePasswordDto> credentials, SonarLintCancelMonitor cancelMonitor) {
-    textSearchIndexCacheByCredentials.invalidate(credentials);
-    return getTextSearchIndex(credentials, cancelMonitor).getAll();
+  public List<OrganizationDto> listUserOrganizations(Either<TokenDto, UsernamePasswordDto> credentials, @Nullable String serverUrl, SonarLintCancelMonitor cancelMonitor) {
+    textSearchIndexCacheByCredentials.invalidate(cacheKey(credentials, serverUrl));
+    return getTextSearchIndex(credentials, serverUrl, cancelMonitor).getAll();
   }
 
   @CheckForNull
-  public OrganizationDto getOrganization(Either<TokenDto, UsernamePasswordDto> credentials, String organizationKey, SonarLintCancelMonitor cancelMonitor) {
-    var helper = serverApiProvider.getForSonarCloudNoOrg(credentials);
+  public OrganizationDto getOrganization(Either<TokenDto, UsernamePasswordDto> credentials, String organizationKey, @Nullable String serverUrl,
+    SonarLintCancelMonitor cancelMonitor) {
+    var helper = serverApiProvider.getForSonarCloudNoOrg(credentials, serverUrl);
     var serverOrganization = helper.organization().getOrganization(organizationKey, cancelMonitor);
     return serverOrganization.map(o -> new OrganizationDto(o.getKey(), o.getName(), o.getDescription())).orElse(null);
+  }
+
+  private static Map.Entry<Either<TokenDto, UsernamePasswordDto>, String> cacheKey(Either<TokenDto, UsernamePasswordDto> credentials, @Nullable String serverUrl) {
+    return Map.entry(credentials, serverUrl == null ? "" : serverUrl);
   }
 
 }

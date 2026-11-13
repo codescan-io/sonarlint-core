@@ -250,6 +250,14 @@ public class SonarLintBackendFixture {
       return this;
     }
 
+    /**
+     * CodeScan: a cloud connection with its own server address (row C2).
+     */
+    public SonarLintBackendBuilder withSonarCloudConnectionAtAddress(String connectionId, String organizationKey, String serverUrl) {
+      sonarCloudConnections.add(new SonarCloudConnectionConfigurationDto(connectionId, organizationKey, true, serverUrl));
+      return this;
+    }
+
     public SonarLintBackendBuilder withSonarCloudConnection(String connectionId) {
       return withSonarCloudConnection(connectionId, "orgKey");
     }

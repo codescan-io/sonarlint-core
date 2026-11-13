@@ -43,6 +43,7 @@ import org.sonarsource.sonarlint.core.serverapi.ServerApi;
 import org.sonarsource.sonarlint.core.serverapi.ServerApiHelper;
 import org.sonarsource.sonarlint.core.serverconnection.ServerVersionAndStatusChecker;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.removeEnd;
 
 @Named
@@ -111,10 +112,11 @@ public class ServerApiProvider {
   }
 
   /**
-   * Used to do SonarCloud requests before knowing the organization
+   * Used to do SonarCloud requests before knowing the organization.
+   * CodeScan: the requests go to the given server address; when it is empty, the cloud address given at start-up is used.
    */
-  public ServerApi getForSonarCloudNoOrg(Either<TokenDto, UsernamePasswordDto> credentials) {
-    var endpointParams = new EndpointParams(sonarCloudUri.toString(), true, null);
+  public ServerApi getForSonarCloudNoOrg(Either<TokenDto, UsernamePasswordDto> credentials, @Nullable String serverUrl) {
+    var endpointParams = new EndpointParams(cloudUrlOrDefault(serverUrl), true, null);
     var httpClient = getClientFor(endpointParams, credentials);
     return new ServerApi(new ServerApiHelper(endpointParams, httpClient));
   }
@@ -122,10 +124,14 @@ public class ServerApiProvider {
   public ServerApi getForTransientConnection(Either<TransientSonarQubeConnectionDto, TransientSonarCloudConnectionDto> transientConnection) {
     var endpointParams = transientConnection.map(
       sq -> new EndpointParams(sq.getServerUrl(), false, null),
-      sc -> new EndpointParams(sonarCloudUri.toString(), true, sc.getOrganization()));
+      sc -> new EndpointParams(cloudUrlOrDefault(sc.getCloudServerUrl()), true, sc.getOrganization()));
     var httpClient = getClientFor(endpointParams, transientConnection
       .map(TransientSonarQubeConnectionDto::getCredentials, TransientSonarCloudConnectionDto::getCredentials));
     return new ServerApi(new ServerApiHelper(endpointParams, httpClient));
+  }
+
+  private String cloudUrlOrDefault(@Nullable String serverUrl) {
+    return isBlank(serverUrl) ? sonarCloudUri.toString() : serverUrl;
   }
 
   private HttpClient getClientFor(EndpointParams params, Either<TokenDto, UsernamePasswordDto> credentials) {

@@ -20,8 +20,10 @@
 package org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.org;
 
 import com.google.gson.annotations.JsonAdapter;
-import org.sonarsource.sonarlint.core.rpc.protocol.common.Either;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import org.sonarsource.sonarlint.core.rpc.protocol.adapter.EitherCredentialsAdapterFactory;
+import org.sonarsource.sonarlint.core.rpc.protocol.common.Either;
 import org.sonarsource.sonarlint.core.rpc.protocol.common.TokenDto;
 import org.sonarsource.sonarlint.core.rpc.protocol.common.UsernamePasswordDto;
 
@@ -30,11 +32,24 @@ public class ListUserOrganizationsParams {
   @JsonAdapter(EitherCredentialsAdapterFactory.class)
   private final Either<TokenDto, UsernamePasswordDto> credentials;
 
+  // CodeScan: the server address for this call; when empty, the cloud address given at start-up is used
+  private final String serverUrl;
+
   public ListUserOrganizationsParams(Either<TokenDto, UsernamePasswordDto> credentials) {
+    this(credentials, null);
+  }
+
+  public ListUserOrganizationsParams(Either<TokenDto, UsernamePasswordDto> credentials, @Nullable String serverUrl) {
     this.credentials = credentials;
+    this.serverUrl = serverUrl;
   }
 
   public Either<TokenDto, UsernamePasswordDto> getCredentials() {
     return credentials;
+  }
+
+  @CheckForNull
+  public String getServerUrl() {
+    return serverUrl;
   }
 }

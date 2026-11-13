@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.common.TransientSonarCloudConnectionDto;
+import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.org.FuzzySearchUserOrganizationsParams;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.org.GetOrganizationParams;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.org.ListUserOrganizationsParams;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.org.OrganizationDto;
@@ -68,10 +69,12 @@ import org.sonarsource.sonarlint.core.serverconnection.proto.Sonarlint;
 import org.sonarsource.sonarlint.core.serverconnection.storage.ProtobufFileUtil;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static mediumtest.fixtures.SonarLintBackendFixture.newBackend;
@@ -170,6 +173,66 @@ class CodeScanServerMediumTests {
       .withQueryParam("qualifiers", equalTo("TRK"))
       .withQueryParam("organization", equalTo(ORGANIZATION)));
     codescan.verify(0, getRequestedFor(urlPathEqualTo("/api/projects/search")));
+  }
+
+  @Test
+  void connectionUsesItsOwnServerAddress() {
+    var client = newFakeClient().withToken(CONNECTION_ID, FAKE_TOKEN).build();
+    backend = newBackend()
+      .withSonarCloudUrl(notCodeScanAddress())
+      .withoutSonarCloudWebSockets()
+      .withSonarCloudConnectionAtAddress(CONNECTION_ID, ORGANIZATION, codescan.baseUrl())
+      .withBoundConfigScope(SCOPE_ID, CONNECTION_ID, PROJECT_KEY)
+      .withFullSynchronization()
+      .build(client);
+
+    waitForSync(client);
+
+    var serverInfo = ProtobufFileUtil.readFile(connectionStorage().resolve("server_info.pb"), Sonarlint.ServerInfo.parser());
+    assertThat(serverInfo.getVersion()).isEqualTo("24.12.0.100206");
+    codescan.verify(0, anyRequestedFor(urlPathMatching("/not-codescan/.*")));
+  }
+
+  @Test
+  void transientConnectionUsesTheGivenServerAddress() {
+    backend = newBackend()
+      .withSonarCloudUrl(notCodeScanAddress())
+      .withoutSonarCloudWebSockets()
+      .build();
+
+    var projects = backend.getConnectionService()
+      .getAllProjects(new GetAllProjectsParams(new TransientSonarCloudConnectionDto(ORGANIZATION, Either.forLeft(new TokenDto(FAKE_TOKEN)), codescan.baseUrl())))
+      .join().getSonarProjects();
+
+    assertThat(projects).hasSize(13);
+    codescan.verify(0, anyRequestedFor(urlPathMatching("/not-codescan/.*")));
+  }
+
+  @Test
+  void organizationLookupUsesTheGivenServerAddress() {
+    backend = newBackend()
+      .withSonarCloudUrl(notCodeScanAddress())
+      .withoutSonarCloudWebSockets()
+      .build();
+    var connectionService = backend.getConnectionService();
+
+    // the IDE-wide cloud address knows no organizations; that answer must not be reused for the CodeScan address
+    var elsewhere = connectionService.fuzzySearchUserOrganizations(new FuzzySearchUserOrganizationsParams(Either.forLeft(new TokenDto(FAKE_TOKEN)), "test"))
+      .join().getTopResults();
+    assertThat(elsewhere).isEmpty();
+
+    var found = connectionService
+      .fuzzySearchUserOrganizations(new FuzzySearchUserOrganizationsParams(Either.forLeft(new TokenDto(FAKE_TOKEN)), "test", codescan.baseUrl()))
+      .join().getTopResults();
+    assertThat(found).extracting(OrganizationDto::getKey).contains(ORGANIZATION);
+
+    var organization = connectionService
+      .getOrganization(new GetOrganizationParams(Either.forLeft(new TokenDto(FAKE_TOKEN)), ORGANIZATION, codescan.baseUrl())).join().getOrganization();
+    assertThat(organization.getKey()).isEqualTo(ORGANIZATION);
+
+    var userOrganizations = connectionService
+      .listUserOrganizations(new ListUserOrganizationsParams(Either.forLeft(new TokenDto(FAKE_TOKEN)), codescan.baseUrl())).join().getUserOrganizations();
+    assertThat(userOrganizations).extracting(OrganizationDto::getKey).containsExactlyInAnyOrder("other-org-1", "other-org-2", ORGANIZATION);
   }
 
   @Test
@@ -326,6 +389,13 @@ class CodeScanServerMediumTests {
 
     await().during(2, SECONDS).atMost(5, SECONDS).untilAsserted(() -> assertThat(client.getLogMessages())
       .noneMatch(message -> message.contains("websocket connection")));
+  }
+
+  /**
+   * An address on the same recording server with no recordings: anything sent there gets 404.
+   */
+  private static String notCodeScanAddress() {
+    return codescan.baseUrl() + "/not-codescan";
   }
 
   private static void waitForSync(FakeSonarLintRpcClient client) {

@@ -184,4 +184,49 @@ class ConnectionServiceTests {
     assertThat(logTester.logs(LogOutput.Level.DEBUG)).containsExactly("Attempt to update connection 'sq2' that was not registered. Possibly a race condition?");
   }
 
+  // CodeScan: a cloud connection can carry its own server address
+  @Test
+  void cloud_connection_uses_its_own_server_address() {
+    var codeScanConnection = new SonarCloudConnectionConfigurationDto("cs1", "org1", true, "https://app.codescan.io/");
+    underTest = new ConnectionService(eventPublisher, repository, List.of(), List.of(codeScanConnection, SC_DTO_2), SonarCloudActiveEnvironment.prod(), null, null);
+
+    assertThat(repository.getConnectionById("cs1"))
+      .asInstanceOf(InstanceOfAssertFactories.type(SonarCloudConnectionConfiguration.class))
+      .extracting(SonarCloudConnectionConfiguration::getUrl, SonarCloudConnectionConfiguration::getOrganization)
+      .containsExactly("https://app.codescan.io", "org1");
+    assertThat(repository.getConnectionById("sc2").getUrl()).isEqualTo("https://sonarcloud.io");
+  }
+
+  // CodeScan: moving a cloud connection to another server address counts as an update
+  @Test
+  void changing_the_server_address_of_a_cloud_connection_is_an_update() {
+    underTest = new ConnectionService(eventPublisher, repository, List.of(),
+      List.of(new SonarCloudConnectionConfigurationDto("cs1", "org1", true, "https://app.codescan.io")), SonarCloudActiveEnvironment.prod(), null, null);
+
+    underTest.didUpdateConnections(List.of(), List.of(new SonarCloudConnectionConfigurationDto("cs1", "org1", true, "https://staging.codescan.io")));
+
+    assertThat(repository.getConnectionById("cs1").getUrl()).isEqualTo("https://staging.codescan.io");
+    var captor = ArgumentCaptor.forClass(ConnectionConfigurationUpdatedEvent.class);
+    verify(eventPublisher, times(1)).publishEvent(captor.capture());
+    assertThat(captor.getAllValues()).extracting(ConnectionConfigurationUpdatedEvent::getUpdatedConnectionId).containsExactly("cs1");
+  }
+
+  // CodeScan: one connection with a malformed address must not stop the others from loading
+  @Test
+  void cloud_connection_with_a_malformed_server_address_is_skipped() {
+    var broken = new SonarCloudConnectionConfigurationDto("broken", "org1", true, "https://app codescan io");
+    var noScheme = new SonarCloudConnectionConfigurationDto("no-scheme", "org1", true, "app.codescan.io");
+    underTest = new ConnectionService(eventPublisher, repository, List.of(SQ_DTO_1), List.of(broken, noScheme, SC_DTO_2), SonarCloudActiveEnvironment.prod(), null, null);
+
+    assertThat(repository.getConnectionsById()).containsOnlyKeys("sq1", "sc2");
+
+    underTest.didUpdateConnections(List.of(SQ_DTO_1), List.of(broken, SC_DTO_1, SC_DTO_2));
+
+    assertThat(repository.getConnectionsById()).containsOnlyKeys("sq1", "sc1", "sc2");
+    assertThat(logTester.logs(LogOutput.Level.ERROR)).containsExactly(
+      "Connection 'broken' has a malformed server address and is ignored",
+      "Connection 'no-scheme' has a malformed server address and is ignored",
+      "Connection 'broken' has a malformed server address and is ignored");
+  }
+
 }

@@ -19,6 +19,9 @@
  */
 package org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.config;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
+
 public class SonarCloudConnectionConfigurationDto {
 
   /**
@@ -27,11 +30,18 @@ public class SonarCloudConnectionConfigurationDto {
   private final String connectionId;
   private final String organization;
   private final boolean disableNotifications;
+  // CodeScan: the server address of this connection; when empty, the cloud address given at start-up is used
+  private final String serverUrl;
 
   public SonarCloudConnectionConfigurationDto(String connectionId, String organization, boolean disableNotifications) {
+    this(connectionId, organization, disableNotifications, null);
+  }
+
+  public SonarCloudConnectionConfigurationDto(String connectionId, String organization, boolean disableNotifications, @Nullable String serverUrl) {
     this.connectionId = connectionId;
     this.organization = organization;
     this.disableNotifications = disableNotifications;
+    this.serverUrl = serverUrl;
   }
 
   public String getConnectionId() {
@@ -44,5 +54,10 @@ public class SonarCloudConnectionConfigurationDto {
 
   public boolean isDisableNotifications() {
     return disableNotifications;
+  }
+
+  @CheckForNull
+  public String getServerUrl() {
+    return serverUrl;
   }
 }

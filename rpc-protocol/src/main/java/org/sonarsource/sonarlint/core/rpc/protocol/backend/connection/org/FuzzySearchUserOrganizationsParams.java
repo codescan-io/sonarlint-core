@@ -20,8 +20,10 @@
 package org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.org;
 
 import com.google.gson.annotations.JsonAdapter;
-import org.sonarsource.sonarlint.core.rpc.protocol.common.Either;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import org.sonarsource.sonarlint.core.rpc.protocol.adapter.EitherCredentialsAdapterFactory;
+import org.sonarsource.sonarlint.core.rpc.protocol.common.Either;
 import org.sonarsource.sonarlint.core.rpc.protocol.common.TokenDto;
 import org.sonarsource.sonarlint.core.rpc.protocol.common.UsernamePasswordDto;
 
@@ -31,9 +33,17 @@ public class FuzzySearchUserOrganizationsParams {
   private final Either<TokenDto, UsernamePasswordDto> credentials;
   private final String searchText;
 
+  // CodeScan: the server address for this call; when empty, the cloud address given at start-up is used
+  private final String serverUrl;
+
   public FuzzySearchUserOrganizationsParams(Either<TokenDto, UsernamePasswordDto> credentials, String searchText) {
+    this(credentials, searchText, null);
+  }
+
+  public FuzzySearchUserOrganizationsParams(Either<TokenDto, UsernamePasswordDto> credentials, String searchText, @Nullable String serverUrl) {
     this.credentials = credentials;
     this.searchText = searchText;
+    this.serverUrl = serverUrl;
   }
 
   public Either<TokenDto, UsernamePasswordDto> getCredentials() {
@@ -42,5 +52,10 @@ public class FuzzySearchUserOrganizationsParams {
 
   public String getSearchText() {
     return searchText;
+  }
+
+  @CheckForNull
+  public String getServerUrl() {
+    return serverUrl;
   }
 }

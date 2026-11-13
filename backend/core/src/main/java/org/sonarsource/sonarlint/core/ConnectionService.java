@@ -20,15 +20,19 @@
 package org.sonarsource.sonarlint.core;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import org.apache.commons.lang.StringUtils;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogger;
 import org.sonarsource.sonarlint.core.commons.progress.SonarLintCancelMonitor;
 import org.sonarsource.sonarlint.core.event.ConnectionConfigurationAddedEvent;
@@ -85,7 +89,7 @@ public class ConnectionService {
       initSonarQubeConnections.forEach(c -> repository.addOrReplace(adapt(c)));
     }
     if (initSonarCloudConnections != null) {
-      initSonarCloudConnections.forEach(c -> repository.addOrReplace(adapt(c)));
+      initSonarCloudConnections.stream().map(this::adapt).filter(Objects::nonNull).forEach(repository::addOrReplace);
     }
   }
 
@@ -93,8 +97,32 @@ public class ConnectionService {
     return new SonarQubeConnectionConfiguration(sqDto.getConnectionId(), sqDto.getServerUrl(), sqDto.getDisableNotifications());
   }
 
+  /**
+   * CodeScan: a cloud connection can carry its own server address. When it is empty, the cloud address given at start-up is used.
+   * A malformed address is logged and that connection is skipped, so the other connections still load.
+   */
+  @CheckForNull
   private SonarCloudConnectionConfiguration adapt(SonarCloudConnectionConfigurationDto scDto) {
-    return new SonarCloudConnectionConfiguration(sonarCloudUri, scDto.getConnectionId(), scDto.getOrganization(), scDto.isDisableNotifications());
+    var uri = sonarCloudUri;
+    var serverUrl = scDto.getServerUrl();
+    if (StringUtils.isNotBlank(serverUrl)) {
+      uri = parseAbsoluteUri(serverUrl);
+      if (uri == null) {
+        LOG.error("Connection '{}' has a malformed server address and is ignored", scDto.getConnectionId());
+        return null;
+      }
+    }
+    return new SonarCloudConnectionConfiguration(uri, scDto.getConnectionId(), scDto.getOrganization(), scDto.isDisableNotifications());
+  }
+
+  @CheckForNull
+  private static URI parseAbsoluteUri(String url) {
+    try {
+      var uri = new URI(url);
+      return uri.isAbsolute() ? uri : null;
+    } catch (URISyntaxException e) {
+      return null;
+    }
   }
 
   private static void putAndLogIfDuplicateId(Map<String, AbstractConnectionConfiguration> map, AbstractConnectionConfiguration config) {
@@ -107,7 +135,7 @@ public class ConnectionService {
     List<SonarCloudConnectionConfigurationDto> sonarCloudConnections) {
     var newConnectionsById = new HashMap<String, AbstractConnectionConfiguration>();
     sonarQubeConnections.forEach(config -> putAndLogIfDuplicateId(newConnectionsById, adapt(config)));
-    sonarCloudConnections.forEach(config -> putAndLogIfDuplicateId(newConnectionsById, adapt(config)));
+    sonarCloudConnections.stream().map(this::adapt).filter(Objects::nonNull).forEach(config -> putAndLogIfDuplicateId(newConnectionsById, config));
 
     var previousConnectionsById = repository.getConnectionsById();
 
