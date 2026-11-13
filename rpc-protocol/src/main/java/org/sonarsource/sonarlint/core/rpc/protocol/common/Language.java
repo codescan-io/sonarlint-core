@@ -50,11 +50,15 @@ public enum Language {
   RUBY,
   SCALA,
   SECRETS,
+  /** CodeScan: Salesforce metadata */
+  SF_META,
   SWIFT,
   TERRAFORM,
   TS,
   TSQL,
   VBNET,
+  /** CodeScan: Visualforce and Lightning */
+  VF,
   XML,
   YAML;
 

@@ -43,11 +43,14 @@ public enum Language {
   RUBY("Ruby"),
   SCALA("Scala"),
   SECRETS("Secrets"),
+  // CodeScan: Salesforce languages from the CodeScan analyzer
+  SF_META("Salesforce Metadata"),
   SWIFT("Swift"),
   TSQL("T-SQL"),
   TS("TypeScript"),
   JSP("JSP"),
   VBNET("VB.NET"),
+  VF("Visualforce & Lightning"),
   XML("XML"),
   YAML("YAML"),
   JSON("JSON"),
@@ -113,6 +116,8 @@ public enum Language {
         return SCALA;
       case SECRETS:
         return SECRETS;
+      case SF_META:
+        return SF_META;
       case SWIFT:
         return SWIFT;
       case TSQL:
@@ -123,6 +128,8 @@ public enum Language {
         return JSP;
       case VBNET:
         return VBNET;
+      case VF:
+        return VF;
       case XML:
         return XML;
       case YAML:

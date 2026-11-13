@@ -122,6 +122,29 @@ class LanguageDetectionTests {
   }
 
   @Test
+  void recognise_salesforce_files() {
+    var detection = new LanguageDetection(new MapSettings(Map.of()).asConfig());
+
+    assertThat(detection.language(newInputFile("classes/Foo.cls"))).extracting(SonarLanguage::getSonarLanguageKey).isEqualTo("sf");
+    assertThat(detection.language(newInputFile("triggers/Foo.trigger"))).extracting(SonarLanguage::getSonarLanguageKey).isEqualTo("sf");
+    for (var file : new String[] {"pages/Foo.page", "components/Foo.component", "aura/Foo/Foo.app", "aura/Foo/Foo.evt", "aura/Foo/Foo.cmp", "aura/Foo/Foo.intf"}) {
+      assertThat(detection.language(newInputFile(file))).as(file).extracting(SonarLanguage::getSonarLanguageKey).isEqualTo("vf");
+    }
+    assertThat(detection.language(newInputFile("settings/Account.settings"))).extracting(SonarLanguage::getSonarLanguageKey).isEqualTo("sfmeta");
+    assertThat(detection.language(newInputFile("objects/Account.object"))).extracting(SonarLanguage::getSonarLanguageKey).isEqualTo("sfmeta");
+  }
+
+  @Test
+  void plain_xml_files_have_no_language_unless_a_setting_says_so() {
+    var detection = new LanguageDetection(new MapSettings(Map.of()).asConfig());
+    assertThat(detection.language(newInputFile("classes/Foo.cls-meta.xml"))).isNull();
+    assertThat(detection.language(newInputFile("schema.xsd"))).isEqualTo(SonarLanguage.XML);
+
+    var withSetting = new LanguageDetection(new MapSettings(Map.of(SonarLanguage.XML.getFileSuffixesPropKey(), ".xml")).asConfig());
+    assertThat(withSetting.language(newInputFile("pom.xml"))).isEqualTo(SonarLanguage.XML);
+  }
+
+  @Test
   void should_not_fail_if_no_language() {
     var detection = new LanguageDetection(new MapSettings(Map.of()).asConfig());
     assertThat(detection.language(newInputFile("Foo.blabla"))).isNull();

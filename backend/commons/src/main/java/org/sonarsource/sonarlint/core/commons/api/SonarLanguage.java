@@ -32,7 +32,8 @@ import java.util.stream.Stream;
 public enum SonarLanguage {
 
   ABAP("abap", "abap", new String[]{".abap", ".ab4", ".flow", ".asprog"}, "sonar.abap.file.suffixes"),
-  APEX("apex", "sonarapex", new String[]{".cls", ".trigger"}, "sonar.apex.file.suffixes"),
+  // CodeScan: the Salesforce languages come from the CodeScan analyzer (plugin key "codescan"), not SonarSource's "sonarapex"
+  APEX("sf", Constants.CODESCAN_PLUGIN_KEY, new String[]{".cls", ".trigger"}, "sf.apex.suffixes"),
   C("c", "cpp", new String[]{".c", ".h"}, "sonar.c.file.suffixes"),
   CPP("cpp", "cpp", new String[]{".cc", ".cpp", ".cxx", ".c++", ".hh", ".hpp", ".hxx", ".h++", ".ipp"}, "sonar.cpp.file.suffixes"),
   CS("cs", "csharp", new String[]{".cs"}, "sonar.cs.file.suffixes"),
@@ -53,13 +54,18 @@ public enum SonarLanguage {
   RUBY("ruby", "ruby", new String[]{".rb"}, "sonar.ruby.file.suffixes"),
   SCALA("scala", "sonarscala", new String[]{".scala"}, "sonar.scala.file.suffixes"),
   SECRETS("secrets", "text", new String[0], "sonar.secrets.file.suffixes"),
+  // CodeScan: Salesforce metadata
+  SF_META("sfmeta", Constants.CODESCAN_PLUGIN_KEY, new String[]{".settings", ".object"}, "sf.sfmeta.suffixes"),
   SWIFT("swift", "swift", new String[]{".swift"}, "sonar.swift.file.suffixes"),
   TSQL("tsql", "tsql", new String[]{".tsql"}, "sonar.tsql.file.suffixes"),
   TS("ts", Constants.JAVASCRIPT_PLUGIN_KEY, new String[]{".ts", ".tsx"},
     "sonar.typescript.file.suffixes"),
+  // CodeScan: Visualforce and Lightning
+  VF("vf", Constants.CODESCAN_PLUGIN_KEY, new String[]{".page", ".component", ".app", ".evt", ".cmp", ".intf"}, "sf.vf.suffixes"),
   JSP("jsp", "web", new String[]{".jsp", ".jspf", ".jspx"}, "sonar.jsp.file.suffixes"),
   VBNET("vbnet", "vbnet", new String[]{".vb"}, "sonar.vbnet.file.suffixes"),
-  XML("xml", "xml", new String[]{".xml", ".xsd", ".xsl"}, "sonar.xml.file.suffixes"),
+  // CodeScan: plain .xml files are not claimed by default (kept from the 9.1.3 fork)
+  XML("xml", "xml", new String[]{".xsd", ".xsl"}, "sonar.xml.file.suffixes"),
   YAML("yaml", Constants.JAVASCRIPT_PLUGIN_KEY, new String[]{".yml", "yaml"}, Constants.NO_PUBLIC_PROPERTY_PROVIDED_FOR_THIS_LANGUAGE),
   JSON("json", Constants.JAVASCRIPT_PLUGIN_KEY, new String[]{".json"}, Constants.NO_PUBLIC_PROPERTY_PROVIDED_FOR_THIS_LANGUAGE),
   GO("go", "go", new String[]{".go"}, "sonar.go.file.suffixes"),
@@ -133,6 +139,7 @@ public enum SonarLanguage {
 
   private static class Constants {
     public static final String JAVASCRIPT_PLUGIN_KEY = "javascript";
+    public static final String CODESCAN_PLUGIN_KEY = "codescan";
     private static final String NO_PUBLIC_PROPERTY_PROVIDED_FOR_THIS_LANGUAGE = "<no public property provided for this language>";
   }
 
