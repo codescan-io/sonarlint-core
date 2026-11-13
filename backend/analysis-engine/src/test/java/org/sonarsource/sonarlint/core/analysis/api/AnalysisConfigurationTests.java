@@ -141,4 +141,32 @@ class AnalysisConfigurationTests {
     assertThat(config.activeRules()).extracting(ActiveRule::getRuleKey).containsExactly("java:S123", "java:S456", "php:S123", "python:S123", "python:S456");
   }
 
+  // CodeScan: the IDE passes the user's token as sonar.login, and this text is written to the log on every analysis.
+  @Test
+  void testToString_hides_secret_values() {
+    var config = AnalysisConfiguration.builder()
+      .putExtraProperty("sonar.login", "fake-token-for-tests")
+      .putExtraProperty("sonar.password", "fake-password-for-tests")
+      .putExtraProperty("sonar.token", "fake-sonar-token-for-tests")
+      .putExtraProperty("some.plugin.clientSecret", "fake-secret-for-tests")
+      .putExtraProperty("sonar.host.url", "https://app.codescan.io")
+      .build();
+
+    assertThat(config.toString())
+      .doesNotContain("fake-token-for-tests")
+      .doesNotContain("fake-password-for-tests")
+      .doesNotContain("fake-sonar-token-for-tests")
+      .doesNotContain("fake-secret-for-tests")
+      .contains("sonar.login=******")
+      .contains("sonar.password=******")
+      .contains("sonar.token=******")
+      .contains("some.plugin.clientSecret=******")
+      .contains("sonar.host.url=https://app.codescan.io");
+    assertThat(config.extraProperties())
+      .containsEntry("sonar.login", "fake-token-for-tests")
+      .containsEntry("sonar.password", "fake-password-for-tests")
+      .containsEntry("sonar.token", "fake-sonar-token-for-tests")
+      .containsEntry("some.plugin.clientSecret", "fake-secret-for-tests");
+  }
+
 }

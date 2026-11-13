@@ -24,12 +24,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
 public class AnalysisConfiguration {
+
+  private static final String HIDDEN_VALUE = "******";
 
   private final List<ClientInputFile> inputFiles;
   private final Map<String, String> extraProperties;
@@ -103,7 +107,19 @@ public class AnalysisConfiguration {
 
   protected void generateToStringCommon(StringBuilder sb) {
     sb.append("  baseDir: ").append(baseDir()).append("\n");
-    sb.append("  extraProperties: ").append(extraProperties()).append("\n");
+    sb.append("  extraProperties: ").append(propertiesWithSecretsHidden()).append("\n");
+  }
+
+  // CodeScan: this text is logged on every analysis, and the IDE passes the user's token as sonar.login.
+  private Map<String, String> propertiesWithSecretsHidden() {
+    var shown = new LinkedHashMap<String, String>();
+    extraProperties.forEach((key, value) -> shown.put(key, isSecret(key) ? HIDDEN_VALUE : value));
+    return shown;
+  }
+
+  private static boolean isSecret(String key) {
+    var lowerCaseKey = key.toLowerCase(Locale.ROOT);
+    return lowerCaseKey.equals("sonar.login") || lowerCaseKey.endsWith("password") || lowerCaseKey.endsWith("token") || lowerCaseKey.endsWith("secret");
   }
 
   protected void generateToStringInputFiles(StringBuilder sb) {
