@@ -30,6 +30,8 @@ public class ActiveRule {
   private final String languageKey;
   private Map<String, String> params = Collections.emptyMap();
   private String templateRuleKey = null;
+  // CodeScan: the rule's internal key from the analyzer's rule definition (CodeScan analyzers look rules up by it)
+  private String internalKey = null;
 
   public ActiveRule(String ruleKey, String languageKey) {
     this.ruleKey = ruleKey;
@@ -59,6 +61,15 @@ public class ActiveRule {
 
   public void setTemplateRuleKey(@Nullable String templateRuleKey) {
     this.templateRuleKey = templateRuleKey;
+  }
+
+  @CheckForNull
+  public String getInternalKey() {
+    return internalKey;
+  }
+
+  public void setInternalKey(@Nullable String internalKey) {
+    this.internalKey = internalKey;
   }
 
   @Override

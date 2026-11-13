@@ -282,14 +282,18 @@ public class AnalysisService {
       // properties sent by client using new API were merged above
       // but this line is important for backward compatibility for clients directly triggering analysis
       .putAllExtraProperties(extraProperties)
-      .addActiveRules(analysisConfig.getActiveRules().stream().map(r -> {
-        var ar = new ActiveRule(r.getRuleKey(), r.getLanguageKey());
-        ar.setParams(r.getParams());
-        ar.setTemplateRuleKey(r.getTemplateRuleKey());
-        return ar;
-      }).collect(toList()))
+      .addActiveRules(analysisConfig.getActiveRules().stream().map(AnalysisService::toEngineActiveRule).collect(toList()))
       .setBaseDir(actualBaseDir)
       .build();
+  }
+
+  static ActiveRule toEngineActiveRule(ActiveRuleDto r) {
+    var ar = new ActiveRule(r.getRuleKey(), r.getLanguageKey());
+    ar.setParams(r.getParams());
+    ar.setTemplateRuleKey(r.getTemplateRuleKey());
+    // CodeScan: CodeScan analyzers look their rules up by internal key
+    ar.setInternalKey(r.getInternalKey());
+    return ar;
   }
 
   public void setUserAnalysisProperties(String configScopeId, Map<String, String> properties) {
@@ -364,7 +368,9 @@ public class AnalysisService {
     return new ActiveRuleDto(activeRule.getRuleKey(),
       ruleOrTemplateDefinition.getLanguage().getSonarLanguageKey(),
       getEffectiveParams(ruleOrTemplateDefinition, activeRule),
-      trimToNull(activeRule.getTemplateKey()));
+      trimToNull(activeRule.getTemplateKey()),
+      // CodeScan: keep the internal key from the analyzer's rule definition
+      ruleOrTemplateDefinition.getInternalKey().orElse(null));
   }
 
   private static Map<String, String> getEffectiveParams(SonarLintRuleDefinition ruleOrTemplateDefinition, ServerActiveRule activeRule) {
@@ -380,7 +386,8 @@ public class AnalysisService {
   }
 
   public ActiveRuleDto buildActiveRuleDto(SonarLintRuleDefinition rule) {
-    return new ActiveRuleDto(rule.getKey(), rule.getLanguage().getSonarLanguageKey(), rule.getDefaultParams(), null);
+    // CodeScan: keep the internal key from the analyzer's rule definition
+    return new ActiveRuleDto(rule.getKey(), rule.getLanguage().getSonarLanguageKey(), rule.getDefaultParams(), null, rule.getInternalKey().orElse(null));
   }
 
   private boolean shouldIncludeRuleForAnalysis(String connectionId, SonarLintRuleDefinition ruleDefinition, boolean hotspotsOnly) {
@@ -449,7 +456,8 @@ public class AnalysisService {
       Map<String, String> effectiveParams = new HashMap<>(rd.getDefaultParams());
       ofNullable(standaloneRuleConfig.get(rd.getKey())).ifPresent(config -> effectiveParams.putAll(config.getParamValueByKey()));
       // No template rules in standalone mode
-      return new ActiveRuleDto(rd.getKey(), rd.getLanguage().getSonarLanguageKey(), effectiveParams, null);
+      // CodeScan: keep the internal key from the analyzer's rule definition
+      return new ActiveRuleDto(rd.getKey(), rd.getLanguage().getSonarLanguageKey(), effectiveParams, null, rd.getInternalKey().orElse(null));
     })
       .collect(toList());
   }

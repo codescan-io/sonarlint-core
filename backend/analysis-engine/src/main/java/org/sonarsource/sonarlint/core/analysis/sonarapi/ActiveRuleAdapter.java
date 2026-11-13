@@ -59,6 +59,11 @@ public class ActiveRuleAdapter implements ActiveRule {
 
   @Override
   public String internalKey() {
+    // CodeScan: use the internal key from the analyzer's rule definition when there is one
+    var internalKey = activeRule.getInternalKey();
+    if (internalKey != null) {
+      return internalKey;
+    }
     // This is a hack for old versions of CFamily (https://github.com/SonarSource/sonar-cpp/pull/1598)
     return ruleKey().rule();
   }

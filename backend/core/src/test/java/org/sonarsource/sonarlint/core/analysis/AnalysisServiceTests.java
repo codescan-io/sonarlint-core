@@ -36,12 +36,27 @@ import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.Def
 import org.sonarsource.sonarlint.core.analysis.container.analysis.filesystem.SonarLintInputFile;
 import org.sonarsource.sonarlint.core.analysis.sonarapi.ActiveRuleAdapter;
 import org.sonarsource.sonarlint.core.commons.api.TextRange;
+import org.sonarsource.sonarlint.core.rpc.protocol.backend.analysis.ActiveRuleDto;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class AnalysisServiceTests {
+
+  @Test
+  void engine_active_rule_keeps_the_analyzer_internal_key() {
+    // CodeScan: the engine must get the internal key, CodeScan analyzers look their rules up by it
+    var dto = new ActiveRuleDto("sf:SomeRule", "sf", Map.of("max", "10"), "sf:SomeTemplate", "InternalKeyFromAnalyzer");
+
+    var engineRule = AnalysisService.toEngineActiveRule(dto);
+
+    assertThat(engineRule.getRuleKey()).isEqualTo("sf:SomeRule");
+    assertThat(engineRule.getLanguageKey()).isEqualTo("sf");
+    assertThat(engineRule.getParams()).isEqualTo(Map.of("max", "10"));
+    assertThat(engineRule.getTemplateRuleKey()).isEqualTo("sf:SomeTemplate");
+    assertThat(engineRule.getInternalKey()).isEqualTo("InternalKeyFromAnalyzer");
+  }
 
   @Test
   void it_should_convert_issue_flaws_and_quick_fixes_to_raw_issue_dto() {

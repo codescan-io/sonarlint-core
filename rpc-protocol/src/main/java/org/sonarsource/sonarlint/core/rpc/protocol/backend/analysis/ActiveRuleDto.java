@@ -29,12 +29,19 @@ public class ActiveRuleDto {
   private final String languageKey;
   private final Map<String, String> params;
   private final String templateRuleKey;
+  // CodeScan: the rule's internal key from the analyzer's rule definition (CodeScan analyzers look rules up by it)
+  private final String internalKey;
 
   public ActiveRuleDto(String ruleKey, String languageKey, Map<String, String> params, @Nullable String templateRuleKey) {
+    this(ruleKey, languageKey, params, templateRuleKey, null);
+  }
+
+  public ActiveRuleDto(String ruleKey, String languageKey, Map<String, String> params, @Nullable String templateRuleKey, @Nullable String internalKey) {
     this.ruleKey = ruleKey;
     this.languageKey = languageKey;
     this.params = params;
     this.templateRuleKey = templateRuleKey;
+    this.internalKey = internalKey;
   }
 
   public String getRuleKey() {
@@ -52,5 +59,10 @@ public class ActiveRuleDto {
   @CheckForNull
   public String getTemplateRuleKey() {
     return templateRuleKey;
+  }
+
+  @CheckForNull
+  public String getInternalKey() {
+    return internalKey;
   }
 }
