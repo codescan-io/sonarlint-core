@@ -1,6 +1,6 @@
 /*
  * SonarLint Core - ITs - Tests
- * Copyright (C) 2016-2023 SonarSource SA
+ * Copyright (C) 2016-2024 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
  * This program is free software; you can redistribute it and/or
@@ -24,19 +24,18 @@ import com.google.common.collect.Maps;
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.build.MavenBuild;
 import com.sonar.orchestrator.http.HttpMethod;
-import its.utils.TestClientInputFile;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import its.utils.LogOnTestFailure;
 import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.assertj.core.internal.Failures;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sonarqube.ws.Issues;
 import org.sonarqube.ws.Qualityprofiles.SearchWsResponse.QualityProfile;
 import org.sonarqube.ws.client.HttpConnector;
@@ -44,37 +43,24 @@ import org.sonarqube.ws.client.PostRequest;
 import org.sonarqube.ws.client.WsClient;
 import org.sonarqube.ws.client.WsClientFactories;
 import org.sonarqube.ws.client.qualityprofiles.SearchRequest;
-import org.sonarsource.sonarlint.core.client.api.common.analysis.Issue;
-import org.sonarsource.sonarlint.core.client.api.common.analysis.IssueListener;
-import org.sonarsource.sonarlint.core.client.api.connected.ConnectedAnalysisConfiguration;
-import org.sonarsource.sonarlint.core.clientapi.backend.initialize.ClientInfoDto;
-import org.sonarsource.sonarlint.core.serverapi.EndpointParams;
+import org.sonarsource.sonarlint.core.rpc.protocol.backend.initialize.ClientConstantInfoDto;
+import org.sonarsource.sonarlint.core.rpc.protocol.backend.initialize.TelemetryClientConstantAttributesDto;
+import org.sonarsource.sonarlint.core.rpc.protocol.client.log.LogParams;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractConnectedTests {
-  public static final ClientInfoDto IT_CLIENT_INFO = new ClientInfoDto("clientName", "integrationTests", "SonarLint ITs");
+  public static final TelemetryClientConstantAttributesDto IT_TELEMETRY_ATTRIBUTES = new TelemetryClientConstantAttributesDto("SonarLint ITs", "SonarLint ITs",
+    "1.2.3", "4.5.6", Collections.emptyMap());
+  protected static final Queue<LogParams> rpcClientLogs = new ConcurrentLinkedQueue<>();
+
+  @RegisterExtension
+  static LogOnTestFailure logOnTestFailure = new LogOnTestFailure(rpcClientLogs);
+
+  public static final ClientConstantInfoDto IT_CLIENT_INFO = new ClientConstantInfoDto("clientName", "integrationTests", 0);
   protected static final String SONARLINT_USER = "sonarlint";
   protected static final String SONARLINT_PWD = "sonarlintpwd";
   protected static final String MAIN_BRANCH_NAME = "master";
-
-  protected static class SaveIssueListener implements IssueListener {
-    List<Issue> issues = new LinkedList<>();
-
-    @Override
-    public void handle(Issue issue) {
-      issues.add(issue);
-    }
-
-    public List<Issue> getIssues() {
-      return issues;
-    }
-
-    public void clear() {
-      issues.clear();
-    }
-
-  }
 
   protected static WsClient newAdminWsClient(Orchestrator orchestrator) {
     var server = orchestrator.getServer();
@@ -82,26 +68,6 @@ public abstract class AbstractConnectedTests {
       .url(server.getUrl())
       .credentials(com.sonar.orchestrator.container.Server.ADMIN_LOGIN, com.sonar.orchestrator.container.Server.ADMIN_PASSWORD)
       .build());
-  }
-
-  protected static ConnectedAnalysisConfiguration createAnalysisConfiguration(String projectKey, String projectDir, String filePath, String... properties) throws IOException {
-    final var baseDir = Paths.get("projects/" + projectDir).toAbsolutePath();
-    final var path = baseDir.resolve(filePath);
-    return ConnectedAnalysisConfiguration.builder()
-      .setProjectKey(projectKey)
-      .setBaseDir(new File("projects/" + projectDir).toPath().toAbsolutePath())
-      .addInputFile(new TestClientInputFile(baseDir, path, false, StandardCharsets.UTF_8))
-      .putAllExtraProperties(toMap(properties))
-      .build();
-  }
-
-  protected static ConnectedAnalysisConfiguration createAnalysisConfiguration(String projectKey, String absoluteFilePath) throws IOException {
-    final var path = Paths.get(absoluteFilePath).toAbsolutePath();
-    return ConnectedAnalysisConfiguration.builder()
-      .setProjectKey(projectKey)
-      .setBaseDir(path.getParent())
-      .addInputFile(new TestClientInputFile(path.getParent(), path, false, StandardCharsets.UTF_8))
-      .build();
   }
 
   static Map<String, String> toMap(String[] keyValues) {
@@ -114,18 +80,6 @@ public abstract class AbstractConnectedTests {
       map.put(key, value);
     }
     return map;
-  }
-
-  protected static EndpointParams endpointParams(Orchestrator orchestrator) {
-    return endpointParamsNoOrg(orchestrator.getServer().getUrl());
-  }
-
-  protected static EndpointParams endpointParamsNoOrg(String url) {
-    return endpointParams(url, false, null);
-  }
-
-  protected static EndpointParams endpointParams(String url, boolean isSonarCloud, @Nullable String org) {
-    return new EndpointParams(url, isSonarCloud, org);
   }
 
   private static final Pattern MATCH_ALL_WHITESPACES = Pattern.compile("\\s");
@@ -205,10 +159,4 @@ public abstract class AbstractConnectedTests {
       .setParam("mainBranch", MAIN_BRANCH_NAME)
       .execute();
   }
-
-  protected static String javaRuleKey(Orchestrator orchestrator, String key) {
-    // Starting from SonarJava 6.0 (embedded in SQ 8.2), rule repository has been changed
-    return orchestrator.getServer().version().isGreaterThanOrEquals(8, 2) ? ("java:" + key) : ("squid:" + key);
-  }
-
 }
