@@ -217,4 +217,21 @@ class DefaultSonarLintIssueTests {
     assertThat(issue.codeVariants()).isEmpty();
   }
 
+  @Test
+  void storesVariableType() {
+    var issue = new DefaultSonarLintIssue(project, baseDir, mock(SensorStorage.class));
+
+    var returned = issue.setVariableType("String");
+
+    assertThat(returned).isSameAs(issue);
+    assertThat(issue.getVariableType()).isEqualTo("String");
+  }
+
+  @Test
+  void variableTypeIsNullOnNewIssue() {
+    var issue = new DefaultSonarLintIssue(project, baseDir, mock(SensorStorage.class));
+
+    assertThat(issue.getVariableType()).isNull();
+  }
+
 }
