@@ -1,0 +1,1162 @@
+{
+ "source": "sonarlint-core 10.12.1.79852 backend/server-api/src/main/proto",
+ "roots": {
+  "/api/organizations/search.protobuf": "sonarcloud.ws.organizations.SearchWsResponse",
+  "/api/components/search.protobuf": "sonarqube.ws.component.SearchWsResponse",
+  "/api/components/tree.protobuf": "sonarqube.ws.component.TreeWsResponse",
+  "/api/components/show.protobuf": "sonarqube.ws.component.ShowWsResponse",
+  "/api/settings/values.protobuf": "sonarqube.ws.settings.ValuesWsResponse",
+  "/api/rules/search.protobuf": "sonarqube.ws.rules.SearchResponse",
+  "/api/rules/show.protobuf": "sonarqube.ws.rules.ShowResponse",
+  "/api/qualityprofiles/search.protobuf": "sonarqube.ws.qualityprofiles.SearchWsResponse",
+  "/api/project_branches/list.protobuf": "sonarqube.ws.projectbranch.ListWsResponse",
+  "/api/measures/component.protobuf": "sonarqube.ws.measures.ComponentWsResponse",
+  "/api/issues/search.protobuf": "sonarqube.ws.issues.SearchWsResponse",
+  "/api/hotspots/search.protobuf": "sonarqube.ws.hotspots.SearchWsResponse",
+  "/api/hotspots/show.protobuf": "sonarqube.ws.hotspots.ShowWsResponse"
+ },
+ "streams": {
+  "/api/issues/pull": [
+   "sonarqube.ws.issues.IssuesPullQueryTimestamp",
+   "sonarqube.ws.issues.IssueLite"
+  ],
+  "/api/issues/pull_taint": [
+   "sonarqube.ws.issues.TaintVulnerabilityPullQueryTimestamp",
+   "sonarqube.ws.issues.TaintVulnerabilityLite"
+  ],
+  "/api/hotspots/pull": [
+   "sonarqube.ws.hotspots.HotspotPullQueryTimestamp",
+   "sonarqube.ws.hotspots.HotspotLite"
+  ]
+ },
+ "messages": {
+  "sonarcloud.ws.organizations.Organization": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "string",
+    null
+   ]
+  },
+  "sonarcloud.ws.organizations.SearchWsResponse": {
+   "1": [
+    "message",
+    "sonarcloud.ws.organizations.Organization"
+   ],
+   "2": [
+    "message",
+    "sonarqube.ws.commons.Paging"
+   ]
+  },
+  "sonarqube.ws.commons.Flow": {
+   "1": [
+    "message",
+    "sonarqube.ws.commons.Location"
+   ]
+  },
+  "sonarqube.ws.commons.Impact": {
+   "1": [
+    "scalar",
+    null
+   ],
+   "2": [
+    "scalar",
+    null
+   ]
+  },
+  "sonarqube.ws.commons.Location": {
+   "4": [
+    "string",
+    null
+   ],
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "message",
+    "sonarqube.ws.commons.TextRange"
+   ],
+   "3": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.commons.Metric": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "string",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ],
+   "5": [
+    "string",
+    null
+   ],
+   "6": [
+    "scalar",
+    null
+   ],
+   "7": [
+    "scalar",
+    null
+   ],
+   "8": [
+    "scalar",
+    null
+   ],
+   "9": [
+    "scalar",
+    null
+   ],
+   "10": [
+    "scalar",
+    null
+   ],
+   "11": [
+    "string",
+    null
+   ],
+   "12": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.commons.Paging": {
+   "1": [
+    "scalar",
+    null
+   ],
+   "2": [
+    "scalar",
+    null
+   ],
+   "3": [
+    "scalar",
+    null
+   ]
+  },
+  "sonarqube.ws.commons.Rule": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "string",
+    null
+   ],
+   "5": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.commons.Rules": {
+   "1": [
+    "message",
+    "sonarqube.ws.commons.Rule"
+   ]
+  },
+  "sonarqube.ws.commons.TextRange": {
+   "1": [
+    "scalar",
+    null
+   ],
+   "2": [
+    "scalar",
+    null
+   ],
+   "3": [
+    "scalar",
+    null
+   ],
+   "4": [
+    "scalar",
+    null
+   ]
+  },
+  "sonarqube.ws.component.Component": {
+   "2": [
+    "string",
+    null
+   ],
+   "6": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.component.SearchWsResponse": {
+   "1": [
+    "message",
+    "sonarqube.ws.commons.Paging"
+   ],
+   "2": [
+    "message",
+    "sonarqube.ws.component.Component"
+   ]
+  },
+  "sonarqube.ws.component.ShowWsResponse": {
+   "1": [
+    "message",
+    "sonarqube.ws.commons.Paging"
+   ],
+   "2": [
+    "message",
+    "sonarqube.ws.component.Component"
+   ],
+   "3": [
+    "message",
+    "sonarqube.ws.component.Component"
+   ]
+  },
+  "sonarqube.ws.component.TreeWsResponse": {
+   "1": [
+    "message",
+    "sonarqube.ws.commons.Paging"
+   ],
+   "3": [
+    "message",
+    "sonarqube.ws.component.Component"
+   ],
+   "4": [
+    "message",
+    "sonarqube.ws.component.Component"
+   ]
+  },
+  "sonarqube.ws.hotspots.Component": {
+   "2": [
+    "string",
+    null
+   ],
+   "6": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.hotspots.HotspotLite": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "string",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ],
+   "5": [
+    "string",
+    null
+   ],
+   "6": [
+    "string",
+    null
+   ],
+   "7": [
+    "scalar",
+    null
+   ],
+   "8": [
+    "message",
+    "sonarqube.ws.hotspots.TextRange"
+   ],
+   "9": [
+    "string",
+    null
+   ],
+   "10": [
+    "scalar",
+    null
+   ],
+   "11": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.hotspots.HotspotPullQueryTimestamp": {
+   "1": [
+    "scalar",
+    null
+   ]
+  },
+  "sonarqube.ws.hotspots.Rule": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "string",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ],
+   "5": [
+    "string",
+    null
+   ],
+   "6": [
+    "string",
+    null
+   ],
+   "7": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.hotspots.SearchWsResponse": {
+   "1": [
+    "message",
+    "sonarqube.ws.commons.Paging"
+   ],
+   "2": [
+    "message",
+    "sonarqube.ws.hotspots.SearchWsResponse.Hotspot"
+   ],
+   "3": [
+    "message",
+    "sonarqube.ws.hotspots.Component"
+   ]
+  },
+  "sonarqube.ws.hotspots.SearchWsResponse.Hotspot": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "string",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ],
+   "5": [
+    "string",
+    null
+   ],
+   "6": [
+    "string",
+    null
+   ],
+   "7": [
+    "string",
+    null
+   ],
+   "8": [
+    "scalar",
+    null
+   ],
+   "9": [
+    "string",
+    null
+   ],
+   "10": [
+    "string",
+    null
+   ],
+   "11": [
+    "string",
+    null
+   ],
+   "12": [
+    "string",
+    null
+   ],
+   "13": [
+    "string",
+    null
+   ],
+   "14": [
+    "message",
+    "sonarqube.ws.commons.TextRange"
+   ],
+   "15": [
+    "message",
+    "sonarqube.ws.commons.Flow"
+   ],
+   "16": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.hotspots.ShowWsResponse": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "message",
+    "sonarqube.ws.hotspots.Component"
+   ],
+   "3": [
+    "message",
+    "sonarqube.ws.hotspots.Component"
+   ],
+   "4": [
+    "message",
+    "sonarqube.ws.hotspots.Rule"
+   ],
+   "5": [
+    "string",
+    null
+   ],
+   "6": [
+    "string",
+    null
+   ],
+   "8": [
+    "string",
+    null
+   ],
+   "10": [
+    "string",
+    null
+   ],
+   "13": [
+    "message",
+    "sonarqube.ws.commons.TextRange"
+   ],
+   "17": [
+    "scalar",
+    null
+   ]
+  },
+  "sonarqube.ws.hotspots.TextRange": {
+   "1": [
+    "scalar",
+    null
+   ],
+   "2": [
+    "scalar",
+    null
+   ],
+   "3": [
+    "scalar",
+    null
+   ],
+   "4": [
+    "scalar",
+    null
+   ],
+   "5": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.issues.Component": {
+   "2": [
+    "string",
+    null
+   ],
+   "8": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.issues.Flow": {
+   "1": [
+    "message",
+    "sonarqube.ws.issues.Location"
+   ]
+  },
+  "sonarqube.ws.issues.Issue": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "scalar",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ],
+   "8": [
+    "scalar",
+    null
+   ],
+   "31": [
+    "string",
+    null
+   ],
+   "9": [
+    "message",
+    "sonarqube.ws.commons.TextRange"
+   ],
+   "10": [
+    "message",
+    "sonarqube.ws.commons.Flow"
+   ],
+   "11": [
+    "string",
+    null
+   ],
+   "12": [
+    "string",
+    null
+   ],
+   "13": [
+    "string",
+    null
+   ],
+   "15": [
+    "string",
+    null
+   ],
+   "20": [
+    "message",
+    "sonarqube.ws.issues.Transitions"
+   ],
+   "23": [
+    "string",
+    null
+   ],
+   "27": [
+    "scalar",
+    null
+   ],
+   "37": [
+    "string",
+    null
+   ],
+   "40": [
+    "scalar",
+    null
+   ],
+   "42": [
+    "message",
+    "sonarqube.ws.commons.Impact"
+   ]
+  },
+  "sonarqube.ws.issues.IssueLite": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "scalar",
+    null
+   ],
+   "3": [
+    "scalar",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ],
+   "5": [
+    "scalar",
+    null
+   ],
+   "6": [
+    "scalar",
+    null
+   ],
+   "7": [
+    "message",
+    "sonarqube.ws.issues.Location"
+   ],
+   "8": [
+    "scalar",
+    null
+   ],
+   "9": [
+    "message",
+    "sonarqube.ws.commons.Impact"
+   ]
+  },
+  "sonarqube.ws.issues.IssuesPullQueryTimestamp": {
+   "1": [
+    "scalar",
+    null
+   ]
+  },
+  "sonarqube.ws.issues.Location": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "message",
+    "sonarqube.ws.issues.TextRange"
+   ]
+  },
+  "sonarqube.ws.issues.SearchWsResponse": {
+   "4": [
+    "message",
+    "sonarqube.ws.commons.Paging"
+   ],
+   "6": [
+    "message",
+    "sonarqube.ws.issues.Issue"
+   ],
+   "7": [
+    "message",
+    "sonarqube.ws.issues.Component"
+   ],
+   "8": [
+    "message",
+    "sonarqube.ws.commons.Rules"
+   ]
+  },
+  "sonarqube.ws.issues.TaintVulnerabilityLite": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "scalar",
+    null
+   ],
+   "3": [
+    "scalar",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ],
+   "5": [
+    "scalar",
+    null
+   ],
+   "6": [
+    "scalar",
+    null
+   ],
+   "7": [
+    "message",
+    "sonarqube.ws.issues.Location"
+   ],
+   "8": [
+    "scalar",
+    null
+   ],
+   "9": [
+    "message",
+    "sonarqube.ws.issues.Flow"
+   ],
+   "10": [
+    "scalar",
+    null
+   ],
+   "11": [
+    "string",
+    null
+   ],
+   "12": [
+    "scalar",
+    null
+   ],
+   "14": [
+    "message",
+    "sonarqube.ws.commons.Impact"
+   ]
+  },
+  "sonarqube.ws.issues.TaintVulnerabilityPullQueryTimestamp": {
+   "1": [
+    "scalar",
+    null
+   ]
+  },
+  "sonarqube.ws.issues.TextRange": {
+   "1": [
+    "scalar",
+    null
+   ],
+   "2": [
+    "scalar",
+    null
+   ],
+   "3": [
+    "scalar",
+    null
+   ],
+   "4": [
+    "scalar",
+    null
+   ],
+   "5": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.issues.Transitions": {
+   "1": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.measures.Component": {
+   "2": [
+    "string",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ],
+   "5": [
+    "string",
+    null
+   ],
+   "6": [
+    "string",
+    null
+   ],
+   "7": [
+    "string",
+    null
+   ],
+   "8": [
+    "string",
+    null
+   ],
+   "9": [
+    "string",
+    null
+   ],
+   "10": [
+    "string",
+    null
+   ],
+   "11": [
+    "message",
+    "sonarqube.ws.measures.Measure"
+   ],
+   "12": [
+    "string",
+    null
+   ],
+   "13": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.measures.ComponentWsResponse": {
+   "1": [
+    "message",
+    "sonarqube.ws.measures.Component"
+   ],
+   "2": [
+    "message",
+    "sonarqube.ws.measures.Metrics"
+   ],
+   "3": [
+    "message",
+    "sonarqube.ws.measures.Periods"
+   ],
+   "4": [
+    "message",
+    "sonarqube.ws.measures.Period"
+   ]
+  },
+  "sonarqube.ws.measures.Measure": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ],
+   "5": [
+    "scalar",
+    null
+   ],
+   "6": [
+    "message",
+    "sonarqube.ws.measures.PeriodValue"
+   ]
+  },
+  "sonarqube.ws.measures.Metrics": {
+   "1": [
+    "message",
+    "sonarqube.ws.commons.Metric"
+   ]
+  },
+  "sonarqube.ws.measures.Period": {
+   "1": [
+    "scalar",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "string",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.measures.PeriodValue": {
+   "1": [
+    "scalar",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "scalar",
+    null
+   ]
+  },
+  "sonarqube.ws.measures.Periods": {
+   "1": [
+    "message",
+    "sonarqube.ws.measures.Period"
+   ]
+  },
+  "sonarqube.ws.projectbranch.Branch": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "scalar",
+    null
+   ],
+   "3": [
+    "scalar",
+    null
+   ]
+  },
+  "sonarqube.ws.projectbranch.ListWsResponse": {
+   "1": [
+    "message",
+    "sonarqube.ws.projectbranch.Branch"
+   ]
+  },
+  "sonarqube.ws.qualityprofiles.SearchWsResponse": {
+   "1": [
+    "message",
+    "sonarqube.ws.qualityprofiles.SearchWsResponse.QualityProfile"
+   ]
+  },
+  "sonarqube.ws.qualityprofiles.SearchWsResponse.QualityProfile": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "string",
+    null
+   ],
+   "4": [
+    "string",
+    null
+   ],
+   "8": [
+    "scalar",
+    null
+   ],
+   "9": [
+    "scalar",
+    null
+   ],
+   "11": [
+    "string",
+    null
+   ],
+   "14": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.rules.Active": {
+   "1": [
+    "string",
+    null
+   ],
+   "3": [
+    "string",
+    null
+   ],
+   "5": [
+    "message",
+    "sonarqube.ws.rules.Active.Param"
+   ],
+   "9": [
+    "message",
+    "sonarqube.ws.rules.Active.Impacts"
+   ]
+  },
+  "sonarqube.ws.rules.Active.Impacts": {
+   "1": [
+    "message",
+    "sonarqube.ws.commons.Impact"
+   ]
+  },
+  "sonarqube.ws.rules.Active.Param": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.rules.ActiveList": {
+   "1": [
+    "message",
+    "sonarqube.ws.rules.Active"
+   ]
+  },
+  "sonarqube.ws.rules.Actives": {
+   "1": [
+    "message",
+    "sonarqube.ws.rules.Actives.ActivesEntry"
+   ]
+  },
+  "sonarqube.ws.rules.Actives.ActivesEntry": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "message",
+    "sonarqube.ws.rules.ActiveList"
+   ]
+  },
+  "sonarqube.ws.rules.Rule": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "string",
+    null
+   ],
+   "5": [
+    "string",
+    null
+   ],
+   "6": [
+    "string",
+    null
+   ],
+   "10": [
+    "string",
+    null
+   ],
+   "14": [
+    "string",
+    null
+   ],
+   "19": [
+    "string",
+    null
+   ],
+   "37": [
+    "scalar",
+    null
+   ],
+   "49": [
+    "message",
+    "sonarqube.ws.rules.Rule.DescriptionSections"
+   ],
+   "50": [
+    "message",
+    "sonarqube.ws.rules.Rule.EducationPrinciples"
+   ],
+   "52": [
+    "scalar",
+    null
+   ],
+   "54": [
+    "message",
+    "sonarqube.ws.rules.Rule.Impacts"
+   ]
+  },
+  "sonarqube.ws.rules.Rule.DescriptionSection": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "message",
+    "sonarqube.ws.rules.Rule.DescriptionSection.Context"
+   ]
+  },
+  "sonarqube.ws.rules.Rule.DescriptionSection.Context": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.rules.Rule.DescriptionSections": {
+   "1": [
+    "message",
+    "sonarqube.ws.rules.Rule.DescriptionSection"
+   ]
+  },
+  "sonarqube.ws.rules.Rule.EducationPrinciples": {
+   "1": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.rules.Rule.Impacts": {
+   "1": [
+    "message",
+    "sonarqube.ws.commons.Impact"
+   ]
+  },
+  "sonarqube.ws.rules.SearchResponse": {
+   "1": [
+    "scalar",
+    null
+   ],
+   "2": [
+    "scalar",
+    null
+   ],
+   "3": [
+    "scalar",
+    null
+   ],
+   "4": [
+    "message",
+    "sonarqube.ws.rules.Rule"
+   ],
+   "5": [
+    "message",
+    "sonarqube.ws.rules.Actives"
+   ],
+   "8": [
+    "message",
+    "sonarqube.ws.commons.Paging"
+   ]
+  },
+  "sonarqube.ws.rules.ShowResponse": {
+   "1": [
+    "message",
+    "sonarqube.ws.rules.Rule"
+   ]
+  },
+  "sonarqube.ws.settings.FieldValues": {
+   "1": [
+    "message",
+    "sonarqube.ws.settings.FieldValues.Value"
+   ]
+  },
+  "sonarqube.ws.settings.FieldValues.Value": {
+   "1": [
+    "message",
+    "sonarqube.ws.settings.FieldValues.Value.ValueEntry"
+   ]
+  },
+  "sonarqube.ws.settings.FieldValues.Value.ValueEntry": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.settings.Setting": {
+   "1": [
+    "string",
+    null
+   ],
+   "2": [
+    "string",
+    null
+   ],
+   "3": [
+    "message",
+    "sonarqube.ws.settings.Values"
+   ],
+   "4": [
+    "message",
+    "sonarqube.ws.settings.FieldValues"
+   ]
+  },
+  "sonarqube.ws.settings.Values": {
+   "1": [
+    "string",
+    null
+   ]
+  },
+  "sonarqube.ws.settings.ValuesWsResponse": {
+   "1": [
+    "message",
+    "sonarqube.ws.settings.Setting"
+   ]
+  }
+ }
+}

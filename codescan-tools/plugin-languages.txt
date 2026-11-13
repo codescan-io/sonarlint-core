@@ -1,0 +1,34 @@
+# Language keys the CodeScan IntelliJ plugin can enable in connected mode (one per line).
+#
+# Core downloads the rules of every quality profile whose language is in this list
+# (LocalStorageSynchronizer.downloadAnalyzerConfig), so the probe records the rules of each of them and
+# check-recordings.py checks that every one is recorded. Keys are the SonarSource keys, with the CodeScan
+# keys for Salesforce: sf (Apex), sfmeta (Salesforce metadata), vf (Visualforce). HTML is "web".
+#
+# Source: plugin EmbeddedPlugins.kt and EnabledLanguages.kt (upstream 10.14.1.80220), plus the CodeScan
+# additions Apex, Salesforce metadata and Visualforce. IPYTHON (ipynb) is added by the plugin when a Python
+# IDE is present, so it is listed to be safe. Rider and CLion languages are left out (removed from the fork).
+web
+xml
+js
+css
+kotlin
+php
+py
+ruby
+secrets
+ts
+yaml
+cloudformation
+docker
+kubernetes
+terraform
+scala
+swift
+sf
+sfmeta
+vf
+java
+go
+plsql
+ipynb

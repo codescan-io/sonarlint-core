@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/batch/issues",
+    "queryParameters": {
+      "key": {
+        "matches": ".*"
+      },
+      "branch": {
+        "equalTo": "main"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html;charset=utf-8"
+    },
+    "body": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <script type=\"module\" crossorigin src=\"/js/polyfills-XELwc-pX.js\"></script>\n\n    <meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\" charset=\"UTF-8\" />\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n    <link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\" />\n    <link rel=\"icon\" type=\"image/x-icon\" href=\"/favicon.ico\" />\n    <meta name=\"application-name\" content=\"SonarQube\" />\n    <meta name=\"msapplication-TileColor\" content=\"#FFFFFF\" />\n    <meta name=\"msapplication-TileImage\" content=\"/mstile-512x512.png\" />\n    <title>AutoRABIT CodeScan</title>\n    <script>\n      window.__assetsPath = function (filename) {\n        return '/' + filename;\n      };\n    </script>\n      <script>if (window.location.hostname.includes('codescan.io')) {\n(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\nnew Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\nj=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n'https://auth-host-9.example.test/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n})(window,document,'script','dataLayer','GTM-TGN67LR');\n}</script>\n      <script>if (window.location.hostname.includes('codescan.io') || window.location.hostname.includes('autorabit.com')) {\n(function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=o._q||[];\nv=['initialize','identify','updateOptions','pageLoad','track'];for(w=0,x=v.length;w<x;++w)(function(m){\no[m]=o[m]||function(){o._q[m===v[0]?'unshift':'push']([m].concat([].slice.call(arguments,0)));};})( v[w]);\ny=e.createElement(n);y.async=!0;y.src='https://auth-host-8.example.test/agent/static/6c4b3816-7b04-42d8-6025-bd01283d95a3/pendo.js';\nz=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');\n}</script>\n      <script>if (window.location.hostname.includes('codescan.io') || window.location.hostname.includes('autorabit.com')) {\nwindow.__initAnalytics = function(userId, accountId, host) {\n  pendo.initialize({ visitor: { id: userId }, account: { id: accountId, instance: host } });\n};\n}</script>\n    <script type=\"module\" crossorigin src=\"/js/main-KXBe8HZf.js\"></script>\n    <link rel=\"modulepreload\" crossorigin href=\"/js/vendor-CQH1ZGzS.js\">\n    <link rel=\"modulepreload\" crossorigin href=\"/js/lodash-qTYna-H1.js\">\n    <link rel=\"modulepreload\" crossorigin href=\"/js/echoes-BBwlXv0g.js\">\n    <link rel=\"modulepreload\" crossorigin href=\"/js/highlightjs-BrFxDSH8.js\">\n    <link rel=\"modulepreload\" crossorigin href=\"/js/datefns-BPXs5sw8.js\">\n    <link rel=\"stylesheet\" crossorigin href=\"/css/echoes-BVXoFVuc.css\">\n    <link rel=\"stylesheet\" crossorigin href=\"/css/main-C97HIZNs.css\">\n  </head>\n\n  <body>\n    <noscript><iframe src=\"https://auth-host-9.example.test/ns.html?id=GTM-TGN67LR\" height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"></iframe></noscript>\n    <div\n      id=\"content\"\n      data-base-url=\"\"\n      data-server-status=\"UP\"\n      data-instance=\"AutoRABIT CodeScan\"\n      data-official=\"false\"\n    >\n      <div class=\"global-loading\">\n        <i class=\"global-loading-spinner\"></i>\n        <span aria-live=\"polite\" class=\"global-loading-text\">Loading...</span>\n      </div>\n    </div>\n  </body>\n</html>\n"
+  },
+  "metadata": {
+    "note": "Real server behaviour that core must handle: CodeScan answered HTTP 200 with content type text/html;charset=utf-8, not the protobuf issue list core expects. Core's IssueApi must treat this as no issues, not crash. Core asks with the project key, or with project:path for one file; the recording matches any key."
+  }
+}

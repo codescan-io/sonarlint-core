@@ -49,3 +49,6 @@ Desktop.ini
 # scripts patches, they are local to each developer
 scripts/patches/*.sh
 scripts/patches/*license*.txt
+
+# real values hidden in recordings (written by codescan-tools/probe-endpoints.sh --hidden-list)
+codescan-tools/.hidden-values.txt

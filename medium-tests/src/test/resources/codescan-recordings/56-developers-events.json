@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/developers/search_events",
+    "queryParameters": {
+      "projects": {
+        "equalTo": "test-project"
+      },
+      "from": {
+        "matches": ".*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"events\":[]}"
+  }
+}

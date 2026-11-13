@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/measures/component.protobuf",
+    "queryParameters": {
+      "additionalFields": {
+        "equalTo": "periods"
+      },
+      "metricKeys": {
+        "equalTo": "projects"
+      },
+      "component": {
+        "equalTo": "test-project"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"errors\":[{\"msg\":\"Value of parameter \\u0027additionalFields\\u0027 (periods) must be one of: [metrics, period]\"}]}"
+  }
+}

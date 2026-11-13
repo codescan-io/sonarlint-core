@@ -1,0 +1,30 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/issues/search.protobuf",
+    "queryParameters": {
+      "issues": {
+        "equalTo": "038c6ccf-3a75-41cc-b1d6-c9d58bf138d6"
+      },
+      "componentKeys": {
+        "equalTo": "test-project"
+      },
+      "branch": {
+        "equalTo": "main"
+      },
+      "ps": {
+        "equalTo": "1"
+      },
+      "p": {
+        "equalTo": "1"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/x-protobuf"
+    },
+    "base64Body": "CAEQARgBIgYIARABGAEy0gMKJDAzOGM2Y2NmLTNhNzUtNDFjYy1iMWQ2LWM5ZDU4YmYxMzhkNhIPamF2YXNjcmlwdDpTMTA0GAIiRnRlc3QtcHJvamVjdDpmb3JjZS1hcHAvbWFpbi9kZWZhdWx0L3N0YXRpY3Jlc291cmNlcy9oaWdobGlnaHQvcHJpc20uanMyDHRlc3QtcHJvamVjdGIET1BFTmpdVGhpcyBmaWxlIGhhcyAxMjA3IGxpbmVzLCB3aGljaCBpcyBncmVhdGVyIHRoYW4gMTAwMCBhdXRob3JpemVkLiBTcGxpdCBpdCBpbnRvIHNtYWxsZXIgZmlsZXMucgIxaIoBAJoBDmJyYWluLW92ZXJsb2FkugEYMjAyNS0wOS0yNFQxMDo1MToxNSswMDAwwgEYMjAyNS0wOS0yNFQxMDo1MToxNSswMDAw2AEB4gECMWjqAQh0ZXN0LW9yZ5oCBE1BSU6gAgDAAgnIAgHSAgQIARAC2gIET1BFTuACAJIDVroCJGUxMTMzYWM4LWVjYzYtNDg3MC05MmFjLTg1OTMwN2U0YjkwYroCATC6AgEyugIkMDM4YzZjY2YtM2E3NS00MWNjLWIxZDYtYzlkNThiZjEzOGQ2yAMAOjsSDHRlc3QtcHJvamVjdCABKgNUUksyDHRlc3QtcHJvamVjdDoMdGVzdC1wcm9qZWN0Wgh0ZXN0LW9yZzrZARJGdGVzdC1wcm9qZWN0OmZvcmNlLWFwcC9tYWluL2RlZmF1bHQvc3RhdGljcmVzb3VyY2VzL2hpZ2hsaWdodC9wcmlzbS5qcyABKgNGSUwyCHByaXNtLmpzOjlmb3JjZS1hcHAvbWFpbi9kZWZhdWx0L3N0YXRpY3Jlc291cmNlcy9oaWdobGlnaHQvcHJpc20uanNCOWZvcmNlLWFwcC9tYWluL2RlZmF1bHQvc3RhdGljcmVzb3VyY2VzL2hpZ2hsaWdodC9wcmlzbS5qc1oIdGVzdC1vcmdiAGg8"
+  }
+}

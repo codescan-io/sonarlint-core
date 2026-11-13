@@ -1,0 +1,27 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/authentication/validate",
+    "queryParameters": {
+      "format": {
+        "equalTo": "json"
+      }
+    },
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer REDACTED"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json;charset=ISO-8859-1"
+    },
+    "body": "{\"valid\":false}"
+  },
+  "metadata": {
+    "note": "Answer to a made-up token (the word REDACTED, not a real token). Matches only a request that sends exactly Authorization: Bearer REDACTED; priority 1 so it wins over the normal answer for the same address."
+  }
+}
