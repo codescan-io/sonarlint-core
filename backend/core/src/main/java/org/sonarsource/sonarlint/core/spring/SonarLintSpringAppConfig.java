@@ -226,7 +226,8 @@ public class SonarLintSpringAppConfig {
   @Bean
   SonarCloudActiveEnvironment provideSonarCloudActiveEnvironment(InitializeParams params) {
     var alternativeSonarCloudEnv = params.getAlternativeSonarCloudEnvironment();
-    return alternativeSonarCloudEnv == null ? SonarCloudActiveEnvironment.prod()
+    // CodeScan: without an environment from the IDE, use CodeScan's address, never sonarcloud.io
+    return alternativeSonarCloudEnv == null ? SonarCloudActiveEnvironment.codeScanDefault()
       : new SonarCloudActiveEnvironment(alternativeSonarCloudEnv.getUri(), alternativeSonarCloudEnv.getWebSocketsEndpointUri());
   }
 
