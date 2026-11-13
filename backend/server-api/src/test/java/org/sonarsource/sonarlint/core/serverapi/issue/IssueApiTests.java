@@ -124,6 +124,18 @@ class IssueApiTests {
   }
 
   @Test
+  void web_page_warning_does_not_log_the_query_string() {
+    // Resilience checklist (F): no URLs with query strings in logs; the project key and branch name stay out
+    mockServer.addStringResponse("/batch/issues?key=secret-project&branch=feature%2Fsecret", "<html><body></body></html>");
+
+    underTest.downloadAllFromBatchIssues("secret-project", "feature/secret", new SonarLintCancelMonitor());
+
+    var warnings = logTester.logs(LogOutput.Level.WARN);
+    assertThat(warnings).hasSize(1);
+    assertThat(warnings.get(0)).contains("/batch/issues").doesNotContain("?").doesNotContain("secret");
+  }
+
+  @Test
   void should_return_no_issues_when_batch_issues_answers_with_an_html_page_without_doctype() {
     mockServer.addStringResponse("/batch/issues?key=keyyy", "<HTML><body>Not here</body></HTML>");
 

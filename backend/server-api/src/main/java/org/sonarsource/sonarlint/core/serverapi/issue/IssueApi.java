@@ -151,7 +151,8 @@ public class IssueApi {
         var input = new BufferedInputStream(response.bodyAsStream());
         if (startsWithWebPage(input)) {
           // CodeScan: the CodeScan server answers this address with its web app page (status 200), not issue data
-          LOG.warn("The server answered " + batchIssueUrl + " with a web page, not issue data. No server issues were downloaded.");
+          // Only the path is logged: the query string holds the project key and branch name
+          LOG.warn("The server answered /batch/issues with a web page, not issue data. No server issues were downloaded.");
           return Collections.emptyList();
         }
         var parser = ScannerInput.ServerIssue.parser();
