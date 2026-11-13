@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/plugins/download",
+    "queryParameters": {
+      "plugin": {
+        "equalTo": "kotlin"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/java-archive"
+    },
+    "base64Body": "UEsDBBQAAAAAAAAAIVjZ1+mQJQAAACUAAAAUAAAATUVUQS1JTkYvTUFOSUZFU1QuTUZNYW5pZmVzdC1WZXJzaW9uOiAxLjAKU3RhbmQtSW46IHRydWUKUEsBAhQDFAAAAAAAAAAhWNnX6ZAlAAAAJQAAABQAAAAAAAAAAAAAAIABAAAAAE1FVEEtSU5GL01BTklGRVNULk1GUEsFBgAAAAABAAEAQgAAAFcAAAAAAA=="
+  },
+  "metadata": {
+    "note": "Stand-in: a tiny jar made by the probe, not the real plugin. The real server answers with the full plugin jar (the probe asked for 100 bytes: HTTP 200, content type application/java-archive). Enough to prove the address and the plugin parameter; not enough to load the plugin."
+  }
+}

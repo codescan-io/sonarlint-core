@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/organizations/search.protobuf",
+    "queryParameters": {
+      "member": {
+        "equalTo": "true"
+      },
+      "ps": {
+        "equalTo": "500"
+      },
+      "p": {
+        "equalTo": "1"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/x-protobuf"
+    },
+    "base64Body": "CiwKC290aGVyLW9yZy0xEgtvdGhlci1vcmctMRoAIgAqAEoGCAEQARgBUAJYAQosCgtvdGhlci1vcmctMhILb3RoZXItb3JnLTIaACIAKgBKBggBEAEYAVACWAEKJgoIdGVzdC1vcmcSCHRlc3Qtb3JnGgAiACoASgYIARABGAFQAlgBEgcIARD0AxgD"
+  }
+}

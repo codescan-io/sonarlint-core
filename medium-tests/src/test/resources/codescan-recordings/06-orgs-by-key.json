@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/organizations/search.protobuf",
+    "queryParameters": {
+      "organizations": {
+        "equalTo": "test-org"
+      },
+      "ps": {
+        "equalTo": "500"
+      },
+      "p": {
+        "equalTo": "1"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/x-protobuf"
+    },
+    "base64Body": "CiQKCHRlc3Qtb3JnEgh0ZXN0LW9yZxoAIgAqAEoGCAEQARgBWAESBwgBEPQDGAE="
+  }
+}

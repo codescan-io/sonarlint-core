@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/push/sonarlint_events",
+    "queryParameters": {
+      "projectKeys": {
+        "equalTo": "test-project"
+      }
+    }
+  },
+  "response": {
+    "status": 403,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"errors\":[{\"msg\":\"Insufficient privileges\"}]}"
+  },
+  "metadata": {
+    "note": "SonarQube-type connections only, not called for CodeScan: core opens this event stream only for a SonarQube-type connection (a SonarCloud-type one uses a WebSocket instead). Recorded for completeness: CodeScan answered HTTP 403. The languages parameter is not matched."
+  }
+}
