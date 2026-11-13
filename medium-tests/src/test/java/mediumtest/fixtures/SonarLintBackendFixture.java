@@ -486,18 +486,18 @@ public class SonarLintBackendFixture {
         var featureFlags = new FeatureFlagsDto(manageSmartNotifications, taintVulnerabilitiesEnabled, synchronizeProjects, startEmbeddedServer, areSecurityHotspotsEnabled,
           manageServerSentEvents, enableDataflowBugDetection, shouldManageFullSynchronization, telemetryEnabled, canOpenFixSuggestion);
 
-        SonarCloudAlternativeEnvironmentDto sonarCloudAlternativeEnvironment = null;
-        if (sonarCloudUrl != null || sonarCloudWebSocketsUrl != null || noSonarCloudWebSockets) {
-          URI webSocketsUri;
-          if (noSonarCloudWebSockets) {
-            webSocketsUri = null;
-          } else {
-            webSocketsUri = sonarCloudWebSocketsUrl == null ? SonarCloudActiveEnvironment.prod().getWebSocketsEndpointUri() : URI.create(sonarCloudWebSocketsUrl);
-          }
-          sonarCloudAlternativeEnvironment = new SonarCloudAlternativeEnvironmentDto(
-            sonarCloudUrl == null ? SonarCloudActiveEnvironment.PRODUCTION_URI : URI.create(sonarCloudUrl),
-            webSocketsUri);
+        // CodeScan: always pass an environment. With none, the backend now falls back to https://app.codescan.io, so
+        // upstream tests that set no cloud address would call CodeScan's production server. Upstream's own
+        // sonarcloud.io settings keep those tests as upstream wrote them.
+        URI webSocketsUri;
+        if (noSonarCloudWebSockets) {
+          webSocketsUri = null;
+        } else {
+          webSocketsUri = sonarCloudWebSocketsUrl == null ? SonarCloudActiveEnvironment.prod().getWebSocketsEndpointUri() : URI.create(sonarCloudWebSocketsUrl);
         }
+        var sonarCloudAlternativeEnvironment = new SonarCloudAlternativeEnvironmentDto(
+          sonarCloudUrl == null ? SonarCloudActiveEnvironment.PRODUCTION_URI : URI.create(sonarCloudUrl),
+          webSocketsUri);
 
         var sslConfiguration = new SslConfigurationDto(null, null, null, keyStorePath, keyStorePassword, keyStoreType);
         var httpConfiguration = new HttpConfigurationDto(sslConfiguration, null, null, null, responseTimeout);
