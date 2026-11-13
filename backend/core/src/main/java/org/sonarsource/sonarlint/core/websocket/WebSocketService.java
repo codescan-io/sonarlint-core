@@ -74,8 +74,12 @@ public class WebSocketService {
     this.connectionConfigurationRepository = connectionConfigurationRepository;
     this.configurationRepository = configurationRepository;
     this.connectionAwareHttpClientProvider = connectionAwareHttpClientProvider;
-    this.shouldEnableWebSockets = params.getFeatureFlags().shouldManageServerSentEvents();
     this.webSocketsEndpointUri = sonarCloudActiveEnvironment.getWebSocketsEndpointUri();
+    // CodeScan: the CodeScan server has no WebSocket address, so the IDE passes none and WebSockets stay off
+    this.shouldEnableWebSockets = params.getFeatureFlags().shouldManageServerSentEvents() && webSocketsEndpointUri != null;
+    if (params.getFeatureFlags().shouldManageServerSentEvents() && webSocketsEndpointUri == null) {
+      LOG.info("WebSockets are off: the cloud environment has no WebSocket address");
+    }
     this.eventPublisher = eventPublisher;
   }
 
