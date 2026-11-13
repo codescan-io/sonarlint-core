@@ -26,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.sonar.scanner.protocol.input.ScannerInput;
+import org.sonarsource.sonarlint.core.commons.log.LogOutput;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogTester;
 import org.sonarsource.sonarlint.core.commons.progress.SonarLintCancelMonitor;
 import org.sonarsource.sonarlint.core.serverapi.MockWebServerExtensionWithProtobuf;
@@ -107,6 +108,28 @@ class IssueApiTests {
     var throwable = catchThrowable(() -> underTest.downloadAllFromBatchIssues("keyyy", null, new SonarLintCancelMonitor()));
 
     assertThat(throwable).isInstanceOf(IllegalStateException.class);
+  }
+
+  @Test
+  void should_return_no_issues_and_warn_once_when_batch_issues_answers_with_a_web_page() {
+    // CodeScan answers /batch/issues with its web app page (status 200, text/html), not issue data
+    mockServer.addStringResponse("/batch/issues?key=keyyy", "\n<!doctype html>\n<html lang=\"en\">\n  <head></head>\n</html>\n");
+
+    var issues = underTest.downloadAllFromBatchIssues("keyyy", null, new SonarLintCancelMonitor());
+
+    assertThat(issues).isEmpty();
+    var warnings = logTester.logs(LogOutput.Level.WARN);
+    assertThat(warnings).hasSize(1);
+    assertThat(warnings.get(0)).contains("/batch/issues").contains("web page");
+  }
+
+  @Test
+  void should_return_no_issues_when_batch_issues_answers_with_an_html_page_without_doctype() {
+    mockServer.addStringResponse("/batch/issues?key=keyyy", "<HTML><body>Not here</body></HTML>");
+
+    var issues = underTest.downloadAllFromBatchIssues("keyyy", null, new SonarLintCancelMonitor());
+
+    assertThat(issues).isEmpty();
   }
 
   @Test

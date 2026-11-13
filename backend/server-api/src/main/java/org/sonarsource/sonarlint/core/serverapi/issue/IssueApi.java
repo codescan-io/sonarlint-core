@@ -20,12 +20,15 @@
 package org.sonarsource.sonarlint.core.serverapi.issue;
 
 import com.google.gson.Gson;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -64,6 +67,7 @@ public class IssueApi {
   );
 
   private static final SonarLintLogger LOG = SonarLintLogger.get();
+  private static final int WEB_PAGE_PEEK_SIZE = 64;
   private static final String ORGANIZATION_PARAM = "&organization=";
 
   private final ServerApiHelper serverApiHelper;
@@ -144,11 +148,24 @@ public class IssueApi {
         } else if (!response.isSuccessful()) {
           throw ServerApiHelper.handleError(response);
         }
-        var input = response.bodyAsStream();
+        var input = new BufferedInputStream(response.bodyAsStream());
+        if (startsWithWebPage(input)) {
+          // CodeScan: the CodeScan server answers this address with its web app page (status 200), not issue data
+          LOG.warn("The server answered " + batchIssueUrl + " with a web page, not issue data. No server issues were downloaded.");
+          return Collections.emptyList();
+        }
         var parser = ScannerInput.ServerIssue.parser();
         return readMessages(input, parser);
       },
       duration -> LOG.debug("Downloaded issues in {}ms", duration));
+  }
+
+  private static boolean startsWithWebPage(BufferedInputStream input) throws IOException {
+    input.mark(WEB_PAGE_PEEK_SIZE);
+    var start = input.readNBytes(WEB_PAGE_PEEK_SIZE);
+    input.reset();
+    var text = new String(start, StandardCharsets.ISO_8859_1).stripLeading().toLowerCase(Locale.ROOT);
+    return text.startsWith("<!doctype html") || text.startsWith("<html");
   }
 
   private static String getBatchIssuesUrl(String key) {
