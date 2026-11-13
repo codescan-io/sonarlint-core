@@ -63,12 +63,12 @@
     <jdk.min.version>11</jdk.min.version>
     <gson.version>2.10</gson.version>
     <mockito.version>5.8.0</mockito.version>
-    <kotlin.version>1.6.21</kotlin.version>
+    <kotlin.version>1.9.25</kotlin.version>
     <lsp4j.version>0.22.0</lsp4j.version>
     <slf4j.version>1.7.36</slf4j.version>
     <logback.version>1.2.13</logback.version>
     <version.surefire.plugin>3.1.2</version.surefire.plugin>
-    <jgit.version>6.9.0.202403050737-r</jgit.version>
+    <jgit.version>6.10.0.202406032230-r</jgit.version>
 
     <!-- AWS CodeArtifact (replaces artifactory.autorabit.com). Hosts the CodeScan builds of sonar-plugin-api.
          Login comes from settings.xml (CODEARTIFACT_AUTH_TOKEN); get a token with
