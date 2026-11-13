@@ -41,6 +41,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.common.TransientSonarCloudConnectionDto;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.org.FuzzySearchUserOrganizationsParams;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.org.GetOrganizationParams;
@@ -48,6 +49,7 @@ import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.org.ListUs
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.org.OrganizationDto;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.projects.GetAllProjectsParams;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.connection.projects.SonarProjectDto;
+import org.sonarsource.sonarlint.core.rpc.protocol.backend.file.DidUpdateFileSystemParams;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.newcode.GetNewCodeDefinitionParams;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.tracking.ClientTrackedFindingDto;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.tracking.LineWithHashDto;
@@ -55,6 +57,7 @@ import org.sonarsource.sonarlint.core.rpc.protocol.backend.tracking.ListAllParam
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.tracking.TaintVulnerabilityDto;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.tracking.TextRangeWithHashDto;
 import org.sonarsource.sonarlint.core.rpc.protocol.backend.tracking.TrackWithServerIssuesParams;
+import org.sonarsource.sonarlint.core.rpc.protocol.client.connection.ConnectionSuggestionDto;
 import org.sonarsource.sonarlint.core.rpc.protocol.client.log.LogLevel;
 import org.sonarsource.sonarlint.core.rpc.protocol.client.log.LogParams;
 import org.sonarsource.sonarlint.core.rpc.protocol.common.ClientFileDto;
@@ -394,6 +397,32 @@ class CodeScanServerMediumTests {
   /**
    * An address on the same recording server with no recordings: anything sent there gets 404.
    */
+  // CodeScan: project settings that name a CodeScan server on its own domain suggest a cloud connection at that address,
+  // even when a connection to the same organization exists on another server
+  @Test
+  void projectSettingsSuggestACloudConnectionAtTheirOwnAddress() throws IOException {
+    var customDomain = "https://codescan.example.com";
+    var settings = baseDir.resolve("sonar-project.properties");
+    Files.writeString(settings, "sonar.host.url=" + customDomain + "\nsonar.organization=" + ORGANIZATION + "\nsonar.projectKey=" + PROJECT_KEY, StandardCharsets.UTF_8);
+    var settingsFile = new ClientFileDto(settings.toUri(), Paths.get("sonar-project.properties"), SCOPE_ID, null, StandardCharsets.UTF_8.name(), settings, null, null, true);
+    var client = newFakeClient().withInitialFs(SCOPE_ID, List.of(settingsFile)).build();
+    backend = newBackend()
+      .withSonarCloudUrl(codescan.baseUrl())
+      .withoutSonarCloudWebSockets()
+      .withSonarCloudConnection(CONNECTION_ID, ORGANIZATION, true, null)
+      .build(client);
+
+    backend.getFileService().didUpdateFileSystem(new DidUpdateFileSystemParams(List.of(settingsFile), List.of(), List.of()));
+
+    ArgumentCaptor<Map<String, List<ConnectionSuggestionDto>>> suggestions = ArgumentCaptor.forClass(Map.class);
+    verify(client, timeout(5000)).suggestConnection(suggestions.capture());
+    assertThat(suggestions.getValue()).containsOnlyKeys(SCOPE_ID);
+    var suggestion = suggestions.getValue().get(SCOPE_ID).get(0).getConnectionSuggestion().getRight();
+    assertThat(suggestion.getOrganization()).isEqualTo(ORGANIZATION);
+    assertThat(suggestion.getProjectKey()).isEqualTo(PROJECT_KEY);
+    assertThat(suggestion.getCloudServerUrl()).isEqualTo(customDomain);
+  }
+
   private static String notCodeScanAddress() {
     return codescan.baseUrl() + "/not-codescan";
   }

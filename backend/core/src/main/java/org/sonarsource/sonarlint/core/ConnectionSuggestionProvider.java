@@ -134,8 +134,8 @@ public class ConnectionSuggestionProvider {
             serverUrl -> connectionSuggestionsByConfigScopeIds.computeIfAbsent(configScopeId, s -> new ArrayList<>())
               .add(new ConnectionSuggestionDto(new SonarQubeConnectionSuggestionDto(serverUrl, projectKey),
                 bindingClue.isFromSharedConfiguration())),
-            organization -> connectionSuggestionsByConfigScopeIds.computeIfAbsent(configScopeId, s -> new ArrayList<>())
-              .add(new ConnectionSuggestionDto(new SonarCloudConnectionSuggestionDto(organization, projectKey),
+            scClue -> connectionSuggestionsByConfigScopeIds.computeIfAbsent(configScopeId, s -> new ArrayList<>())
+              .add(new ConnectionSuggestionDto(new SonarCloudConnectionSuggestionDto(scClue.getOrganization(), projectKey, scClue.getServerUrl()),
                 bindingClue.isFromSharedConfiguration()))
           ), () -> bindingSuggestionsForConfigScopeIds.add(configScopeId));
         }
@@ -146,13 +146,17 @@ public class ConnectionSuggestionProvider {
     computeBindingSuggestionIfAny(bindingSuggestionsForConfigScopeIds);
   }
 
-  private Optional<Either<String, String>> handleBindingClue(BindingClueProvider.BindingClue bindingClue) {
+  private Optional<Either<String, BindingClueProvider.SonarCloudBindingClue>> handleBindingClue(BindingClueProvider.BindingClue bindingClue) {
     if (bindingClue instanceof BindingClueProvider.SonarCloudBindingClue) {
       LOG.debug("Found a SonarCloud binding clue");
-      var organization = ((BindingClueProvider.SonarCloudBindingClue) bindingClue).getOrganization();
-      var connection = connectionRepository.findByOrganization(organization);
+      var scClue = (BindingClueProvider.SonarCloudBindingClue) bindingClue;
+      var serverUrl = scClue.getServerUrl();
+      // CodeScan: a connection only counts when it is also at the server address the settings name, if any
+      var connection = connectionRepository.findByOrganization(scClue.getOrganization()).stream()
+        .filter(c -> serverUrl == null || c.isSameServerUrl(serverUrl))
+        .collect(Collectors.toList());
       if (connection.isEmpty()) {
-        return Optional.of(Either.forRight(organization));
+        return Optional.of(Either.forRight(scClue));
       }
     } else if (bindingClue instanceof BindingClueProvider.SonarQubeBindingClue) {
       LOG.debug("Found a SonarQube binding clue");

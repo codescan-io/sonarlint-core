@@ -22,6 +22,7 @@ package org.sonarsource.sonarlint.core;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ import org.sonarsource.sonarlint.core.commons.log.SonarLintLogTester;
 import org.sonarsource.sonarlint.core.commons.progress.SonarLintCancelMonitor;
 import org.sonarsource.sonarlint.core.fs.ClientFile;
 import org.sonarsource.sonarlint.core.fs.ClientFileSystemService;
+import org.sonarsource.sonarlint.core.repository.connection.AbstractConnectionConfiguration;
 import org.sonarsource.sonarlint.core.repository.connection.ConnectionConfigurationRepository;
 import org.sonarsource.sonarlint.core.repository.connection.SonarCloudConnectionConfiguration;
 import org.sonarsource.sonarlint.core.repository.connection.SonarQubeConnectionConfiguration;
@@ -51,6 +53,9 @@ class BindingClueProviderTests {
   private static final String PROJECT_KEY_1 = "myproject1";
   public static final String MY_ORG_1 = "myOrg1";
   public static final String MY_ORG_2 = "myOrg2";
+  public static final String CS_CONNECTION_ID = "cs1";
+  public static final String CS_CONNECTION_ID_2 = "cs2";
+  public static final String CODESCAN_URL = "https://codescan.example.com";
 
   public static final String CONFIG_SCOPE_ID = "configScopeId";
   private final ConnectionConfigurationRepository connectionRepository = mock(ConnectionConfigurationRepository.class);
@@ -224,6 +229,71 @@ class BindingClueProviderTests {
     var file = new ClientFile(URI.create("/path/to/.sonarlint/connectedMode.json"), CONFIG_SCOPE_ID, Path.of("/path/to/.sonarlint2/connectedMode.json"), false, null, null, null, true);
 
     assertThat(file.isSonarlintConfigurationFile()).isFalse();
+  }
+
+  // CodeScan: a project address that belongs to a configured cloud connection gives a cloud hint for that address only
+  @Test
+  void address_of_a_configured_cloud_connection_gives_a_cloud_hint_for_that_address_only() {
+    mockFindFileByNamesInScope(List.of(buildClientFile("sonar-project.properties", "path/to/sonar-project.properties",
+      "sonar.host.url=" + CODESCAN_URL + "/\nsonar.projectKey=" + PROJECT_KEY_1)));
+    mockConnections(
+      new SonarCloudConnectionConfiguration(URI.create(CODESCAN_URL), CS_CONNECTION_ID, MY_ORG_1, true),
+      new SonarCloudConnectionConfiguration(SonarCloudActiveEnvironment.PRODUCTION_URI, SC_CONNECTION_ID_1, MY_ORG_1, true),
+      new SonarQubeConnectionConfiguration(SQ_CONNECTION_ID_1, "http://mysonarqube.org", true));
+
+    var bindingClueWithConnections = underTest.collectBindingCluesWithConnections(CONFIG_SCOPE_ID, Set.of(CS_CONNECTION_ID, SC_CONNECTION_ID_1, SQ_CONNECTION_ID_1),
+      new SonarLintCancelMonitor());
+
+    assertThat(bindingClueWithConnections).hasSize(1);
+    var bindingClue = bindingClueWithConnections.get(0).getBindingClue();
+    assertThat(bindingClue).isInstanceOf(BindingClueProvider.SonarCloudBindingClue.class);
+    assertThat(((BindingClueProvider.SonarCloudBindingClue) bindingClue).getServerUrl()).isEqualTo(CODESCAN_URL + "/");
+    assertThat(bindingClue.getSonarProjectKey()).isEqualTo(PROJECT_KEY_1);
+    assertThat(bindingClueWithConnections.get(0).getConnectionIds()).containsOnly(CS_CONNECTION_ID);
+  }
+
+  // CodeScan: the same organization key can exist on two servers; the project's address picks the right one
+  @Test
+  void organization_and_address_match_only_cloud_connections_at_that_address() {
+    mockFindFileByNamesInScope(List.of(buildClientFile("sonar-project.properties", "path/to/sonar-project.properties",
+      "sonar.host.url=" + CODESCAN_URL + "\nsonar.organization=" + MY_ORG_1)));
+    mockConnections(
+      new SonarCloudConnectionConfiguration(URI.create(CODESCAN_URL), CS_CONNECTION_ID, MY_ORG_1, true),
+      new SonarCloudConnectionConfiguration(URI.create(CODESCAN_URL), CS_CONNECTION_ID_2, MY_ORG_2, true),
+      new SonarCloudConnectionConfiguration(SonarCloudActiveEnvironment.PRODUCTION_URI, SC_CONNECTION_ID_1, MY_ORG_1, true));
+
+    var bindingClueWithConnections = underTest.collectBindingCluesWithConnections(CONFIG_SCOPE_ID, Set.of(CS_CONNECTION_ID, CS_CONNECTION_ID_2, SC_CONNECTION_ID_1),
+      new SonarLintCancelMonitor());
+
+    assertThat(bindingClueWithConnections).hasSize(1);
+    var bindingClue = (BindingClueProvider.SonarCloudBindingClue) bindingClueWithConnections.get(0).getBindingClue();
+    assertThat(bindingClue.getOrganization()).isEqualTo(MY_ORG_1);
+    assertThat(bindingClue.getServerUrl()).isEqualTo(CODESCAN_URL);
+    assertThat(bindingClueWithConnections.get(0).getConnectionIds()).containsOnly(CS_CONNECTION_ID);
+  }
+
+  // CodeScan: an address that no cloud connection uses is still a SonarQube hint, as upstream
+  @Test
+  void unknown_address_stays_a_sonarqube_hint_when_cloud_connections_exist() {
+    mockFindFileByNamesInScope(List.of(buildClientFile("sonar-project.properties", "path/to/sonar-project.properties", "sonar.host.url=http://mysonarqube.org\n")));
+    mockConnections(
+      new SonarCloudConnectionConfiguration(URI.create(CODESCAN_URL), CS_CONNECTION_ID, MY_ORG_1, true),
+      new SonarQubeConnectionConfiguration(SQ_CONNECTION_ID_1, "http://mysonarqube.org", true));
+
+    var bindingClueWithConnections = underTest.collectBindingCluesWithConnections(CONFIG_SCOPE_ID, Set.of(CS_CONNECTION_ID, SQ_CONNECTION_ID_1), new SonarLintCancelMonitor());
+
+    assertThat(bindingClueWithConnections).hasSize(1);
+    assertThat(bindingClueWithConnections.get(0).getBindingClue()).isInstanceOf(BindingClueProvider.SonarQubeBindingClue.class);
+    assertThat(bindingClueWithConnections.get(0).getConnectionIds()).containsOnly(SQ_CONNECTION_ID_1);
+  }
+
+  private void mockConnections(AbstractConnectionConfiguration... connections) {
+    var connectionsById = new HashMap<String, AbstractConnectionConfiguration>();
+    for (var connection : connections) {
+      connectionsById.put(connection.getConnectionId(), connection);
+      when(connectionRepository.getConnectionById(connection.getConnectionId())).thenReturn(connection);
+    }
+    when(connectionRepository.getConnectionsById()).thenReturn(connectionsById);
   }
 
   private ClientFile buildClientFile(String filename, String relativePath, String content) {

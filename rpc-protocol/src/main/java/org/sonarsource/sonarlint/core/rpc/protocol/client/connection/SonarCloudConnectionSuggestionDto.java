@@ -19,14 +19,25 @@
  */
 package org.sonarsource.sonarlint.core.rpc.protocol.client.connection;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
+
 public class SonarCloudConnectionSuggestionDto {
 
   private final String organization;
   private final String projectKey;
+  // CodeScan: the cloud server address named in the project's settings, if any.
+  // Not named "serverUrl": EitherSonarQubeSonarCloudConnectionAdapterFactory reads any JSON with "serverUrl" as a SonarQube suggestion.
+  private final String cloudServerUrl;
 
   public SonarCloudConnectionSuggestionDto(String organization, String projectKey) {
+    this(organization, projectKey, null);
+  }
+
+  public SonarCloudConnectionSuggestionDto(String organization, String projectKey, @Nullable String cloudServerUrl) {
     this.organization = organization;
     this.projectKey = projectKey;
+    this.cloudServerUrl = cloudServerUrl;
   }
 
   public String getOrganization() {
@@ -35,6 +46,11 @@ public class SonarCloudConnectionSuggestionDto {
 
   public String getProjectKey() {
     return projectKey;
+  }
+
+  @CheckForNull
+  public String getCloudServerUrl() {
+    return cloudServerUrl;
   }
 
 }

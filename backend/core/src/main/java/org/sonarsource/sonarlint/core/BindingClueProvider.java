@@ -177,10 +177,13 @@ public class BindingClueProvider {
     }
     if (bindingClue instanceof SonarCloudBindingClue) {
       var organization = ((SonarCloudBindingClue) bindingClue).organization;
+      var serverUrl = ((SonarCloudBindingClue) bindingClue).serverUrl;
       return eligibleConnectionIds.stream().map(connectionRepository::getConnectionById)
         .filter(SonarCloudConnectionConfiguration.class::isInstance)
         .map(SonarCloudConnectionConfiguration.class::cast)
         .filter(c -> organization == null || Objects.equals(organization, c.getOrganization()))
+        // CodeScan: when the settings name a server address, only connections to that address match
+        .filter(c -> serverUrl == null || c.isSameServerUrl(serverUrl))
         .map(AbstractConnectionConfiguration::getConnectionId)
         .collect(toSet());
     }
@@ -253,11 +256,12 @@ public class BindingClueProvider {
       return new SonarCloudBindingClue(scannerProps.projectKey, scannerProps.organization, scannerProps.isFromSharedConfiguration);
     }
     if (scannerProps.organization != null) {
-      return new SonarCloudBindingClue(scannerProps.projectKey, scannerProps.organization, scannerProps.isFromSharedConfiguration);
+      // CodeScan: keep the server address so a project can point at a cloud server on its own domain
+      return new SonarCloudBindingClue(scannerProps.projectKey, scannerProps.organization, scannerProps.serverUrl, scannerProps.isFromSharedConfiguration);
     }
     if (scannerProps.serverUrl != null) {
-      if (removeEnd(scannerProps.serverUrl, "/").equals(removeEnd(sonarCloudUri.toString(), "/"))) {
-        return new SonarCloudBindingClue(scannerProps.projectKey, null, scannerProps.isFromSharedConfiguration);
+      if (isCloudAddress(scannerProps.serverUrl)) {
+        return new SonarCloudBindingClue(scannerProps.projectKey, null, scannerProps.serverUrl, scannerProps.isFromSharedConfiguration);
       } else {
         return new SonarQubeBindingClue(scannerProps.projectKey, scannerProps.serverUrl, scannerProps.isFromSharedConfiguration);
       }
@@ -266,6 +270,18 @@ public class BindingClueProvider {
       return new UnknownBindingClue(scannerProps.projectKey, scannerProps.isFromSharedConfiguration);
     }
     return null;
+  }
+
+  /**
+   * CodeScan: an address is a cloud address when it is the IDE-wide cloud address or the address of a configured cloud connection.
+   */
+  private boolean isCloudAddress(String serverUrl) {
+    if (removeEnd(serverUrl, "/").equals(removeEnd(sonarCloudUri.toString(), "/"))) {
+      return true;
+    }
+    return connectionRepository.getConnectionsById().values().stream()
+      .filter(SonarCloudConnectionConfiguration.class::isInstance)
+      .anyMatch(c -> c.isSameServerUrl(serverUrl));
   }
 
   public interface BindingClue {
@@ -329,11 +345,18 @@ public class BindingClueProvider {
 
     private final String sonarProjectKey;
     private final String organization;
+    // CodeScan: the cloud server address named in the project's settings, if any
+    private final String serverUrl;
     private final boolean isFromSharedConfiguration;
 
     SonarCloudBindingClue(@Nullable String sonarProjectKey, @Nullable String organization, boolean isFromSharedConfiguration) {
+      this(sonarProjectKey, organization, null, isFromSharedConfiguration);
+    }
+
+    SonarCloudBindingClue(@Nullable String sonarProjectKey, @Nullable String organization, @Nullable String serverUrl, boolean isFromSharedConfiguration) {
       this.sonarProjectKey = sonarProjectKey;
       this.organization = organization;
+      this.serverUrl = serverUrl;
       this.isFromSharedConfiguration = isFromSharedConfiguration;
     }
 
@@ -349,6 +372,11 @@ public class BindingClueProvider {
 
     public String getOrganization() {
       return organization;
+    }
+
+    @CheckForNull
+    public String getServerUrl() {
+      return serverUrl;
     }
 
   }
