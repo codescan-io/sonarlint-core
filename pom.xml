@@ -43,7 +43,7 @@
   </modules>
 
   <properties>
-    <sonar-plugin-api.version>10.14-CODESCAN</sonar-plugin-api.version>
+    <sonar-plugin-api.version>10.14.1-CODESCAN</sonar-plugin-api.version>
     <sonar-ws.version>9.9.1.69595</sonar-ws.version>
     <sonar-markdown.version>9.9.0.65466</sonar-markdown.version>
     <sonar-scanner-protocol.version>7.9</sonar-scanner-protocol.version>
@@ -60,6 +60,11 @@
     <lsp4j.version>0.19.0</lsp4j.version>
 
     <version.surefire.plugin>3.1.2</version.surefire.plugin>
+
+    <!-- AWS CodeArtifact (replaces artifactory.autorabit.com). Hosts the CodeScan builds of sonar-plugin-api.
+         Login comes from settings.xml (CODEARTIFACT_AUTH_TOKEN); get a token with
+         eval "$(../sonarlint-intellij-master/scripts/codeartifact-bootstrap.sh)" -->
+    <codeartifact.release.url>https://autorabit-artifacts-domain-261140574810.d.codeartifact.us-east-1.amazonaws.com/maven/codescan-libs-release/</codeartifact.release.url>
 
     <sonar.host.url>https://app.codescan.io</sonar.host.url>
     <sonar.login></sonar.login>
@@ -206,6 +211,20 @@
 <!--      </dependency>-->
     </dependencies>
   </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>codeartifact-release</id>
+      <name>codescan-libs-release</name>
+      <url>${codeartifact.release.url}</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <build>
     <pluginManagement>
