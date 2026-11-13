@@ -24,8 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +38,7 @@ import java.util.Queue;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 import javax.annotation.CheckForNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -160,11 +161,26 @@ public class PluginInstancesLoader implements Closeable {
     }
   }
 
-  private static void extractFile(Path zipFile, String fileName, Path outputFile) throws IOException {
-    try (var fileSystem = FileSystems.newFileSystem(zipFile, (ClassLoader) null)) {
-      var fileToExtract = fileSystem.getPath(fileName);
-      Files.copy(fileToExtract, outputFile);
+  /**
+   * CodeScan (CD-6238): read the jar with {@link ZipFile}, not a zip file system, which failed on Windows in IntelliJ 2024.3.
+   * Entry names are compared with forward slashes, so a jar written with backslashes still works.
+   * A missing entry is an error that names the entry and the jar.
+   */
+  private static void extractFile(Path zipFilePath, String fileName, Path outputFile) throws IOException {
+    var wantedName = withForwardSlashes(fileName);
+    try (var zipFile = new ZipFile(zipFilePath.toFile())) {
+      var entry = zipFile.stream()
+        .filter(e -> withForwardSlashes(e.getName()).equals(wantedName))
+        .findFirst()
+        .orElseThrow(() -> new NoSuchFileException(fileName + " (not found in " + zipFilePath + ")"));
+      try (var input = zipFile.getInputStream(entry)) {
+        Files.copy(input, outputFile);
+      }
     }
+  }
+
+  private static String withForwardSlashes(String name) {
+    return name.replace('\\', '/');
   }
 
   /**

@@ -21,11 +21,15 @@ package org.sonarsource.sonarlint.core.plugin.commons.loading;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.data.MapEntry;
@@ -39,6 +43,7 @@ import org.sonarsource.sonarlint.core.commons.log.LogOutput;
 import org.sonarsource.sonarlint.core.commons.log.SonarLintLogTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.groups.Tuple.tuple;
 
@@ -118,6 +123,50 @@ class PluginInstancesLoaderTests {
       tuple("commons-cli-1.0.jar", "d784fa8b6d98d27699781bd9a7cf19f0"),
       tuple("checkstyle-5.1.jar", "d784fa8b6d98d27699781bd9a7cf19f0"),
       tuple("antlr-2.7.6.jar", "d784fa8b6d98d27699781bd9a7cf19f0"));
+  }
+
+  @Test
+  void extract_dependency_from_a_jar_whose_entry_names_use_backslashes(@TempDir Path tmp) throws IOException {
+    // CodeScan (CD-6238): entry names are compared with forward slashes
+    var jar = createJar(tmp.resolve("backslash-plugin.jar"), "META-INF\\lib\\dep.jar", "dependency content");
+    var info = new PluginInfo("backslash")
+      .setJarFile(jar.toFile())
+      .setMainClass("org.foo.FooPlugin")
+      .setDependencies(List.of("META-INF/lib/dep.jar"));
+
+    var defs = loader.defineClassloaders(Map.of("backslash", info));
+
+    assertThat(defs.iterator().next().getFiles())
+      .filteredOn(f -> f.getName().equals("dep.jar"))
+      .singleElement()
+      .satisfies(f -> assertThat(Files.readString(f.toPath(), StandardCharsets.UTF_8)).isEqualTo("dependency content"));
+  }
+
+  @Test
+  void missing_dependency_fails_with_an_error_naming_the_entry_and_the_jar(@TempDir Path tmp) throws IOException {
+    // CodeScan (CD-6238): the old CodeScan version only wrote a debug log here and went on loading
+    var jar = createJar(tmp.resolve("incomplete-plugin.jar"), "META-INF/lib/other.jar", "other content");
+    var info = new PluginInfo("incomplete")
+      .setJarFile(jar.toFile())
+      .setMainClass("org.foo.FooPlugin")
+      .setDependencies(List.of("META-INF/lib/missing.jar"));
+
+    assertThatThrownBy(() -> loader.defineClassloaders(Map.of("incomplete", info)))
+      .isInstanceOf(IllegalStateException.class)
+      .hasMessage("Unable to extract plugin dependency: META-INF/lib/missing.jar")
+      .cause()
+      .isInstanceOf(NoSuchFileException.class)
+      .hasMessageContaining("META-INF/lib/missing.jar")
+      .hasMessageContaining("incomplete-plugin.jar");
+  }
+
+  private static Path createJar(Path jar, String entryName, String content) throws IOException {
+    try (var out = new ZipOutputStream(Files.newOutputStream(jar))) {
+      out.putNextEntry(new ZipEntry(entryName));
+      out.write(content.getBytes(StandardCharsets.UTF_8));
+      out.closeEntry();
+    }
+    return jar;
   }
 
   /**
