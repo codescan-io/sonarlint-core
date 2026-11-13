@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/organizations/search.protobuf",
+    "queryParameters": {
+      "organizations": {
+        "equalTo": "no-such-org-for-tests"
+      },
+      "ps": {
+        "equalTo": "500"
+      },
+      "p": {
+        "equalTo": "1"
+      }
+    }
+  },
+  "response": {
+    "status": 403,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"errors\":[{\"msg\":\"Insufficient privileges\"}]}"
+  }
+}

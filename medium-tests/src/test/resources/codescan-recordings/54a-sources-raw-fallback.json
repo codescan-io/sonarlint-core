@@ -1,0 +1,23 @@
+{
+  "priority": 10,
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/sources/raw",
+    "queryParameters": {
+      "key": {
+        "matches": ".*"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/plain"
+    },
+    "body": "// Stand-in source text for tests: not the real file.\n"
+  },
+  "metadata": {
+    "note": "Stand-in for every file key that no other recording has (with or without a branch). Core asks for the source of each file with a taint vulnerability and of the file of an issue or hotspot opened from the browser; only one file is recorded for real. Snippets and line hashes core builds from this text are not real.",
+    "fallback": true
+  }
+}

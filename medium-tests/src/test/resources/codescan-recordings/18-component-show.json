@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/components/show.protobuf",
+    "queryParameters": {
+      "component": {
+        "equalTo": "test-project"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/x-protobuf"
+    },
+    "base64Body": "En8SDHRlc3QtcHJvamVjdDIMdGVzdC1wcm9qZWN0QgNUUktiCHRlc3Qtb3JnahgyMDI2LTAyLTA2VDAyOjUxOjI5KzAwMDByCAoGZ2l0aHViegdwcml2YXRlggEYMjAyNS0wOS0yNFQxMDo1MToxNSswMDAwmgEDMS4wqAEAuAEA"
+  }
+}

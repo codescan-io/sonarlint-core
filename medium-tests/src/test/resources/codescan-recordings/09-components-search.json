@@ -1,0 +1,27 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/components/search.protobuf",
+    "queryParameters": {
+      "qualifiers": {
+        "equalTo": "TRK"
+      },
+      "organization": {
+        "equalTo": "test-org"
+      },
+      "ps": {
+        "equalTo": "500"
+      },
+      "p": {
+        "equalTo": "1"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/x-protobuf"
+    },
+    "base64Body": "CgcIARD0AxgNEk4SEG90aGVyLXByb2plY3QtMTAyEG90aGVyLXByb2plY3QtMTBCA1RSS2IQb3RoZXItcHJvamVjdC0xMIoBEG90aGVyLXByb2plY3QtMTASThIQb3RoZXItcHJvamVjdC0xNjIQb3RoZXItcHJvamVjdC0xNEIDVFJLYhBvdGhlci1wcm9qZWN0LTE2igEQb3RoZXItcHJvamVjdC0xNhJLEg9vdGhlci1wcm9qZWN0LTgyEG90aGVyLXByb2plY3QtMTJCA1RSS2IPb3RoZXItcHJvamVjdC04igEPb3RoZXItcHJvamVjdC04EkoSD290aGVyLXByb2plY3QtOTIPb3RoZXItcHJvamVjdC05QgNUUktiD290aGVyLXByb2plY3QtOYoBD290aGVyLXByb2plY3QtORJOEhBvdGhlci1wcm9qZWN0LTE3MhBvdGhlci1wcm9qZWN0LTE3QgNUUktiEG90aGVyLXByb2plY3QtMTeKARBvdGhlci1wcm9qZWN0LTE3EkoSD290aGVyLXByb2plY3QtMTIPb3RoZXItcHJvamVjdC0yQgNUUktiD290aGVyLXByb2plY3QtMYoBD290aGVyLXByb2plY3QtMRJOEhBvdGhlci1wcm9qZWN0LTExMhBvdGhlci1wcm9qZWN0LTExQgNUUktiEG90aGVyLXByb2plY3QtMTGKARBvdGhlci1wcm9qZWN0LTExEk4SEG90aGVyLXByb2plY3QtMTUyEG90aGVyLXByb2plY3QtMTVCA1RSS2IQb3RoZXItcHJvamVjdC0xNYoBEG90aGVyLXByb2plY3QtMTUSShIPb3RoZXItcHJvamVjdC01Mg9vdGhlci1wcm9qZWN0LTZCA1RSS2IPb3RoZXItcHJvamVjdC01igEPb3RoZXItcHJvamVjdC01EksSD290aGVyLXByb2plY3QtNzIQb3RoZXItcHJvamVjdC0xM0IDVFJLYg9vdGhlci1wcm9qZWN0LTeKAQ9vdGhlci1wcm9qZWN0LTcSShIPb3RoZXItcHJvamVjdC00Mg9vdGhlci1wcm9qZWN0LTNCA1RSS2IPb3RoZXItcHJvamVjdC00igEPb3RoZXItcHJvamVjdC00Ek4SEG90aGVyLXByb2plY3QtMTkyEG90aGVyLXByb2plY3QtMThCA1RSS2IQb3RoZXItcHJvamVjdC0xOYoBEG90aGVyLXByb2plY3QtMTkSPhIMdGVzdC1wcm9qZWN0Mgx0ZXN0LXByb2plY3RCA1RSS2IMdGVzdC1wcm9qZWN0igEMdGVzdC1wcm9qZWN0"
+  }
+}
