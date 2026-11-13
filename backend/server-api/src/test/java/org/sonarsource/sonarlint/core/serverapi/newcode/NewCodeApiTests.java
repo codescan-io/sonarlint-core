@@ -48,6 +48,7 @@ class NewCodeApiTests {
   private static final String BRANCH = "branch";
   private static final Version RECENT_SQ_VERSION = Version.create("10.2");
   private static final Version SC_VERSION = Version.create("8.0.0.46314");
+  private static final Version CODESCAN_VERSION = Version.create("24.12.0.100206");
   private static final String SOME_DATE = "2023-08-29T09:37:59+0000";
   private static final long SOME_DATE_EPOCH_MILLIS = ServerApiUtils.parseOffsetDateTime(SOME_DATE).toInstant().toEpochMilli();
 
@@ -87,15 +88,14 @@ class NewCodeApiTests {
 
   @Test
   void getPeriodFromServer() {
-    var serverApiHelper = mock(ServerApiHelper.class);
-    when(serverApiHelper.isSonarCloud()).thenReturn(true);
-
-    var sonarCloud = getPeriodForServer(serverApiHelper, Version.create("9.2"));
-    when(serverApiHelper.isSonarCloud()).thenReturn(false);
-    var sonarQubeOld = getPeriodForServer(serverApiHelper, Version.create("8.0"));
-    var sonarQubeNew = getPeriodForServer(serverApiHelper, Version.create("8.1"));
+    var sonarCloud = getPeriodForServer(SC_VERSION);
+    // CodeScan: cloud-type servers are also asked by version. CodeScan reports 24.12 and rejects "periods" with a 400.
+    var codeScan = getPeriodForServer(CODESCAN_VERSION);
+    var sonarQubeOld = getPeriodForServer(Version.create("8.0"));
+    var sonarQubeNew = getPeriodForServer(Version.create("8.1"));
 
     assertThat(sonarCloud).isEqualTo("periods");
+    assertThat(codeScan).isEqualTo("period");
     assertThat(sonarQubeOld).isEqualTo("periods");
     assertThat(sonarQubeNew).isEqualTo("period");
   }
@@ -165,6 +165,21 @@ class NewCodeApiTests {
     assertThat(newCodeDefinition.isOnNewCode(SOME_DATE_EPOCH_MILLIS + 1)).isTrue();
     assertThat(newCodeDefinition.isOnNewCode(SOME_DATE_EPOCH_MILLIS - 1)).isFalse();
     assertThat(newCodeDefinition.isSupported()).isTrue();
+  }
+
+  @Test
+  void cloudTypeServerWithRecentVersionIsAskedForPeriod() {
+    // CodeScan is a cloud-type connection that reports version 24.12 and only accepts additionalFields=period
+    prepareSqWsResponseWithPeriod(Measures.Period.newBuilder()
+      .setMode("PREVIOUS_VERSION")
+      .setDate(SOME_DATE)
+      .build());
+    when(mockApiHelper.isSonarCloud()).thenReturn(true);
+
+    var newCodeDefinition = underTest.getNewCodeDefinition(PROJECT, BRANCH, CODESCAN_VERSION, new SonarLintCancelMonitor());
+
+    assertThat(newCodeDefinition).isPresent();
+    assertThat(newCodeDefinition.get().isSupported()).isTrue();
   }
 
   @Test

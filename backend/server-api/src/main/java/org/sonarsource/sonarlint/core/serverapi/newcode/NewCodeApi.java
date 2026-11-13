@@ -46,7 +46,7 @@ public class NewCodeApi {
 
   public Optional<NewCodeDefinition> getNewCodeDefinition(String projectKey, @Nullable String branch, Version serverVersion, SonarLintCancelMonitor cancelMonitor) {
     Measures.ComponentWsResponse response;
-    var period = getPeriodForServer(helper, serverVersion);
+    var period = getPeriodForServer(serverVersion);
     var requestPath = new StringBuilder().append(GET_NEW_CODE_DEFINITION_URL)
       .append("?additionalFields=")
       .append(period)
@@ -91,10 +91,9 @@ public class NewCodeApi {
     return response.getPeriod();
   }
 
-  static String getPeriodForServer(ServerApiHelper helper, Version serverVersion) {
-    if (helper.isSonarCloud()) {
-      return OLD_SQ_OR_SC_PERIOD;
-    }
+  static String getPeriodForServer(Version serverVersion) {
+    // CodeScan: chosen by version only, not by server type. CodeScan is a cloud-type server that reports a recent
+    // version and answers 400 to "periods". SonarCloud reports 8.0.x, so it still gets "periods".
     if (serverVersion.compareToIgnoreQualifier(NEW_SQ_VERSION) < 0) {
       return OLD_SQ_OR_SC_PERIOD;
     }
