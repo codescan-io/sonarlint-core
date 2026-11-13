@@ -19,7 +19,9 @@
  */
 package org.sonarsource.sonarlint.core.serverconnection;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.MessageDigest;
 import org.sonarsource.sonarlint.core.serverapi.plugins.ServerPlugin;
 
 public class StoredPlugin {
@@ -46,6 +48,11 @@ public class StoredPlugin {
   }
 
   public boolean hasSameHash(ServerPlugin serverPlugin) {
-    return getHash().equals(serverPlugin.getHash());
+    // CodeScan: compare in constant time (security scan finding); the answers are the same as equals()
+    var serverHash = serverPlugin.getHash();
+    if (serverHash == null) {
+      return false;
+    }
+    return MessageDigest.isEqual(getHash().getBytes(StandardCharsets.UTF_8), serverHash.getBytes(StandardCharsets.UTF_8));
   }
 }
