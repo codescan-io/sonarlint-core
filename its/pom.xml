@@ -3,13 +3,13 @@
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-parent</artifactId>
-    <version>9.1.3-CODESCAN</version>
+    <version>10.12.1-SNAPSHOT</version>
   </parent>
   <artifactId>sonarlint-core-its</artifactId>
   <name>SonarLint Core - ITs</name>
   <description>Integration tests parent</description>
   <packaging>pom</packaging>
-  
+
   <modules>
     <module>plugins/custom-sensor-plugin</module>
     <module>plugins/java-custom-rules</module>

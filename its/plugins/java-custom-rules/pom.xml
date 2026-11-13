@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>org.sonarsource.sonarlint.core</groupId>
     <artifactId>sonarlint-core-its</artifactId>
-    <version>9.1.3-CODESCAN</version>
+    <version>10.12.1-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -20,13 +20,14 @@
   <properties>
     <sonarjava.version>7.16.0.30901</sonarjava.version>
     <analyzer.commons.version>2.11.0.2861</analyzer.commons.version>
+    <sonar.apiVersion>9.14.0.375</sonar.apiVersion>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.sonarsource.sonarqube</groupId>
+      <groupId>org.sonarsource.api.plugin</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>9.14.0.375</version>
+      <version>${sonar.apiVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -55,16 +56,31 @@
     <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>shade</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <version>1.20.0.405</version>
+        <version>1.23.0.740</version>
         <extensions>true</extensions>
         <configuration>
           <pluginClass>org.sonar.samples.java.MyJavaRulesPlugin</pluginClass>
-          <sonarQubeMinVersion>7.9</sonarQubeMinVersion>
+          <pluginApiMinVersion>${sonar.apiVersion}</pluginApiMinVersion>
           <pluginKey>custom</pluginKey>
           <sonarLintSupported>true</sonarLintSupported>
+          <skipDependenciesPackaging>true</skipDependenciesPackaging>
           <requirePlugins>java:${sonarjava.version}</requirePlugins>
+          <requiredForLanguages>java</requiredForLanguages>
         </configuration>
       </plugin>
 
