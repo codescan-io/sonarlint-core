@@ -153,6 +153,7 @@ public class SonarLintBackendFixture {
     private Path eslintBridgeServerBundlePath;
     private String sonarCloudUrl;
     private String sonarCloudWebSocketsUrl;
+    private boolean noSonarCloudWebSockets;
     private Duration responseTimeout;
     private Path keyStorePath;
     private String keyStorePassword;
@@ -227,6 +228,14 @@ public class SonarLintBackendFixture {
 
     public SonarLintBackendBuilder withSonarCloudWebSocketsUrl(String sonarCloudWebSocketsUrl) {
       this.sonarCloudWebSocketsUrl = sonarCloudWebSocketsUrl;
+      return this;
+    }
+
+    /**
+     * CodeScan: the alternative cloud environment has no WebSocket address, as the CodeScan plugin passes it.
+     */
+    public SonarLintBackendBuilder withoutSonarCloudWebSockets() {
+      this.noSonarCloudWebSockets = true;
       return this;
     }
 
@@ -470,10 +479,16 @@ public class SonarLintBackendFixture {
           manageServerSentEvents, enableDataflowBugDetection, shouldManageFullSynchronization, telemetryEnabled, canOpenFixSuggestion);
 
         SonarCloudAlternativeEnvironmentDto sonarCloudAlternativeEnvironment = null;
-        if (sonarCloudUrl != null || sonarCloudWebSocketsUrl != null) {
+        if (sonarCloudUrl != null || sonarCloudWebSocketsUrl != null || noSonarCloudWebSockets) {
+          URI webSocketsUri;
+          if (noSonarCloudWebSockets) {
+            webSocketsUri = null;
+          } else {
+            webSocketsUri = sonarCloudWebSocketsUrl == null ? SonarCloudActiveEnvironment.prod().getWebSocketsEndpointUri() : URI.create(sonarCloudWebSocketsUrl);
+          }
           sonarCloudAlternativeEnvironment = new SonarCloudAlternativeEnvironmentDto(
             sonarCloudUrl == null ? SonarCloudActiveEnvironment.PRODUCTION_URI : URI.create(sonarCloudUrl),
-            sonarCloudWebSocketsUrl == null ? SonarCloudActiveEnvironment.prod().getWebSocketsEndpointUri() : URI.create(sonarCloudWebSocketsUrl));
+            webSocketsUri);
         }
 
         var sslConfiguration = new SslConfigurationDto(null, null, null, keyStorePath, keyStorePassword, keyStoreType);
