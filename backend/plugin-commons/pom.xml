@@ -38,6 +38,21 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- The CodeScan Salesforce analyzer (plugin key "codescan") uses org.sonar.api.batch.fs.internal.DefaultInputFile, which
+      sonar-plugin-api does not contain. Without it the analyzer fails to load (ClassNotFoundException). Plugins see it
+      through the "org/sonar/api/" mask in PluginClassloaderFactory. The CodeScan VS Code language server ships the same jar.
+      Its own dependencies are excluded: the backend already has them, except junit, which it does not need. -->
+    <dependency>
+      <groupId>org.sonarsource.sonarqube</groupId>
+      <artifactId>sonar-plugin-api-impl</artifactId>
+      <version>${sonar-plugin-api-impl.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
