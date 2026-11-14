@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.sonarlint.plugin.api.module.file.ModuleFileListener;
 
@@ -59,6 +60,16 @@ class PluginClassloaderFactoryTests {
     assertThat(canLoadClass(classLoader, PluginClassloaderFactory.class.getCanonicalName())).isFalse();
     assertThat(canLoadClass(classLoader, Test.class.getCanonicalName())).isFalse();
     assertThat(canLoadClass(classLoader, StringUtils.class.getCanonicalName())).isFalse();
+  }
+
+  @Test
+  void plugin_can_load_the_old_internal_input_file_used_by_codescan_analyzers() throws ClassNotFoundException {
+    var def = basePluginDef();
+    var classLoader = factory.create(getClass().getClassLoader(), List.of(def)).get(def);
+
+    var defaultInputFile = classLoader.loadClass("org.sonar.api.batch.fs.internal.DefaultInputFile");
+
+    assertThat(InputFile.class).isAssignableFrom(defaultInputFile);
   }
 
   @Test

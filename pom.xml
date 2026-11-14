@@ -52,6 +52,8 @@
     
     <maven.compiler.release>11</maven.compiler.release>
     <sonar-plugin-api.version>10.14.1-CODESCAN</sonar-plugin-api.version>
+    <!-- Same version as the CodeScan VS Code language server -->
+    <sonar-plugin-api-impl.version>9.9.3.79811</sonar-plugin-api-impl.version>
     <sonar-markdown.version>9.9.0.65466</sonar-markdown.version>
     <sonar-scanner-protocol.version>9.9.0.65466</sonar-scanner-protocol.version>
     <protobuf.version>4.28.2</protobuf.version>
