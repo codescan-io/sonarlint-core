@@ -108,6 +108,7 @@ class CodeScanSalesforceAnalyzerMediumTests {
     var analysis = analyze(apexFile, Map.of("sonar.host.url", serverUrl, "sonar.organization", organization, "sonar.login", token));
 
     assertThat(missingClassErrors()).isEmpty();
+    // getFailedAnalysisFiles() is empty even when the analyzer breaks; the missing-class log check above is the real guard
     assertThat(analysis.join().getFailedAnalysisFiles()).isEmpty();
     await().atMost(ANALYSIS_TIMEOUT).untilAsserted(() -> assertThat(client.getRaisedIssuesForScopeIdAsList(SCOPE_ID)).isNotEmpty());
   }

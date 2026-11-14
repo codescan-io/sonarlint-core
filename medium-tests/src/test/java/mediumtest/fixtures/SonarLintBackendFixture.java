@@ -123,6 +123,7 @@ public class SonarLintBackendFixture {
   }
 
   public static class SonarLintBackendBuilder {
+    private static final java.util.regex.Pattern SECRET_PROPERTY = java.util.regex.Pattern.compile("(\"sonar\\.(?:login|password|token)\"\\s*:\\s*)\"(?:[^\"\\\\]|\\\\.)*\"");
     private final List<SonarQubeConnectionConfigurationDto> sonarQubeConnections = new ArrayList<>();
     private final List<SonarCloudConnectionConfigurationDto> sonarCloudConnections = new ArrayList<>();
     private final List<ConfigurationScopeDto> configurationScopes = new ArrayList<>();
@@ -516,6 +517,11 @@ public class SonarLintBackendFixture {
       }
     }
 
+    // The RPC trace goes to the console, surefire reports and CI logs: never print credentials passed as analysis properties
+    private static String redactSecrets(String rpcMessage) {
+      return SECRET_PROPERTY.matcher(rpcMessage).replaceAll("$1\"***\"");
+    }
+
     private static SonarLintTestRpcServer createTestBackend(SonarLintRpcClientDelegate client) throws IOException {
       var clientToServerOutputStream = new PipedOutputStream() {
         private final StringBuilder mem = new StringBuilder();
@@ -539,7 +545,7 @@ public class SonarLintBackendFixture {
             var content = mem.substring(2, nextContentSize + 2);
             mem.replace(0, nextContentSize + 2, "");
             nextContentSize = -1;
-            System.out.println("--> " + content);
+            System.out.println("--> " + redactSecrets(content));
           }
         }
       };
@@ -551,7 +557,7 @@ public class SonarLintBackendFixture {
         public synchronized int read(byte[] b, int off, int len) throws IOException {
           int readLength = super.read(b, off, len);
           if (readLength > 0) {
-            System.out.println("<-- " + new String(b, off, readLength));
+            System.out.println("<-- " + redactSecrets(new String(b, off, readLength)));
           }
           return readLength;
         }
