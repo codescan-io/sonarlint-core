@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/measures/component.protobuf",
+    "queryParameters": {
+      "additionalFields": {
+        "equalTo": "period"
+      },
+      "metricKeys": {
+        "equalTo": "projects"
+      },
+      "component": {
+        "equalTo": "test-project"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/x-protobuf"
+    },
+    "base64Body": "CiESDHRlc3QtcHJvamVjdDIMdGVzdC1wcm9qZWN0QgNUUksiLggBEhBQUkVWSU9VU19WRVJTSU9OGhgyMDI1LTA5LTI0VDEwOjUxOjE1KzAwMDA="
+  }
+}

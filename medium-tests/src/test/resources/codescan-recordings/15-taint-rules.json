@@ -1,0 +1,36 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/rules/search.protobuf",
+    "queryParameters": {
+      "repositories": {
+        "matches": ".*"
+      },
+      "organization": {
+        "equalTo": "test-org"
+      },
+      "f": {
+        "equalTo": "repo"
+      },
+      "s": {
+        "equalTo": "key"
+      },
+      "ps": {
+        "equalTo": "500"
+      },
+      "p": {
+        "equalTo": "1"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/x-protobuf"
+    },
+    "base64Body": "CAAQARj0A0IHCAEQ9AMYAA=="
+  },
+  "metadata": {
+    "note": "Core asks for the taint repositories in SonarLanguage enum order; this recording matches any repositories value."
+  }
+}

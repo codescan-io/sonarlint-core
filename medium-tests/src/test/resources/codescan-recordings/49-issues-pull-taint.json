@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/issues/pull_taint",
+    "queryParameters": {
+      "projectKey": {
+        "equalTo": "test-project"
+      },
+      "branchName": {
+        "equalTo": "main"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "base64Body": "BwifxbeinTQ="
+  },
+  "metadata": {
+    "note": "SonarQube-type connections only, not called for CodeScan: core calls this only for a SonarQube-type connection, and the CodeScan plugin connects as a SonarCloud-type one. Recorded for completeness; the languages parameter is not matched."
+  }
+}

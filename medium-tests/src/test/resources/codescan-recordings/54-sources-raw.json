@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/sources/raw",
+    "queryParameters": {
+      "key": {
+        "equalTo": "test-project:force-app/main/default/classes/Collection Recipes/AccountNumberOfEmployeesComparator.cls"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/plain"
+    },
+    "body": "/**\n * @description An example implementation of the Comparator Interface\n * In this example we show how to sort all the accounts by their employee numbers in ascending order\n **/\n\npublic with sharing class AccountNumberOfEmployeesComparator implements Comparator<Account> {\n    public Integer compare(Account a1, Account a2) {\n        Integer compareResult;\n        // Handle null objects before null field values\n        if (a1 == null && a2 == null) {\n            compareResult = 0;\n        } else if (a1 == null) {\n            compareResult = -1;\n        } else if (a2 == null) {\n            compareResult = 1;\n        } else {\n            Integer a1NumberOfEmployees = a1?.NumberOfEmployees;\n            Integer a2NumberOfEmployees = a2?.NumberOfEmployees;\n            // Handle null field values then actual value compares\n            if (a1NumberOfEmployees == null && a2NumberOfEmployees == null) {\n                compareResult = 0;\n            } else if (a1NumberOfEmployees == null) {\n                compareResult = -1;\n            } else if (a2NumberOfEmployees == null) {\n                compareResult = 1;\n            } else if (a1NumberOfEmployees < a2NumberOfEmployees) {\n                compareResult = -1;\n            } else if (a1NumberOfEmployees > a2NumberOfEmployees) {\n                compareResult = 1;\n            } else {\n                compareResult = 0;\n            }\n        }\n        return compareResult;\n    }\n}\n\n"
+  },
+  "metadata": {
+    "note": "Core asks with a branch, with a pull request, or with neither; the recording does not match on the branch."
+  }
+}

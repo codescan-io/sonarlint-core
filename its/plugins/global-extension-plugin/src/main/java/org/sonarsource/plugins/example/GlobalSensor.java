@@ -1,6 +1,6 @@
 /*
  * Example Plugin with global extension
- * Copyright (C) 2016-2023 SonarSource SA
+ * Copyright (C) 2016-2024 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
  * This program is free software; you can redistribute it and/or
@@ -60,12 +60,17 @@ public class GlobalSensor implements Sensor {
     } else {
       LOGGER.error("Rule is not active");
     }
-    for (InputFile f : context.fileSystem().inputFiles(context.fileSystem().predicates().all())) {
-      NewIssue newIssue = context.newIssue();
-      newIssue
-        .forRule(globalRuleKey)
-        .at(newIssue.newLocation().on(f).message("Issue number " + GlobalExtension.getInstance().getAndInc()))
-        .save();
+    var inputFiles = context.fileSystem().inputFiles(context.fileSystem().predicates().all());
+    if (!inputFiles.iterator().hasNext()) {
+      LOGGER.error("File system is empty");
+    } else {
+      for (InputFile f : inputFiles) {
+        NewIssue newIssue = context.newIssue();
+        newIssue
+          .forRule(globalRuleKey)
+          .at(newIssue.newLocation().on(f).message("Issue number " + GlobalExtension.getInstance().getAndInc()))
+          .save();
+      }
     }
     long timeAfter = clock.millis();
     LOGGER.info(String.format("Executed Global Sensor in %d ms", timeAfter - timeBefore));

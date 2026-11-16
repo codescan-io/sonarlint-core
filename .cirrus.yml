@@ -6,11 +6,6 @@ env:
   ARTIFACTORY_PRIVATE_USERNAME: vault-${CIRRUS_REPO_OWNER}-${CIRRUS_REPO_NAME}-private-reader
   ARTIFACTORY_PRIVATE_PASSWORD: VAULT[development/artifactory/token/${CIRRUS_REPO_OWNER}-${CIRRUS_REPO_NAME}-private-reader access_token]
   ARTIFACTORY_ACCESS_TOKEN: VAULT[development/artifactory/token/${CIRRUS_REPO_OWNER}-${CIRRUS_REPO_NAME}-private-reader access_token]
-  BURGR_URL: VAULT[development/kv/data/burgr data.url]
-  BURGR_USERNAME: VAULT[development/kv/data/burgr data.cirrus_username]
-  BURGR_PASSWORD: VAULT[development/kv/data/burgr data.cirrus_password]
-  SONAR_HOST_URL: VAULT[development/kv/data/next data.url]
-  SONAR_TOKEN: VAULT[development/kv/data/next data.token]
 
 auto_cancellation: $CIRRUS_BRANCH != $CIRRUS_DEFAULT_BRANCH
 
@@ -22,15 +17,25 @@ only_if_with_nightly: &ONLY_IF
 only_if_except_nightly: &ONLY_IF_EXCEPT_NIGHTLY
   skip: "changesIncludeOnly('docs/**/*', 'spec/**/*', 'README.md')"
   only_if: $CIRRUS_USER_COLLABORATOR == 'true' && $CIRRUS_TAG == "" && $CIRRUS_BUILD_SOURCE != "cron"
-
-only_pr_and_maintained_branches: &ONLY_PR_AND_MAINTAINED_BRANCHES
-  skip: "changesIncludeOnly('docs/**/*', 'spec/**/*', 'README.md')"
-  only_if: $CIRRUS_USER_COLLABORATOR == 'true' && $CIRRUS_TAG == "" && $CIRRUS_BUILD_SOURCE != "cron"
     && ($CIRRUS_PR != "" || $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_BRANCH =~ "branch-.*" || $CIRRUS_BRANCH =~ "dogfood-on-.*")
 
 only_main_branches: &ONLY_MAIN_BRANCHES
   skip: "changesIncludeOnly('docs/**/*', 'spec/**/*', 'README.md')"
   only_if: $CIRRUS_USER_COLLABORATOR == 'true' && $CIRRUS_TAG == "" && ($CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_BRANCH =~ "branch-.*")
+
+orchestrator_monthly_cache_template: &ORCHESTRATOR_MONTHLY_CACHE_TEMPLATE
+  env:
+    JDK_VERSION: "17"
+  set_orchestrator_home_script: |
+    export THIS_MONTH=$(date '+%Y-%m')
+    echo "THIS_MONTH=${THIS_MONTH}" >> $CIRRUS_ENV
+    echo "ORCHESTRATOR_HOME=${CIRRUS_WORKING_DIR}/orchestrator/${THIS_MONTH}" >> $CIRRUS_ENV
+  mkdir_orchestrator_home_script: |
+    echo "Create dir ${ORCHESTRATOR_HOME} if needed"
+    mkdir -p ${ORCHESTRATOR_HOME}
+  orchestrator_cache:
+    folder: ${ORCHESTRATOR_HOME}
+    fingerprint_script: echo ${THIS_MONTH}
 
 maven_cache_definition: &MAVEN_CACHE_DEFINITION
   maven_cache:
@@ -38,7 +43,7 @@ maven_cache_definition: &MAVEN_CACHE_DEFINITION
     fingerprint_script:
       - find . -name pom.xml -not -path './its/*' -exec cat {} \+
 
-eks_container: &CONTAINER_DEFINITION
+container_definition: &CONTAINER_DEFINITION
   dockerfile: .cirrus/Dockerfile
   docker_arguments:
     CIRRUS_AWS_ACCOUNT: ${CIRRUS_AWS_ACCOUNT}
@@ -48,51 +53,53 @@ eks_container: &CONTAINER_DEFINITION
   builder_role: cirrus-builder
   builder_image: docker-builder-v*
   builder_instance_type: t3.xlarge
-  builder_subnet_id: ${CIRRUS_AWS_SUBNET}
   namespace: default
   cpu: 4
-  memory: 2G
+  memory: 6G
 
-ec2_instance: &WINVM_DEFINITION
+ec2_instance_definition: &WINVM_DEFINITION
   experimental: true
   image: base-windows-jdk17-v*
   platform: windows
   region: eu-central-1
-  subnet_id: ${CIRRUS_AWS_SUBNET}
-  type: t3.xlarge
+  type: c5.4xlarge
 
 build_task:
   # Build and Stage to repox
   <<: *ONLY_IF
   env:
-    JDK_VERSION: "11"
+    JDK_VERSION: "17"
     DEPLOY_PULL_REQUEST: "true"
     ARTIFACTORY_DEPLOY_REPO: sonarsource-public-qa
     ARTIFACTORY_DEPLOY_USERNAME: vault-${CIRRUS_REPO_OWNER}-${CIRRUS_REPO_NAME}-qa-deployer
     ARTIFACTORY_DEPLOY_PASSWORD: VAULT[development/artifactory/token/${CIRRUS_REPO_OWNER}-${CIRRUS_REPO_NAME}-qa-deployer access_token]
     SIGN_KEY: VAULT[development/kv/data/sign data.key]
     PGP_PASSPHRASE: VAULT[development/kv/data/sign data.passphrase]
+    SONAR_HOST_URL: "not_used_but_needed_by_regular_mvn_build_deploy_analyze"
+    SONAR_TOKEN: "not_used_but_needed_by_regular_mvn_build_deploy_analyze"
   eks_container:
     <<: *CONTAINER_DEFINITION
-    memory: 1G
+    memory: 2G
   <<: *MAVEN_CACHE_DEFINITION
   build_script:
     - source cirrus-env BUILD
-    - regular_mvn_build_deploy_analyze -Dmaven.test.skip=true -Dsonar.skip=true
+    - regular_mvn_build_deploy_analyze -P dist-no-arch,dist-windows_x64,dist-linux_x64,dist-linux_aarch64,dist-macosx_x64,dist-macosx_aarch64 -Dmaven.test.skip=true -Dsonar.skip=true
   cache_script:
     - mvn -B -e -V -Pits dependency:go-offline # populate cache including ITs deps too
   cleanup_before_cache_script: cleanup_maven_repository
 
 test_linux_task:
-  # Run unit tests on Linux with Java 11 and SonarQube analysis on Next
+  # Run unit tests on Linux with Java 17 and SonarQube analysis on Next
   depends_on:
     - build
   <<: *ONLY_IF_EXCEPT_NIGHTLY
   eks_container:
     <<: *CONTAINER_DEFINITION
   env:
-    JDK_VERSION: "11"
+    JDK_VERSION: "17"
     DEPLOY_PULL_REQUEST: "false"
+    SONAR_HOST_URL: VAULT[development/kv/data/next data.url]
+    SONAR_TOKEN: VAULT[development/kv/data/next data.token]
   <<: *MAVEN_CACHE_DEFINITION
   script:
     - source cirrus-env QA
@@ -124,6 +131,21 @@ test_windows_task:
       path: '**/target/surefire-reports/TEST-*.xml'
       format: junit
 
+inspect_orchestrator_cache_task:
+  <<: *ONLY_IF_EXCEPT_NIGHTLY
+  depends_on: build
+  eks_container:
+    <<: *CONTAINER_DEFINITION
+    cpu: 1
+    memory: 2G
+  <<: *ORCHESTRATOR_MONTHLY_CACHE_TEMPLATE
+  inspect_cache_script: |
+    echo "Inspecting cache ${ORCHESTRATOR_HOME}..."
+    cd "${ORCHESTRATOR_HOME}"
+    ls -l
+    find .
+    echo "Inspecting cache done."
+
 mend_scan_task:
   # Run Mend analysis
   depends_on:
@@ -151,6 +173,7 @@ qa_task:
   depends_on:
     - build
   <<: *ONLY_IF_EXCEPT_NIGHTLY
+  <<: *ORCHESTRATOR_MONTHLY_CACHE_TEMPLATE
   eks_container:
     <<: *CONTAINER_DEFINITION
     cpu: 4
@@ -162,7 +185,7 @@ qa_task:
   matrix:
       -  env:
           SQ_VERSION: "SonarCloud"
-          JDK_VERSION: "11"
+          JDK_VERSION: "17"
           CATEGORY: "-Dgroups=SonarCloud"
           SONARCLOUD_IT_PASSWORD: VAULT[development/team/sonarlint/kv/data/sonarcloud-it data.password]
           QA_CATEGORY: SonarCloud
@@ -177,15 +200,10 @@ qa_task:
           CATEGORY: "-DexcludedGroups=SonarCloud"
           QA_CATEGORY: SQLatest
       -  env:
-          SQ_VERSION: "LATEST_RELEASE[8.9]"
-          JDK_VERSION: "11"
+          SQ_VERSION: "LATEST_RELEASE[9.9]"
+          JDK_VERSION: "17"
           CATEGORY: "-DexcludedGroups=SonarCloud"
-          QA_CATEGORY: SQLts89
-      -  env:
-          SQ_VERSION: "LATEST_RELEASE[7.9]"
-          JDK_VERSION: "11"
-          CATEGORY: "-DexcludedGroups=SonarCloud"
-          QA_CATEGORY: SQLts79
+          QA_CATEGORY: SQLts99
   <<: *MAVEN_CACHE_DEFINITION
   qa_script: |
     source cirrus-env QA
@@ -202,6 +220,8 @@ qa_task:
     junit_artifacts:
       path: '**/target/surefire-reports/TEST-*.xml'
       format: junit
+    log_artifacts:
+      path: "**/target/**/sonarqube*/logs/*.log"
 
 promote_task:
   # Promotion
@@ -211,18 +231,15 @@ promote_task:
     - test_windows
     - mend_scan
     - qa
-  <<: *ONLY_PR_AND_MAINTAINED_BRANCHES
+  <<: *ONLY_IF_EXCEPT_NIGHTLY
   eks_container:
     <<: *CONTAINER_DEFINITION
-    cpu: 1
-    memory: 1G
+    cpu: 2
+    memory: 4G
   env:
       JDK_VERSION: "11"
-      GCF_ACCESS_TOKEN: VAULT[development/kv/data/promote data.token]
-      PROMOTE_URL: VAULT[development/kv/data/promote data.url]
+      ARTIFACTORY_PROMOTE_ACCESS_TOKEN: VAULT[development/artifactory/token/${CIRRUS_REPO_OWNER}-${CIRRUS_REPO_NAME}-promoter access_token]
       GITHUB_TOKEN: VAULT[development/github/token/${CIRRUS_REPO_OWNER}-${CIRRUS_REPO_NAME}-promotion token]
-      # artifacts which will have downloadable links in burgr
-      ARTIFACTS: org.sonarsource.sonarlint.core:sonarlint-core:jar
   <<: *MAVEN_CACHE_DEFINITION
   script: cirrus_promote_maven
   cleanup_before_cache_script: cleanup_maven_repository
