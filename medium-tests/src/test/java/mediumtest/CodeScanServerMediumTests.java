@@ -319,8 +319,9 @@ class CodeScanServerMediumTests {
 
     var taints = backend.getTaintVulnerabilityTrackingService().listAll(new ListAllParams(SCOPE_ID)).join().getTaintVulnerabilities();
     assertThat(taints).hasSize(recorded.getIssuesCount());
-    assertThat(impactsOf(taints, blockerIssue.getKey())).containsExactly(SoftwareQuality.SECURITY + "=" + ImpactSeverity.BLOCKER);
-    assertThat(impactsOf(taints, infoIssue.getKey())).containsExactly(SoftwareQuality.SECURITY + "=" + ImpactSeverity.INFO);
+    // CodeScan Cloud shows the old severities, not impacts: the BLOCKER and INFO impacts above must not break the sync
+    assertThat(severityOf(taints, blockerIssue.getKey())).isEqualTo(blockerIssue.getSeverity().name());
+    assertThat(severityOf(taints, infoIssue.getKey())).isEqualTo(infoIssue.getSeverity().name());
   }
 
   @Test
@@ -461,11 +462,9 @@ class CodeScanServerMediumTests {
     return new ClientFileDto(fsPath.toUri(), Path.of(relativePath), SCOPE_ID, false, null, fsPath, null, null, true);
   }
 
-  private static List<String> impactsOf(List<TaintVulnerabilityDto> taints, String serverKey) {
+  private static String severityOf(List<TaintVulnerabilityDto> taints, String serverKey) {
     var taint = taints.stream().filter(t -> t.getSonarServerKey().equals(serverKey)).findFirst().orElseThrow();
-    assertThat(taint.getSeverityMode().isRight()).as("cloud connections show impacts (MQR mode)").isTrue();
-    return taint.getSeverityMode().getRight().getImpacts().stream()
-      .map(impact -> impact.getSoftwareQuality() + "=" + impact.getImpactSeverity())
-      .collect(Collectors.toList());
+    assertThat(taint.getSeverityMode().isLeft()).as("CodeScan Cloud connections show severities, not impacts").isTrue();
+    return taint.getSeverityMode().getLeft().getSeverity().name();
   }
 }
