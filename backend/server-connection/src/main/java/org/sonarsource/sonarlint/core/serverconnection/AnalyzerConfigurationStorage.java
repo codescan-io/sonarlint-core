@@ -19,6 +19,7 @@
  */
 package org.sonarsource.sonarlint.core.serverconnection;
 
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
@@ -60,7 +61,12 @@ public class AnalyzerConfigurationStorage {
     try {
       return Optional.of(read());
     } catch (Exception e) {
-      LOG.error("Could not load analyzer configuration storage", e);
+      if (e.getCause() instanceof NoSuchFileException) {
+        // CodeScan: expected before the first sync has written the file
+        LOG.warn("Could not load analyzer configuration storage: file not found yet ({})", storageFilePath);
+      } else {
+        LOG.error("Could not load analyzer configuration storage", e);
+      }
       return Optional.empty();
     }
   }

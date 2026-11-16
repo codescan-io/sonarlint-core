@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +56,12 @@ public class PluginsStorage {
       rwLock.read(() -> ProtobufFileUtil.readFile(pluginReferencesFilePath, Sonarlint.PluginReferences.parser()));
       return true;
     } catch (Exception e) {
-      LOG.error("Could not load plugins storage", e);
+      if (e.getCause() instanceof NoSuchFileException) {
+        // CodeScan: expected before the first sync has written the file
+        LOG.warn("Could not load plugins storage: file not found yet ({})", pluginReferencesFilePath);
+      } else {
+        LOG.error("Could not load plugins storage", e);
+      }
       return false;
     }
   }
