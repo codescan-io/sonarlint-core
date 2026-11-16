@@ -47,7 +47,10 @@ public class SeverityModeService {
     }
     var isSonarCloud = connectionConfigurationRepository.getEndpointParams(connectionId).orElseThrow().isSonarCloud();
     if (isSonarCloud) {
-      return true;
+      // CodeScan: "SonarCloud" here is CodeScan Cloud, which still uses the old severities (BLOCKER ... INFO) and lets
+      // projects rename them (codescan.severity.masking.*). Upstream always shows impacts for SonarCloud; CodeScan shows
+      // severities, as the 7.x plugin did.
+      return false;
     }
     var optServerInfo = storageService.connection(connectionId).serverInfo().read();
     var isMQRMode = optServerInfo.map(StoredServerInfo::getSeverityMode).orElse(StoredServerInfo.SeverityModeDetails.MQR);
