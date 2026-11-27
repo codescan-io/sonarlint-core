@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/qualityprofiles/search.protobuf",
+    "queryParameters": {
+      "project": {
+        "equalTo": "no-such-project-for-tests"
+      },
+      "organization": {
+        "equalTo": "test-org"
+      }
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"errors\":[{\"msg\":\"Project \\u0027no-such-project-for-tests\\u0027 not found\"}]}"
+  }
+}
